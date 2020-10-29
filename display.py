@@ -1,12 +1,8 @@
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 
 
 @app.route('/')
-def index():
-    return 'Index page'
-
-
-@app.route('/<test>')
-def hello(test):
-    return test
+@app.route('/<title>')
+def index(title=''):
+    return render_template('navigation.html', title=title)
