@@ -5,8 +5,12 @@
   <title>{{ title }}</title>
 </head>
 <body>
-  {% block navigation %}
-    <h1>No nav template rendered</h1>
+  {% block heading %}
+    <header>Default Heading</header>
   {% endblock %}
+  {% include "navigation.html" -%}
+  {% block content %}
+    <p>This is the standard content. It should not be seen.</p>
+  {% endblock -%}
 </body>
 </html>
