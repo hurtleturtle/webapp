@@ -3,6 +3,5 @@ app = Flask(__name__)
 
 
 @app.route('/')
-@app.route('/<title>')
-def index(title=''):
-    return render_template('navigation.html', title=title)
+def home():
+    return render_template('home.html', title='Home')
