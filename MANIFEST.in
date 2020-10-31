@@ -1,0 +1,4 @@
+include wuxia/schema.sql
+graft wuxia/static
+graft wuxia/templates
+global-exclude *.pyc
