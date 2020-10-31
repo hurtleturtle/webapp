@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+  <section class="navbar">{% include "nav.html" %}</section>
+  <section class="content">
+    {% block content %}
+      <p>This is the standard content. It should not be seen.</p>
+    {% endblock -%}
+  </section>
+</body>
+</html>
