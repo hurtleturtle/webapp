@@ -77,6 +77,15 @@ def allow(id):
     return redirect(url_for('users.list'))
 
 
+@bp.route('/<int:id>/disallow', methods=['GET', 'POST'])
+@admin_required
+def disallow(id):
+    db = get_db()
+    db.execute('UPDATE user SET access_approved = false WHERE id = ?', (id,))
+    db.commit()
+    return redirect(url_for('users.list'))
+
+
 def get_user(id):
     db = get_db()
     user = db.execute('SELECT * FROM user WHERE id = ?', (id,)).fetchone()

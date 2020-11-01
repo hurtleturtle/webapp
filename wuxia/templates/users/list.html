@@ -24,6 +24,9 @@
             <a href="{{ url_for('users.allow', id=user.id) }}">Allow</a>
           </td>
           <td class="action">
+            <a href="{{ url_for('users.disallow', id=user.id) }}">Ban</a>
+          </td>
+          <td class="action">
             <a href="{{ url_for('users.edit', id=user.id) }}">Edit</a>
           </td>
           <td class="action" >
