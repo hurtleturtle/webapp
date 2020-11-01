@@ -98,6 +98,23 @@ def login_required(view):
     return wrapped_view
 
 
+def approval_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        error = None
+
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+        if not g.user['access_approved']:
+            error = 'You do not have access to this page. Please contact '
+            error += 'support.'
+
+        flash(error)
+        return view(**kwargs)
+
+    return wrapped_view
+
+
 def admin_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
