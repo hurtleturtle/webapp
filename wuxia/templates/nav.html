@@ -1,19 +1,20 @@
 {% block navigation %}
 <nav>
-  <h1><a href="{{ url_for('index') }}">Wuxia</a></h1>
-  <ul class="menu">
-    <li><a>Stories</a></li>
+  <div class="menu">
+    <a href="{{ url_for('index')}}"><i class="fas fa-home"></i></a>
+    <a href="#">Stories</a>
     {% if g.user['admin'] in g.admin_levels %}
-      <li><a>Admin</a></li>
+      <a href="#">Admin</a>
     {% endif %}
-  </ul>
-  <ul class="auth">
+  </div>
+  <div class="auth">
     {% if g.user %}
-      <li id="username"><span>{{ g.user['username'] }}<span></li>
-      <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+      <span>{{ g.user['username'] }}<span>
+      <a href="{{ url_for('auth.logout') }}">Logout</a>
     {% else %}
-      <li><a href="{{ url_for('auth.register') }}">Register</a></li>
-      <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+      <a href="{{ url_for('auth.register') }}">Register</a>
+      <a href="{{ url_for('auth.login') }}">Login</a>
     {% endif %}
+  </div>
 </nav>
 {% endblock %}
