@@ -121,7 +121,7 @@ def admin_required(view):
         if g.user is None:
             return redirect(url_for('auth.login'))
         if g.user['admin'] not in g.admin_levels:
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('index'))
 
         return view(**kwargs)
 
