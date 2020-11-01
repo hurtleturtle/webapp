@@ -29,8 +29,8 @@ def create_app(test_config=None):
     # app.register_blueprint(blog.bp)
     # app.add_url_rule('/', endpoint='index')
     #
-    # from . import users
-    # app.register_blueprint(users.bp)
+    from . import users
+    app.register_blueprint(users.bp)
 
     @app.route('/')
     def index():
