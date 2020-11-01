@@ -53,6 +53,11 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
+            db.execute(
+                'UPDATE user SET last_access = CURRENT_TIMESTAMP WHERE id = ?',
+                (user['id'],)
+            )
+            db.commit()
             return redirect(url_for('index'))
 
         flash(error)
