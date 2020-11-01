@@ -109,7 +109,9 @@ def approval_required(view):
             error = 'You do not have access to this page. Please contact '
             error += 'support.'
 
-        flash(error)
+        if error:
+            flash(error)
+        
         return view(**kwargs)
 
     return wrapped_view

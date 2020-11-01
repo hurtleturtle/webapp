@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  font-family: sans-serif;
 }
 nav {
   background: #ff3d00;
@@ -11,7 +12,6 @@ nav {
 nav a, nav span {
   text-decoration: none;
   color: white;
-  font-family: sans-serif;
   padding: 0;
   margin: 0;
   display: block;
@@ -30,6 +30,13 @@ nav div {
 nav div.menu {
   flex: auto;
 }
+.flash {
+  margin: 1rem;
+  padding: 1rem;
+  background: #ffd8cc;
+  border: 1px solid #ff3d00;
+}
+
 
 ::before, ::after {
   box-sizing: border-box;
