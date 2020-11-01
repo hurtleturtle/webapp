@@ -78,7 +78,8 @@ def load_logged_in_user():
 
 @bp.before_app_request
 def load_admin_levels():
-    g.admin_levels = ['no', 'read', 'read-write']
+    g.privilege_levels = ['no', 'read', 'read-write']
+    g.admin_levels = ['read', 'read-write']
 
 
 def login_required(view):
@@ -97,7 +98,7 @@ def admin_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for('auth.login'))
-        if g.user['admin'] not in ['read', 'read-write']:
+        if g.user['admin'] not in g.admin_levels:
             return redirect(url_for('blog.index'))
 
         return view(**kwargs)
