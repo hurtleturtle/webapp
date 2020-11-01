@@ -2,7 +2,11 @@
 <html>
 <head>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="shortcut icon"
+   href="{{ url_for('static', filename='favicon.ico') }}">
   <title>{% block title %}{% endblock %}</title>
+  <script src="https://kit.fontawesome.com/c6943e9ea1.js"
+   crossorigin="anonymous"></script>
 </head>
 <body>
   <section class="navbar">{% include "nav.html" %}</section>
