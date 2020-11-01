@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block header %}
+  <h1>{% block title %}Edit user: {{ user['username'] }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="username">Username</label>
+    <input name="username" id="username" value="{{ request.form['username']
+     or user['username'] }}" required>
+    <label for="admin">Admin Status</label>
+    <select name="admin" id="admin" value="{{ request.form['admin']
+     or user['admin'] }}" required>
+     {% for level in admin %}
+      {% if user.admin == level %}
+        <option value="{{ level }}" selected=true>{{ level }}</option>
+      {% else %}
+        <option value="{{ level }}">{{ level }}</option>
+      {% endif %}
+     {% endfor %}
+    </select>
+    <input type="submit" value="Save">
+  </form>
+  <hr />
+  <form action="{{ url_for('users.delete', id=user['id']) }}" method="post">
+    <input class="danger" type="submit" value="Delete"
+     onclick="return confirm('Are you sure?');">
+  </form>
+{% endblock %}

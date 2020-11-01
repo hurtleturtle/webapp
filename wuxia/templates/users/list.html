@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block header %}
+<h1>{% block title %}Users{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <table class="users">
+    <tr class="user-header">
+      <th>Username</th>
+      <th>Admin Status</th>
+      <th colspan="2" class="action">Actions</th>
+    </tr>
+    {% for user in users %}
+      <tr class="user">
+        <td>{{ user.username }}</td>
+        <td>{{ user.admin }}</td>
+        {% if g.user.admin == 'read-write' %}
+          <td class="action">
+            <a href="{{ url_for('users.edit', id=user.id) }}">Edit</a>
+          </td>
+          <td class="action" >
+            <a href="{{ url_for('users.delete', id=user.id) }}"
+             onclick="return confirm('Are you sure?');" method="delete">
+             Delete
+            </a>
+          </td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
