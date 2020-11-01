@@ -2,14 +2,14 @@
 <nav>
   <h1><a href="{{ url_for('index') }}">Wuxia</a></h1>
   <ul class="menu">
-    <li>Stories</li>
+    <li><a>Stories</a></li>
     {% if g.user['admin'] in g.admin_levels %}
-      <li>Admin</li>
+      <li><a>Admin</a></li>
     {% endif %}
   </ul>
   <ul class="auth">
     {% if g.user %}
-      <li id="username">{{ g.user['username'] }}</li>
+      <li id="username"><span>{{ g.user['username'] }}<span></li>
       <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
     {% else %}
       <li><a href="{{ url_for('auth.register') }}">Register</a></li>
