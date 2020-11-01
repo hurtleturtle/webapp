@@ -68,6 +68,15 @@ def delete(id):
     return redirect(url_for('users.list'))
 
 
+@bp.route('/<int:id>/allow', methods=['GET', 'POST'])
+@admin_required
+def allow(id):
+    db = get_db()
+    db.execute('UPDATE user SET access_approved = true WHERE id = ?', (id,))
+    db.commit()
+    return redirect(url_for('users.list'))
+
+
 def get_user(id):
     db = get_db()
     user = db.execute('SELECT * FROM user WHERE id = ?', (id,)).fetchone()

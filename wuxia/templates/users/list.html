@@ -21,6 +21,9 @@
         <td>{{ user.last_access }}</td>
         {% if g.user.admin == 'read-write' %}
           <td class="action">
+            <a href="{{ url_for('users.allow', id=user.id) }}">Allow</a>
+          </td>
+          <td class="action">
             <a href="{{ url_for('users.edit', id=user.id) }}">Edit</a>
           </td>
           <td class="action" >
