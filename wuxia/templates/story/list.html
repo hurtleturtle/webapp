@@ -2,9 +2,30 @@
 
 {% block title %}Stories{% endblock %}
 
+
 {% block content %}
+{% if g.user['access_approved'] %}
   <div class="story-list">
-  {% for story in stories %}
-  {% endfor %}
+    <table>
+      <tr>
+        {% if g.user['admin'] in g.admin_levels %}
+          <th>ID</th>
+        {% endif %}
+        <th>Title</th>
+        <th>Author</th>
+        <th>Date Added</th>
+      </tr>
+      {% for story in stories %}
+        <tr>
+          {% if g.user['admin'] in g.admin_levels %}
+            <td>{{ story.id }}</td>
+          {% endif %}
+          <td>{{ story.title }}</td>
+          <td>{{ story.author }}</td>
+          <td>{{ story.created }}</td>
+        </tr>
+      {% endfor %}
+    </table>
   </div>
+{% endif %}
 {% endblock %}
