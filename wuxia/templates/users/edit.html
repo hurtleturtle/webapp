@@ -12,7 +12,7 @@
     <label for="admin">Admin Status</label>
     <select name="admin" id="admin" value="{{ request.form['admin']
      or user['admin'] }}" required>
-     {% for level in admin %}
+     {% for level in g.privilege_levels %}
       {% if user.admin == level %}
         <option value="{{ level }}" selected=true>{{ level }}</option>
       {% else %}

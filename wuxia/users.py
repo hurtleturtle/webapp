@@ -56,7 +56,7 @@ def edit(id):
             db.commit()
             return redirect(url_for('users.list'))
 
-    return render_template('users/edit.html', user=user, admin=admin_levels)
+    return render_template('users/edit.html', user=user)
 
 
 @bp.route('/<int:id>/delete', methods=['GET', 'POST'])
