@@ -53,11 +53,6 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            db.execute(
-                'UPDATE user SET last_access = CURRENT_TIMESTAMP WHERE id = ?',
-                (user['id'],)
-            )
-            db.commit()
             return redirect(url_for('index'))
 
         flash(error)
@@ -111,7 +106,7 @@ def approval_required(view):
 
         if error:
             flash(error)
-        
+            
         return view(**kwargs)
 
     return wrapped_view
@@ -128,3 +123,14 @@ def admin_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+
+@bp.before_app_request
+def update_access_time():
+    if g.user is not None:
+        db = get_db()
+        db.execute(
+            'UPDATE user SET last_access = CURRENT_TIMESTAMP WHERE id = ?',
+            (g.user['id'],)
+        )
+        db.commit()
