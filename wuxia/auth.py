@@ -106,7 +106,7 @@ def approval_required(view):
 
         if error:
             flash(error)
-            
+
         return view(**kwargs)
 
     return wrapped_view
