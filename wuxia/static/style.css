@@ -36,7 +36,29 @@ nav div.menu {
   background: #ffd8cc;
   border: 1px solid #ff3d00;
 }
-
+.content table {
+  margin: 2.5%;
+  width: 95%;
+}
+table, th, td {
+  border-collapse: collapse;
+}
+th, td {
+  padding: 0.25em 1em;
+}
+td:last-child {
+  border-right: none;
+}
+th {
+  background: #000066;
+  color: white;
+}
+tr:nth-child(even) {
+  background: white
+}
+tr:nth-child(odd) {
+  background: #e6e6f0;
+}
 
 ::before, ::after {
   box-sizing: border-box;
