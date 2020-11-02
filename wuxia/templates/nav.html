@@ -2,7 +2,14 @@
 <nav>
   <div class="menu">
     <a href="{{ url_for('index')}}"><i class="fas fa-home"></i></a>
-    <a href="{{ url_for('story.list') }}">Stories</a>
+    <div class="dropdown">
+      <a href="{{ url_for('story.list') }}">Stories</a>
+      <div class="dropdown-content">
+        <a href="#">Add</a>
+        <a href="#">Remove</a>
+        <a href="#">Edit</a>
+      </div>
+    </div>
     {% if g.user['admin'] in g.admin_levels %}
       <a href="{{ url_for('users.list') }}">Admin</a>
     {% endif %}

@@ -12,24 +12,58 @@ nav {
 nav a, nav span {
   text-decoration: none;
   color: white;
-  padding: 0;
   margin: 0;
   display: block;
   padding: 0.5rem;
-  height: 100%;
 }
 nav a:hover {
   background: white;
   color: #ff3d00;
 }
-nav div {
+nav > div {
   display: flex;
   margin: 0;
   padding: 0;
 }
-nav div.menu {
+nav > div.menu {
   flex: auto;
 }
+.dropdown {
+  float: left;
+  overflow: hidden;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: black;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
 .flash {
   margin: 1rem;
   padding: 1rem;
