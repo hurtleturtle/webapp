@@ -11,7 +11,9 @@
       <th>Admin Status</th>
       <th>Access Approved</th>
       <th>Last Accessed</th>
-      <th colspan="2" class="action">Actions</th>
+      {% if g.user.admin == 'read-write' %}
+        <th colspan="4" class="action">Actions</th>
+      {% endif %}
     </tr>
     {% for user in users %}
       <tr class="user">
