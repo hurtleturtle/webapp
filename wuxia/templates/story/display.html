@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+  {% for c in chapters %}
+    <div class="chapter">
+      {{ c.content|safe }}
+    </div>
+  {% endfor %}
+{% endblock %}
