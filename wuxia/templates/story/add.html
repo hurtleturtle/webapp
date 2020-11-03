@@ -4,20 +4,6 @@
 
 {% block content %}
 <form method="post" enctype="multipart/form-data">
-  <div class="form-wrapper">
-    {% for key, group in form_groups.items() %}
-    <div class="form-group">
-      <h2 class="form-group-title">{{ group.group_title }}</h2>
-        {% for key2, item in group.items() if key2 != "group_title" %}
-          <div class="form-item">
-            <input id="{{ item.id }}" name="{{ item.name}}"
-             placeholder="{{ item.placeholder }}" type="{{ item.type }}"
-             {% if item.required %}required{% endif %} value="{{ item.value }}"
-             autocomplete="{{ item.autocomplete }}"/>
-          </div>
-        {% endfor %}
-    </div>
-    {% endfor %}
-  </div>
+  {% include "form.html" %}
 </form>
 {% endblock %}
