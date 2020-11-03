@@ -13,6 +13,7 @@
         {% endif %}
         <th>Title</th>
         <th>Author</th>
+        <th>Chapters</th>
         <th>Date Added</th>
       </tr>
       {% for story in stories %}
@@ -20,8 +21,11 @@
           {% if g.user['admin'] in g.admin_levels %}
             <td>{{ story.id }}</td>
           {% endif %}
-          <td>{{ story.title }}</td>
+          <td><a href="{{ url_for('story.display', id=story.id)}}">
+            {{ story.title }}
+          </a></td>
           <td>{{ story.author }}</td>
+          <td>{{ story.chapter_count }}</td>
           <td>{{ story.created }}</td>
         </tr>
       {% endfor %}
