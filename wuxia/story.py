@@ -6,6 +6,7 @@ from wuxia.auth import approval_required
 from wuxia.forms import gen_form_item
 import os
 
+
 bp = Blueprint('story', __name__, url_prefix='/stories')
 
 
@@ -23,6 +24,7 @@ def list():
 @bp.route('/add', methods=['GET', 'POST'])
 @approval_required
 def add():
+    db = get_db()
     groups = {
         'details': {
             'group_title': 'Details',
@@ -51,10 +53,12 @@ def add():
     }
 
     if request.method == 'POST':
-        if upload_file():
-            pass
-        else:
-            return redirect(url_for('story.add'))
+        if not upload_file():
+            return render_template('story/add.html',
+                                   form_groups=preserve_form_data(groups))
+        if not add_story_to_db(db):
+            return render_template('story/add.html',
+                                   form_groups=preserve_form_data(groups))
 
     return render_template('story/add.html', form_groups=groups)
 
@@ -86,3 +90,29 @@ def upload_file():
         filename = secure_filename(file.filename)
         file.save(os.path.join(UPLOAD_FOLDER, filename))
         return True
+
+
+def add_story_to_db(db):
+    title = request.form.get('title')
+    author = request.form.get('author', 'Unknown')
+    story_exists = db.execute(
+        'SELECT id FROM story WHERE title = ? AND author = ?', (title, author)
+    ).fetchone()
+
+    if story_exists:
+        flash('A story with that title by that author already exists')
+        return False
+    else:
+        db.execute(
+            'INSERT INTO story (title, author) VALUES (?, ?)', (title, author)
+        )
+        db.commit()
+        return True
+
+
+def preserve_form_data(groups):
+    groups['details']['story_title']['value'] = request.form['title']
+    groups['details']['author']['value'] = request.form['author']
+    groups['attributes']['container']['value'] = request.form['container']
+    groups['attributes']['heading']['value'] = request.form['heading']
+    return groups
