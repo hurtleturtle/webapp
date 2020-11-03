@@ -53,7 +53,7 @@ def add():
         if upload_file():
             pass
         else:
-            return redirect(url_for(request.url))
+            return redirect(url_for('story.add'))
 
     return render_template('story/add.html', form_groups=groups)
 
@@ -78,7 +78,7 @@ def upload_file():
     # if user does not select file, browser also
     # submit an empty part without filename
     if file.filename == '':
-        flash('No selected file')
+        flash('No file selected')
         return False
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
