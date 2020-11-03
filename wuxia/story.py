@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from wuxia.db import get_db
 from wuxia.auth import approval_required
 from wuxia.forms import gen_form_item
+from wuxia.chapters import get_soup, get_chapters, get_heading
 import os
 
 
@@ -15,10 +16,35 @@ bp = Blueprint('story', __name__, url_prefix='/stories')
 def list():
     db = get_db()
     stories = db.execute(
-        'SELECT * from story'
+        'SELECT *, (\
+            SELECT COUNT(id) FROM chapter WHERE story_id = story.id\
+        ) chapter_count FROM story'
     ).fetchall()
 
     return render_template('story/list.html', stories=stories)
+
+
+@bp.route('/<int:id>')
+@approval_required
+def display(id):
+    db = get_db()
+    chapter_rows = db.execute(
+        'SELECT chapter_title title, chapter_content content FROM chapter \
+         WHERE story_id = ?', (id,)
+    ).fetchall()
+    story = db.execute(
+        'SELECT title FROM story WHERE id = ?', (id,)
+    ).fetchone()['title']
+
+    if chapter_rows:
+        chapters = [dict(row) for row in chapter_rows]
+    else:
+        chapters = []
+        flash('No chapters found for that story')
+        return redirect(url_for('story.list'))
+
+    return render_template('story/display.html', chapters=chapters,
+                           title=story)
 
 
 @bp.route('/add', methods=['GET', 'POST'])
@@ -53,12 +79,18 @@ def add():
     }
 
     if request.method == 'POST':
-        if not upload_file():
+        filepath = upload_file()
+        if not filepath:
             return render_template('story/add.html',
                                    form_groups=preserve_form_data(groups))
-        if not add_story_to_db(db):
+
+        story_id = add_story_to_db(db)
+        if not story_id:
             return render_template('story/add.html',
                                    form_groups=preserve_form_data(groups))
+
+        add_chapters_to_db(db, filepath, story_id['id'],
+                           request.form['container'], request.form['heading'])
 
     return render_template('story/add.html', form_groups=groups)
 
@@ -88,16 +120,15 @@ def upload_file():
         return False
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(UPLOAD_FOLDER, filename))
-        return True
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+        return filepath
 
 
 def add_story_to_db(db):
     title = request.form.get('title')
     author = request.form.get('author', 'Unknown')
-    story_exists = db.execute(
-        'SELECT id FROM story WHERE title = ? AND author = ?', (title, author)
-    ).fetchone()
+    story_exists = check_story(db, title, author)
 
     if story_exists:
         flash('A story with that title by that author already exists')
@@ -107,7 +138,29 @@ def add_story_to_db(db):
             'INSERT INTO story (title, author) VALUES (?, ?)', (title, author)
         )
         db.commit()
-        return True
+        return check_story(db, title, author)
+
+
+def check_story(db, title, author):
+    story_exists = db.execute(
+        'SELECT id FROM story WHERE title = ? AND author = ?', (title, author)
+    ).fetchone()
+    return story_exists
+
+
+def add_chapters_to_db(db, filepath, story_id, chapter_container,
+                       heading_selector):
+    soup = get_soup(filepath)
+    chapters = get_chapters(soup, chapter_container)
+
+    for idx, chapter in enumerate(chapters):
+        heading = get_heading(chapter, heading_selector)
+        db.execute(
+            'INSERT INTO chapter (story_id, chapter_number, chapter_title, \
+             chapter_content) VALUES (?, ?, ?, ?)',
+            (int(story_id), idx + 1, heading, chapter.prettify())
+        )
+    db.commit()
 
 
 def preserve_form_data(groups):
