@@ -3,9 +3,8 @@ from flask import redirect, current_app
 from werkzeug.utils import secure_filename
 from wuxia.db import get_db
 from wuxia.auth import approval_required
+from wuxia.forms import gen_form_item
 import os
-from forms import gen_form_item
-
 
 bp = Blueprint('story', __name__, url_prefix='/stories')
 ALLOWED_EXTENSIONS = {'html', 'htm'}
