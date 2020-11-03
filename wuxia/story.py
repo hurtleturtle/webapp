@@ -7,7 +7,6 @@ from wuxia.forms import gen_form_item
 import os
 
 bp = Blueprint('story', __name__, url_prefix='/stories')
-ALLOWED_EXTENSIONS = {'html', 'htm'}
 
 
 @bp.route('/')
@@ -34,9 +33,11 @@ def add():
         'attributes': {
             'group_title': 'Attributes',
             'container': gen_form_item('container',
-                                       placeholder='Container CSS'),
+                                       placeholder='Container CSS',
+                                       autocomplete='on'),
             'heading': gen_form_item('heading',
-                                     placeholder='Chapter heading CSS')
+                                     placeholder='Chapter heading CSS',
+                                     autocomplete='on')
         },
         'upload': {
             'group_title': 'Location',
@@ -59,6 +60,7 @@ def add():
 
 
 def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'html', 'htm'}
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
