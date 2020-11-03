@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Add Story{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+  <input id="title" name="title" placeholder="Title" required />
+  <input id="author" name="author" placeholder="Author" />
+  <input id="file" name="file" placeholder="File"  type="file" required />
+  <input type="submit" value="Add Story" />
+</form>
+{% endblock %}

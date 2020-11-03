@@ -1,14 +1,16 @@
 from flask import Blueprint, flash, g, render_template, request, url_for
-from flask import redirect
-from werkzeug.exceptions import abort
+from flask import redirect, current_app
+from werkzeug.utils import secure_filename
 from wuxia.db import get_db
-from wuxia.auth import admin_required, approval_required
+from wuxia.auth import approval_required
+import os
 
 
-bp = Blueprint('story', __name__)
+bp = Blueprint('story', __name__, url_prefix='/stories')
+ALLOWED_EXTENSIONS = {'html', 'htm'}
 
 
-@bp.route('/stories')
+@bp.route('/')
 @approval_required
 def list():
     db = get_db()
@@ -17,3 +19,43 @@ def list():
     ).fetchall()
 
     return render_template('story/list.html', stories=stories)
+
+
+@bp.route('/add', methods=['GET', 'POST'])
+@approval_required
+def add():
+    if request.method == 'POST':
+        if upload_file():
+            pass
+        else:
+            return redirect(url_for(request.url))
+
+    return render_template('story/add.html')
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def upload_file():
+    UPLOAD_FOLDER = os.path.join(current_app.instance_path, 'stories')
+    try:
+        os.makedirs(UPLOAD_FOLDER)
+    except OSError:
+        pass
+
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        flash('No file part')
+        return False
+    file = request.files['file']
+    # if user does not select file, browser also
+    # submit an empty part without filename
+    if file.filename == '':
+        flash('No selected file')
+        return False
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(UPLOAD_FOLDER, filename))
+        return True
