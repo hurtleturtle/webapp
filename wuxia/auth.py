@@ -3,6 +3,7 @@ from flask import Blueprint, flash, g, render_template, request, session
 from flask import url_for, redirect
 from werkzeug.security import check_password_hash, generate_password_hash
 from wuxia.db import get_db
+from wuxia.forms import gen_form_item
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -32,7 +33,8 @@ def register():
 
         flash(error)
 
-    return render_template('auth/register.html')
+    return render_template('auth/register.html',
+                           form_groups=get_user_form('register'))
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -56,13 +58,31 @@ def login():
             return redirect(url_for('index'))
 
         flash(error)
-    return render_template('auth/login.html')
+    return render_template('auth/login.html',
+                           form_groups=get_user_form('login'))
 
 
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+
+def get_user_form(form_type):
+    groups = {
+        'user': {
+            'group_title': form_type.capitalize(),
+            'username': gen_form_item('username', placeholder='Username',
+                                      required=True),
+            'password': gen_form_item('password', placeholder='Password',
+                                      required=True, item_type='password')
+        },
+        'submit': {
+            'button': gen_form_item('btn-submit', item_type='submit',
+                                    value=form_type.capitalize())
+        },
+    }
+    return groups
 
 
 @bp.before_app_request
@@ -101,11 +121,12 @@ def approval_required(view):
         if g.user is None:
             return redirect(url_for('auth.login'))
         if not g.user['access_approved']:
-            error = 'You do not have access to this page. Please contact '
+            error = f'You do not have access to {request.url}. Please contact '
             error += 'support.'
 
         if error:
             flash(error)
+            return redirect(url_for('index'))
 
         return view(**kwargs)
 
