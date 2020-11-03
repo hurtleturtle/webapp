@@ -94,6 +94,56 @@ tr:nth-child(odd) {
   background: #e6e6f0;
 }
 
+form {
+  padding: 3rem 30%;
+  /* display: table;
+  border-collapse: collapse; */
+}
+.form-wrapper {
+  background: #e6e6f0;
+  border: 1px solid #000066;
+  box-shadow: 0.1em 0.1em 0.25em 0.1em #006;
+}
+.form-group {
+  width: 100%;
+  padding: 0.5em 0;
+}
+.form-group-title {
+  text-align: center;
+  margin: 0;
+  color: #000066;
+}
+.form-item {
+  padding: 0 0.5em;
+  padding-bottom: 0.5em;
+  margin: 0 0.5em;
+}
+.form-item:first-of-type {
+  padding-top: 0.5em;
+}
+.form-item:last-of-type {
+  padding-bottom: 0;
+}
+.form-group:first-of-type {
+  padding-top: 1em;
+}
+.form-group:last-of-type {
+  padding-bottom: 1em;
+}
+.form-item input {
+  display: block;
+  width: 100%;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.form-item input[type="submit"] {
+  background-color: #000066;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5em 0;
+}
 ::before, ::after {
   box-sizing: border-box;
 }

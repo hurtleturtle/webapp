@@ -4,9 +4,19 @@
 
 {% block content %}
 <form method="post" enctype="multipart/form-data">
-  <input id="title" name="title" placeholder="Title" required />
-  <input id="author" name="author" placeholder="Author" />
-  <input id="file" name="file" placeholder="File"  type="file" required />
-  <input type="submit" value="Add Story" />
+  <div class="form-wrapper">
+    {% for key, group in form_groups.items() %}
+    <div class="form-group">
+      <h2 class="form-group-title">{{ group.group_title }}</h2>
+        {% for key2, item in group.items() if key2 != "group_title" %}
+          <div class="form-item">
+            <input id="{{ item.id }}" name="{{ item.name}}"
+             placeholder="{{ item.placeholder }}" type="{{ item.type }}"
+             {% if item.required %}required{% endif %} value="{{ item.value }}"/>
+          </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
 </form>
 {% endblock %}

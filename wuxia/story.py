@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from wuxia.db import get_db
 from wuxia.auth import approval_required
 import os
+from forms import gen_form_item
 
 
 bp = Blueprint('story', __name__, url_prefix='/stories')
@@ -24,13 +25,38 @@ def list():
 @bp.route('/add', methods=['GET', 'POST'])
 @approval_required
 def add():
+    groups = {
+        'details': {
+            'group_title': 'Details',
+            'story_title': gen_form_item('title', placeholder='Title',
+                                         required=True),
+            'author': gen_form_item('author', placeholder='Author')
+        },
+        'attributes': {
+            'group_title': 'Attributes',
+            'container': gen_form_item('container',
+                                       placeholder='Container CSS'),
+            'heading': gen_form_item('heading',
+                                     placeholder='Chapter heading CSS')
+        },
+        'upload': {
+            'group_title': 'Location',
+            'file': gen_form_item('file', placeholder='Story file',
+                                  item_type='file')
+        },
+        'submit': {
+            'button': gen_form_item('btn-submit', item_type='submit',
+                                    value='Add')
+        },
+    }
+
     if request.method == 'POST':
         if upload_file():
             pass
         else:
             return redirect(url_for(request.url))
 
-    return render_template('story/add.html')
+    return render_template('story/add.html', form_groups=groups)
 
 
 def allowed_file(filename):
