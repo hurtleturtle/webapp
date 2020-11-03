@@ -12,7 +12,8 @@
           <div class="form-item">
             <input id="{{ item.id }}" name="{{ item.name}}"
              placeholder="{{ item.placeholder }}" type="{{ item.type }}"
-             {% if item.required %}required{% endif %} value="{{ item.value }}"/>
+             {% if item.required %}required{% endif %} value="{{ item.value }}"
+             autocomplete="{{ item.autocomplete }}"/>
           </div>
         {% endfor %}
     </div>
