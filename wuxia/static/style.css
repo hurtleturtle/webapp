@@ -166,6 +166,7 @@ form {
   padding: 0 0.5em;
   padding-bottom: 0.5em;
   margin: 0 0.5em;
+  display: flex;
 }
 .form-item:first-of-type {
   padding-top: 0.5em;
@@ -192,6 +193,9 @@ form {
   border: none;
   cursor: pointer;
   padding: 0.5em 0;
+}
+.form-item label {
+  padding: 0.5em;
 }
 ::before, ::after {
   box-sizing: border-box;
