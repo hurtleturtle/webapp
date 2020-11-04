@@ -7,6 +7,13 @@ def get_soup(filepath):
 
 
 def get_chapters(soup, container):
+    unsafe_tags = {'script', 'link', 'a'}
+    unsafe_tag_selector = ', '.join(unsafe_tags)
+    unsafe_elements = soup.select(unsafe_tag_selector)
+
+    for el in unsafe_elements:
+        el.decompose()
+
     return soup.select(container)
 
 
