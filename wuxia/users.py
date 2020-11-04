@@ -3,6 +3,7 @@ from flask import redirect
 from werkzeug.exceptions import abort
 from wuxia.db import get_db
 from wuxia.auth import admin_required
+from wuxia.forms import gen_form_item
 
 
 bp = Blueprint('users', __name__, url_prefix='/users')
@@ -35,7 +36,7 @@ def edit(id):
 
         if username_new:
             if username_exists:
-                error = 'Username exists.'
+                error = 'Username exists'
             else:
                 db.execute(
                     'UPDATE user SET username = ? WHERE id = ?',
