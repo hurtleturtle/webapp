@@ -1,5 +1,6 @@
 def gen_form_item(id, name=None, placeholder=None, required=False,
-                  item_type='text', value='', autocomplete='off'):
+                  item_type='text', value='', autocomplete='off',
+                  field_type='input', label='', options={}):
     item = {
         'id': id,
         'name': name if name else id,
@@ -8,6 +9,9 @@ def gen_form_item(id, name=None, placeholder=None, required=False,
         'type': item_type,
         'value': value,
         'autocomplete': autocomplete,
+        'field_type': field_type,
+        'label': label,
+        'options': options,
     }
 
     return item
