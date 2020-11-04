@@ -9,14 +9,16 @@
    crossorigin="anonymous"></script>
 </head>
 <body>
-  <section class="navbar">{% include "nav.html" %}</section>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  <section class="content">
-    {% block content %}
-      <p>This is the standard content. It should not be seen.</p>
-    {% endblock -%}
-  </section>
+  <div class="wrapper">
+    <section class="navbar">{% include "nav.html" %}</section>
+    {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+    {% endfor %}
+    <section class="content">
+      {% block content %}
+        <p>This is the standard content. It should not be seen.</p>
+      {% endblock -%}
+    </section>
+  </div>
 </body>
 </html>
