@@ -96,6 +96,21 @@ div.story {
   box-shadow: 0.1em 0.1em 0.25em 0.25em #ff3d00;
 }
 
+/* Style for home page */
+.home {
+  display: block;
+  overflow-y: auto;
+  margin: 40% 30% 40% 35%;
+  padding: 1em 1.5em;
+  color: #000066;
+  background-color: #e6e6f0;
+  border: 1px solid #000066;
+  border-radius: 0.1em;
+  box-shadow: 0.1em 0.1em 0.25em 0.25em #000066;
+  opacity: 0.7;
+  text-align: center;
+}
+
 /* Flash messages on base template */
 .flash {
   margin: 1rem;
