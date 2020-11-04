@@ -91,3 +91,13 @@ def get_user(id):
     db = get_db()
     user = db.execute('SELECT * FROM user WHERE id = ?', (id,)).fetchone()
     return user
+
+
+def generate_form_groups(user, admin_levels):
+    groups = {
+        'user': {
+            'group_title': f'Edit: {user.username}',
+            'username': gen_form_item('username', value=user.username,
+                                      required=True, label='Username')
+        }
+    }
