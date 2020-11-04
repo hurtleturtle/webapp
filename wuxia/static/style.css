@@ -1,10 +1,20 @@
-body {
+html, body {
   margin: 0;
+  height: 100%;
   font-family: sans-serif;
+}
+.wrapper {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+section.navbar {
+  flex: 0 1 auto;
 }
 nav {
   background: #ff3d00;
   display: flex;
+  flex: 0 1 auto;
   align-items: center;
   padding: 0;
   font-size: 16px;
@@ -27,6 +37,15 @@ nav > div {
 }
 nav > div.menu {
   flex: auto;
+}
+section.content {
+  flex: 1 1 auto;
+  background-image: url(library.jpg);
+  background-size: cover;
+  opacity: 0.8;
+}
+.homepage {
+
 }
 .dropdown {
   float: left;
@@ -96,8 +115,6 @@ tr:nth-child(odd) {
 
 form {
   padding: 3rem 30%;
-  /* display: table;
-  border-collapse: collapse; */
 }
 .form-wrapper {
   background: #e6e6f0;
