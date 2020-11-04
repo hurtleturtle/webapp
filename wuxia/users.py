@@ -57,7 +57,8 @@ def edit(id):
             db.commit()
             return redirect(url_for('users.list'))
 
-    return render_template('users/edit.html', user=user)
+    groups = generate_form_groups(user)
+    return render_template('users/edit.html', form_groups=groups)
 
 
 @bp.route('/<int:id>/delete', methods=['GET', 'POST'])
@@ -93,11 +94,17 @@ def get_user(id):
     return user
 
 
-def generate_form_groups(user, admin_levels):
+def generate_form_groups(user):
     groups = {
         'user': {
-            'group_title': f'Edit: {user.username}',
-            'username': gen_form_item('username', value=user.username,
-                                      required=True, label='Username')
+            'group_title': 'Edit: {}'.format(user['username']),
+            'username': gen_form_item('username', value=user['username'],
+                                      required=True, label='Username'),
+            'admin': gen_form_item('admin', required=True, label='Admin',
+                                   field_type='select',
+                                   options=g.privilege_levels,
+                                   value=user['admin'],
+                                   selected_option=user['admin'])
         }
     }
+    return groups
