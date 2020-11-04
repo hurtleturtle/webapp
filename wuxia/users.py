@@ -3,7 +3,7 @@ from flask import redirect
 from werkzeug.exceptions import abort
 from wuxia.db import get_db
 from wuxia.auth import admin_required
-from wuxia.forms import gen_form_item
+from wuxia.forms import gen_form_item, gen_options
 
 
 bp = Blueprint('users', __name__, url_prefix='/users')
@@ -23,12 +23,13 @@ def list():
 @admin_required
 def edit(id):
     user = get_user(id)
-    admin_levels = g.admin_levels
+    admin_levels = g.privilege_levels
 
     if request.method == 'POST':
         error = None
         username = request.form['username']
         admin = request.form['admin']
+        access = request.form['access']
         db = get_db()
         username_new = (username != user['username'])
         username_exists = db.execute('SELECT id FROM user WHERE username = ?',
@@ -48,8 +49,12 @@ def edit(id):
             )
         else:
             error = error + '\n' if error else ''
-            error += 'Admin Status must be one of:'
+            error += f'{admin}\nAdmin Status must be one of:'
             error += ' {}'.format(', '.join(admin_levels))
+
+        db.execute(
+            'UPDATE user SET access_approved = ? WHERE id = ?', (access, id)
+        )
 
         if error:
             flash(error)
@@ -100,11 +105,22 @@ def generate_form_groups(user):
             'group_title': 'Edit: {}'.format(user['username']),
             'username': gen_form_item('username', value=user['username'],
                                       required=True, label='Username'),
+            'access': gen_form_item('access', label='Story Access',
+                                    field_type='select',
+                                    options=gen_options(['Yes', 'No'], [1, 0]),
+                                    value=user['access_approved'],
+                                    selected_option=user['access_approved']),
             'admin': gen_form_item('admin', required=True, label='Admin',
                                    field_type='select',
-                                   options=g.privilege_levels,
+                                   options=gen_options(['None', 'Read Only',
+                                                        'Read & Write'],
+                                                       g.privilege_levels),
                                    value=user['admin'],
                                    selected_option=user['admin'])
+        },
+        'submit': {
+            'button': gen_form_item('btn-submit', item_type='submit',
+                                    value='Change', field_type='input')
         }
     }
     return groups

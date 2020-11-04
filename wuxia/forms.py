@@ -17,3 +17,20 @@ def gen_form_item(id, name=None, placeholder=None, required=False,
     }
 
     return item
+
+
+def gen_options(options, values=[]):
+    option_dict = {}
+    for idx, opt in enumerate(options):
+        if values:
+            option_dict[opt] = {
+                'value': values[idx],
+                'text': opt
+            }
+        else:
+            option_dict[opt] = {
+                'value': opt,
+                'text': opt
+            }
+    print(option_dict)
+    return option_dict

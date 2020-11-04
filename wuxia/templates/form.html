@@ -19,9 +19,11 @@
           <select name="{{ item.name }}" id="{{ item.id }}"
            value="{{ item.value }}" {% if item.required %}required{% endif %}>
             {% for option in item.options %}
-              <option value="option" {% if option == item.selected_option %}
-               selected{% endif %}>{{ option }}</option>
+              <option value="{{ item.options[option].value }}"
+               {% if item.options[option].value == item.selected_option %}
+               selected{% endif %}>{{ item.options[option].text }}</option>
             {% endfor %}
+          </select>
           {% endif %}
         </div>
       {% endfor %}
