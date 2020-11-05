@@ -197,6 +197,9 @@ form {
 .form-item label {
   padding: 0.5em;
 }
+.form-item select {
+  flex: 1 1 auto;
+}
 ::before, ::after {
   box-sizing: border-box;
 }
