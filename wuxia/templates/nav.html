@@ -7,8 +7,7 @@
       <div class="dropdown-content">
         <a href="{{ url_for('story.list') }}">List</a>
         <a href="{{ url_for('story.add') }}">Add</a>
-        <a href="#">Remove</a>
-        <a href="#">Edit</a>
+        <a href="#">Modify</a>
       </div>
     </div>
     {% if g.user['admin'] in g.admin_levels %}
