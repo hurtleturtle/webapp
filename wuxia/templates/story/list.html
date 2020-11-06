@@ -15,6 +15,9 @@
         <th>Author</th>
         <th>Chapters</th>
         <th>Date Added</th>
+        {% if g.user['admin'] == 'read-write' %}
+          <th>Action</th>
+        {% endif %}
       </tr>
       {% for story in stories %}
         <tr>
@@ -27,6 +30,14 @@
           <td>{{ story.author }}</td>
           <td>{{ story.chapter_count }}</td>
           <td>{{ story.created }}</td>
+          {% if g.user['admin'] == 'read-write' %}
+            <td>
+              <a href="{{ url_for('story.delete', id=story.id) }}"
+               onclick="return confirm('Are you sure?');" method="delete">
+                Delete
+              </a>
+            </td>
+          {% endif %}
         </tr>
       {% endfor %}
     </table>

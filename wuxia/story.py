@@ -2,7 +2,7 @@ from flask import Blueprint, flash, g, render_template, request, url_for
 from flask import redirect, current_app
 from werkzeug.utils import secure_filename
 from wuxia.db import get_db
-from wuxia.auth import approval_required
+from wuxia.auth import approval_required, admin_required
 from wuxia.forms import gen_form_item
 from wuxia.chapters import get_soup, get_chapters, get_heading
 import os
@@ -93,6 +93,20 @@ def add():
                            request.form['container'], request.form['heading'])
 
     return render_template('story/add.html', form_groups=groups)
+
+
+@bp.route('/<int:id>/delete', methods=['GET', 'DELETE'])
+@admin_required
+def delete(id):
+    db = get_db()
+    db.execute(
+        'DELETE FROM chapter WHERE story_id = ?', (id,)
+    )
+    db.execute(
+        'DELETE FROM story WHERE id = ?', (id,)
+    )
+    db.commit()
+    return redirect(url_for('story.list'))
 
 
 def allowed_file(filename):

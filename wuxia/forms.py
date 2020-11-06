@@ -1,4 +1,4 @@
-def gen_form_item(id, name=None, item_class=None placeholder=None,
+def gen_form_item(id, name=None, item_class=None, placeholder=None,
                   required=False, item_type='text', autocomplete='off',
                   field_type='input', label='', options={}, value='',
                   selected_option=''):
