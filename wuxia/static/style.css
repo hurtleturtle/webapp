@@ -99,8 +99,8 @@ div.story {
 /* Style for home page */
 .home {
   display: block;
-  overflow-y: auto;
-  margin: 40% 30% 40% 35%;
+  overflow-y: hidden;
+  margin: 40% 30% 0 35%;
   padding: 1em 1.5em;
   color: #000066;
   background-color: #e6e6f0;
