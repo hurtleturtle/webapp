@@ -143,6 +143,9 @@ tr:nth-child(even) {
 tr:nth-child(odd) {
   background: #e6e6f0;
 }
+tr:hover {
+  background: #ffd8cc;
+}
 
 /* Standard form format */
 form {
