@@ -200,6 +200,9 @@ form {
 .form-item select {
   flex: 1 1 auto;
 }
+#btn-submit.danger {
+  background-color: red;
+}
 ::before, ::after {
   box-sizing: border-box;
 }

@@ -123,7 +123,7 @@ def generate_form_groups(user):
                                     value='Change', field_type='input')
         },
         'delete': {
-            'button': gen_form_item('btn-submit', item_class='danger',
+            'button': gen_form_item('btn-submit', field_class='danger',
                                     item_type='submit',
                                     value='Delete', field_type='input')
         }
