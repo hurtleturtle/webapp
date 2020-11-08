@@ -16,7 +16,7 @@
         <th>Chapters</th>
         <th>Date Added</th>
         {% if g.user['admin'] == 'read-write' %}
-          <th>Action</th>
+          <th>Actions</th>
         {% endif %}
       </tr>
       {% for story in stories %}
@@ -32,9 +32,10 @@
           <td>{{ story.created }}</td>
           {% if g.user['admin'] == 'read-write' %}
             <td>
+              <a href="#"><i class="fas fa-edit"></i></a>
               <a href="{{ url_for('story.delete', id=story.id) }}"
                onclick="return confirm('Are you sure?');" method="delete">
-                Delete
+                <i class="fas fa-trash"></i>
               </a>
             </td>
           {% endif %}
