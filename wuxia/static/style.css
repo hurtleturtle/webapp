@@ -126,12 +126,22 @@ div.story {
 }
 table, th, td {
   border-collapse: collapse;
+  text-align: center;
 }
 th, td {
   padding: 0.25em 1em;
 }
 td:last-child {
   border-right: none;
+}
+td.action a {
+  text-decoration: none;
+}
+td i.fa-lock-open {
+  color: green;
+}
+td i.fa-ban {
+  color: red;
 }
 th {
   background: #000066;
