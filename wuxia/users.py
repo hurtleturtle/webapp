@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, g, render_template, request, url_for
-from flask import redirect
+from flask import redirect, escape
 from werkzeug.exceptions import abort
 from wuxia.db import get_db
 from wuxia.auth import admin_required
@@ -27,9 +27,9 @@ def edit(id):
 
     if request.method == 'POST':
         error = None
-        username = request.form['username']
+        username = escape(request.form['username'])
         admin = request.form['admin']
-        access = request.form['access']
+        access = escape(request.form['access'])
         db = get_db()
         username_new = (username != user['username'])
         username_exists = db.execute('SELECT id FROM user WHERE username = ?',

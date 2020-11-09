@@ -1,6 +1,6 @@
 import functools
 from flask import Blueprint, flash, g, render_template, request, session
-from flask import url_for, redirect
+from flask import url_for, redirect, escape
 from werkzeug.security import check_password_hash, generate_password_hash
 from wuxia.db import get_db
 from wuxia.forms import gen_form_item
@@ -12,8 +12,8 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = escape(request.form['username'])
+        password = escape(request.form['password'])
         db = get_db()
         error = None
 
@@ -40,8 +40,8 @@ def register():
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = escape(request.form['username'])
+        password = escape(request.form['password'])
         db = get_db()
         error = None
         user = db.execute('SELECT * FROM user WHERE username = ?',

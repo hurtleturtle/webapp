@@ -1,5 +1,5 @@
-from flask import Blueprint, flash, g, render_template, request, url_for
-from flask import redirect, current_app
+from flask import Blueprint, flash, render_template, request, url_for
+from flask import redirect, current_app, escape
 from werkzeug.utils import secure_filename
 from wuxia.db import get_db
 from wuxia.auth import approval_required, admin_required
@@ -90,7 +90,8 @@ def add():
                                    form_groups=preserve_form_data(groups))
 
         add_chapters_to_db(db, filepath, story_id['id'],
-                           request.form['container'], request.form['heading'])
+                           escape(request.form['container']),
+                           escape(request.form['heading']))
 
     return render_template('story/add.html', form_groups=groups)
 
@@ -140,8 +141,8 @@ def upload_file():
 
 
 def add_story_to_db(db):
-    title = request.form.get('title')
-    author = request.form.get('author', 'Unknown')
+    title = escape(request.form.get('title'))
+    author = escape(request.form.get('author', 'Unknown'))
     story_exists = check_story(db, title, author)
 
     if story_exists:
@@ -178,8 +179,9 @@ def add_chapters_to_db(db, filepath, story_id, chapter_container,
 
 
 def preserve_form_data(groups):
-    groups['details']['story_title']['value'] = request.form['title']
-    groups['details']['author']['value'] = request.form['author']
-    groups['attributes']['container']['value'] = request.form['container']
-    groups['attributes']['heading']['value'] = request.form['heading']
+    groups['details']['story_title']['value'] = escape(request.form['title'])
+    groups['details']['author']['value'] = escape(request.form['author'])
+    container = escape(request.form['container'])
+    groups['attributes']['container']['value'] = container
+    groups['attributes']['heading']['value'] = escape(request.form['heading'])
     return groups
