@@ -193,27 +193,35 @@ form {
 .form-group:last-of-type {
   padding-bottom: 1em;
 }
-.form-item input {
+.form-item input, .form-item a {
   display: block;
   width: 100%;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
-.form-item input[type="submit"] {
+.form-item input[type="submit"], .form-item a {
   background-color: #000066;
   color: white;
   border: none;
   cursor: pointer;
   padding: 0.5em 0;
 }
+.form-item a {
+  text-decoration: none;
+  text-align: center;
+}
+.form-item a.danger {
+  background-color: red;
+}
 .form-item label {
   padding: 0.5em;
+  flex: 0 1;
 }
 .form-item select {
   flex: 1 1 auto;
 }
-#btn-submit.danger {
+.danger {
   background-color: red;
 }
 ::before, ::after {
