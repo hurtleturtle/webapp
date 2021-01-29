@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, g, render_template, request, url_for
 from flask import redirect, escape
 from werkzeug.exceptions import abort
+from werkzeug.security import check_password_hash, generate_password_hash
 from wuxia.db import get_db
 from wuxia.auth import admin_required
 from wuxia.forms import gen_form_item, gen_options
@@ -65,6 +66,43 @@ def edit(id):
     groups = generate_form_groups(user)
     return render_template('users/edit.html', form_groups=groups)
 
+@bp.route('/<int:id>/change-password', methods=['GET', 'POST'])
+def change_password(id):
+    user = get_user(id)
+    db = get_db()
+
+    if not g.user or g.user['id'] != id:
+        error = 'Could not change password for the specified user.'
+        flash(error)
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        error = None
+        old_pass = escape(request.form['old_pass'])
+        new_pass = escape(request.form['new_pass'])
+        confirm_pass = escape(request.form['confirm_pass'])
+
+        if new_pass != confirm_pass:
+            error = 'Passwords do not match.'
+
+        if not check_password_hash(user['password'], old_pass):
+            error = 'Existing password incorrect.'
+
+        if error:
+            flash(error)
+            return redirect(url_for('users.change_password', id=id))
+
+        query = 'UPDATE user SET password = ? WHERE id = ?'
+        params = (generate_password_hash(new_pass), id)
+        db.execute(query, params)
+        db.commit()
+
+        flash('Password updated.')
+        return redirect(url_for('index'))
+
+
+    groups = gen_pass_groups(user)
+    return render_template('users/edit.html', form_groups=groups)
 
 @bp.route('/<int:id>/delete', methods=['GET', 'POST'])
 @admin_required
@@ -126,6 +164,26 @@ def generate_form_groups(user):
             'button': gen_form_item('btn-submit', field_class='danger',
                                     item_type='submit',
                                     value='Delete', field_type='input')
+        }
+    }
+    return groups
+
+
+def gen_pass_groups(user):
+    groups = {
+        'user': {
+            'group_title': 'Change Password for {}'.format(user['username']),
+            'old_pass': gen_form_item('old_pass', label='Old Password',
+                                      item_type='password', required=True),
+            'new_pass': gen_form_item('new_pass', label='New Password',
+                                      item_type='password', required=True),
+            'confirm_pass': gen_form_item('confirm_pass', label='Confirm ' +
+                                          'Password', item_type='password',
+                                          required=True)
+        },
+        'submit': {
+            'button': gen_form_item('btn-submit', item_type='submit',
+                                    value='Change', field_type='input')
         }
     }
     return groups
