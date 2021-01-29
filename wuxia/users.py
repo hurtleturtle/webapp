@@ -138,6 +138,9 @@ def get_user(id):
 
 
 def generate_form_groups(user):
+    password_href = url_for('users.change_password', id=user['id'])
+    delete_href = url_for('users.delete', id=user['id'])
+
     groups = {
         'user': {
             'group_title': 'Edit: {}'.format(user['username']),
@@ -156,14 +159,19 @@ def generate_form_groups(user):
                                    value=user['admin'],
                                    selected_option=user['admin'])
         },
+        'change_pass': {
+            'button': gen_form_item('change_pass', field_type='link',
+                                     href=password_href,
+                                     value='Change Password')
+        },
         'submit': {
             'button': gen_form_item('btn-submit', item_type='submit',
-                                    value='Change', field_type='input')
+                                    value='Update', field_type='input')
         },
         'delete': {
-            'button': gen_form_item('btn-submit', field_class='danger',
-                                    item_type='submit',
-                                    value='Delete', field_type='input')
+            'button': gen_form_item('delete', field_class='danger',
+                                    field_type='link', href=delete_href,
+                                    value='Delete')
         }
     }
     return groups
