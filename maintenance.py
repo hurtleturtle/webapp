@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sqlite3
 import pandas as pd
+import sys
 
 
 def get_db(path='instance/wuxia.sqlite'):
@@ -26,5 +27,9 @@ def get_users(db):
 
 if __name__ == '__main__':
     db = get_db()
-    make_admin(db, 1)
+    if len(sys.argv) == 2:
+        make_admin(db, int(sys.argv[1]))
+    else:
+        make_admin(db, 1)
+
     print(get_users(db))
