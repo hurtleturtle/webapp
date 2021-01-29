@@ -29,8 +29,9 @@ nav a, nav span {
   margin: 0;
   display: block;
   padding: 0.5rem;
+  cursor: pointer;
 }
-nav a:hover {
+nav a:hover, nav span:hover {
   background: white;
   color: #ff3d00;
 }
@@ -61,6 +62,10 @@ nav > div.menu {
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+}
+.dropdown-content.align-right {
+  right: 4.5rem;
+  left: auto;
 }
 .dropdown-content a {
   float: none;
