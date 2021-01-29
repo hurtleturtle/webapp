@@ -28,6 +28,10 @@
                selected{% endif %}>{{ item.options[option].text }}</option>
             {% endfor %}
           </select>
+          {% elif item.field_type == "link" %}
+          <a class="{{ item.field_class }}" href="{{ item.href }}">
+            {{ item.value }}
+          </a>
           {% endif %}
         </div>
       {% endfor %}
