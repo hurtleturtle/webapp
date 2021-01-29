@@ -71,7 +71,7 @@ def change_password(id):
     user = get_user(id)
     db = get_db()
 
-    if not g.user or g.user['id'] != id:
+    if (not g.user or g.user['id'] != id) and g.user['admin'] != 'read-write':
         error = 'Could not change password for the specified user.'
         flash(error)
         return redirect(url_for('index'))
@@ -85,7 +85,8 @@ def change_password(id):
         if new_pass != confirm_pass:
             error = 'Passwords do not match.'
 
-        if not check_password_hash(user['password'], old_pass):
+        if not check_password_hash(user['password'], old_pass) and \
+        g.user['admin'] != 'read-write':
             error = 'Existing password incorrect.'
 
         if error:
@@ -182,7 +183,7 @@ def gen_pass_groups(user):
         'user': {
             'group_title': 'Change Password for {}'.format(user['username']),
             'old_pass': gen_form_item('old_pass', label='Old Password',
-                                      item_type='password', required=True),
+                                      item_type='password', required=False),
             'new_pass': gen_form_item('new_pass', label='New Password',
                                       item_type='password', required=True),
             'confirm_pass': gen_form_item('confirm_pass', label='Confirm ' +
