@@ -63,7 +63,6 @@ def edit(uid):
             db.commit()
             return redirect(url_for('users.list'))
     else:
-        flash('You must have read-write access to make changes')
         return redirect(url_for('users.edit', uid=uid))
 
     groups = generate_form_groups(user)
