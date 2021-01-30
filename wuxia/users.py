@@ -3,7 +3,7 @@ from flask import redirect, escape
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from wuxia.db import get_db
-from wuxia.auth import admin_required
+from wuxia.auth import admin_required, write_admin_required
 from wuxia.forms import gen_form_item, gen_options
 
 
