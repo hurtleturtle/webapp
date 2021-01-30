@@ -152,6 +152,7 @@ def write_admin_required(view):
         if g.user is None:
             return redirect(url_for('auth.login'))
         if g.user['admin'] != 'read-write':
+            flash('Write access required')
             return redirect(url_for('index'))
 
         return view(**kwargs)
