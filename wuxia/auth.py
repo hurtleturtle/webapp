@@ -146,6 +146,19 @@ def admin_required(view):
     return wrapped_view
 
 
+def write_admin_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+        if g.user['admin'] != 'read-write':
+            return redirect(url_for('index'))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
 @bp.before_app_request
 def update_access_time():
     if g.user is not None:
