@@ -19,7 +19,7 @@
       <div class="dropdown">
         <span>{{ g.user['username'] }}</span>
         <div class="dropdown-content align-right">
-          <a href="{{ url_for('users.change_password', id=g.user['id']) }}">
+          <a href="{{ url_for('users.change_password', uid=g.user['id']) }}">
             Change Password
           </a>
         </div>
