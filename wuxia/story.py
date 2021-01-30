@@ -97,7 +97,7 @@ def add():
 
 
 @bp.route('/<int:id>/delete', methods=['GET', 'DELETE'])
-@admin_required
+@write_admin_required
 def delete(id):
     db = get_db()
     db.execute(
