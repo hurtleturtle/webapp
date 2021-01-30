@@ -23,16 +23,16 @@
         <td>{{ user.last_access }}</td>
         {% if g.user.admin == 'read-write' %}
           <td class="action">
-            <a href="{{ url_for('users.allow', id=user.id) }}">
+            <a href="{{ url_for('users.allow', uid=user.id) }}">
               <i class="fas fa-lock-open"></i>
             </a>
-            <a href="{{ url_for('users.disallow', id=user.id) }}">
+            <a href="{{ url_for('users.disallow', uid=user.id) }}">
               <i class="fas fa-ban"></i>
             </a>
-            <a href="{{ url_for('users.edit', id=user.id) }}">
+            <a href="{{ url_for('users.edit', uid=user.id) }}">
               <i class="fas fa-edit"></i>
             </a>
-            <a href="{{ url_for('users.delete', id=user.id) }}"
+            <a href="{{ url_for('users.delete', uid=user.id) }}"
              onclick="return confirm('Are you sure?');" method="delete">
              <i class="fas fa-trash"></i>
             </a>
