@@ -62,8 +62,8 @@ def edit(uid):
         else:
             db.commit()
             return redirect(url_for('users.list'))
-    else:
-        return redirect(url_for('users.edit', uid=uid))
+    elif request.method == 'POST' and g.user['admin'] != 'read-write':
+        flash('Write access required')
 
     groups = generate_form_groups(user)
     return render_template('users/edit.html', form_groups=groups)
