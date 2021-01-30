@@ -43,6 +43,12 @@ class Database():
 
         return self.execute(query, params).fetchone()
 
+    def set_story_access(self, uid, access=True):
+        query = 'UPDATE user SET access_approved = ? WHERE id = ?'
+        params = (int(access), uid)
+        self.execute(query, params)
+        self.commit()
+
 
 def get_args():
     parser = ArgumentParser()
@@ -52,6 +58,10 @@ def get_args():
     parser.add_argument('-l', '--list', action='store_true', help='List users')
     parser.add_argument('-u', '--username', help='Username of user to act on')
     parser.add_argument('-i', '--user-id', type=int, help='ID of user')
+    parser.add_argument('--approve', action='store_true',
+                        help='Approve story access')
+    parser.add_argument('--remove', action='store_true',
+                        help='Remove story access')
 
     return parser.parse_args()
 
@@ -59,13 +69,18 @@ def get_args():
 if __name__ == '__main__':
     db = Database()
     args = get_args()
+    user = db.get_user(uid=args.user_id, name=args.username)
 
     if args.admin is not None:
-        user = db.get_user(uid=args.user_id, name=args.username)
         if user:
             db.make_admin(user['id'], admin_level=args.admin)
         else:
             print('Invalid username and/or user ID')
+
+    if args.approve:
+        db.set_story_access(user['id'], True)
+    if args.remove:
+        db.set_story_access(user['id'], False)
 
     if args.list:
         print(db.get_users())
