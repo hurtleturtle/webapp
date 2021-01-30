@@ -20,13 +20,13 @@ def list():
     return render_template('users/list.html', users=users)
 
 
-@bp.route('/<int:id>/edit', methods=['GET', 'POST'])
+@bp.route('/<int:uid>/edit', methods=['GET', 'POST'])
 @admin_required
-def edit(id):
-    user = get_user(id)
+def edit(uid):
+    user = get_user(uid)
     admin_levels = g.privilege_levels
 
-    if request.method == 'POST':
+    if request.method == 'POST' and g.user['admin'] == 'read-write':
         error = None
         username = escape(request.form['username'])
         admin = request.form['admin']
@@ -42,11 +42,11 @@ def edit(id):
             else:
                 db.execute(
                     'UPDATE user SET username = ? WHERE id = ?',
-                    (username, id)
+                    (username, uid)
                 )
         if admin in admin_levels:
             db.execute(
-                'UPDATE user SET admin = ? WHERE id = ?', (admin, id)
+                'UPDATE user SET admin = ? WHERE id = ?', (admin, uid)
             )
         else:
             error = error + '\n' if error else ''
@@ -54,7 +54,7 @@ def edit(id):
             error += ' {}'.format(', '.join(admin_levels))
 
         db.execute(
-            'UPDATE user SET access_approved = ? WHERE id = ?', (access, id)
+            'UPDATE user SET access_approved = ? WHERE id = ?', (access, uid)
         )
 
         if error:
@@ -62,16 +62,19 @@ def edit(id):
         else:
             db.commit()
             return redirect(url_for('users.list'))
+    else:
+        flash('You must have read-write access to make changes')
+        return redirect(url_for('users.edit', uid=uid))
 
     groups = generate_form_groups(user)
     return render_template('users/edit.html', form_groups=groups)
 
-@bp.route('/<int:id>/change-password', methods=['GET', 'POST'])
-def change_password(id):
-    user = get_user(id)
+@bp.route('/<int:uid>/change-password', methods=['GET', 'POST'])
+def change_password(uid):
+    user = get_user(uid)
     db = get_db()
 
-    if (not g.user or g.user['id'] != id) and g.user['admin'] != 'read-write':
+    if (not g.user or g.user['id'] != uid) and g.user['admin'] != 'read-write':
         error = 'Could not change password for the specified user.'
         flash(error)
         return redirect(url_for('index'))
@@ -91,10 +94,10 @@ def change_password(id):
 
         if error:
             flash(error)
-            return redirect(url_for('users.change_password', id=id))
+            return redirect(url_for('users.change_password', uid=uid))
 
         query = 'UPDATE user SET password = ? WHERE id = ?'
-        params = (generate_password_hash(new_pass), id)
+        params = (generate_password_hash(new_pass), uid)
         db.execute(query, params)
         db.commit()
 
@@ -105,42 +108,42 @@ def change_password(id):
     groups = gen_pass_groups(user)
     return render_template('users/edit.html', form_groups=groups)
 
-@bp.route('/<int:id>/delete', methods=['GET', 'POST'])
-@admin_required
-def delete(id):
+@bp.route('/<int:uid>/delete', methods=['GET', 'POST'])
+@write_admin_required
+def delete(uid):
     db = get_db()
-    db.execute('DELETE FROM user WHERE id = ?', (id,))
+    db.execute('DELETE FROM user WHERE id = ?', (uid,))
     db.commit()
     return redirect(url_for('users.list'))
 
 
-@bp.route('/<int:id>/allow', methods=['GET', 'POST'])
-@admin_required
-def allow(id):
+@bp.route('/<int:uid>/allow', methods=['GET', 'POST'])
+@write_admin_required
+def allow(uid):
     db = get_db()
-    db.execute('UPDATE user SET access_approved = true WHERE id = ?', (id,))
+    db.execute('UPDATE user SET access_approved = true WHERE id = ?', (uid,))
     db.commit()
     return redirect(url_for('users.list'))
 
 
-@bp.route('/<int:id>/disallow', methods=['GET', 'POST'])
-@admin_required
-def disallow(id):
+@bp.route('/<int:uid>/disallow', methods=['GET', 'POST'])
+@write_admin_required
+def disallow(uid):
     db = get_db()
-    db.execute('UPDATE user SET access_approved = false WHERE id = ?', (id,))
+    db.execute('UPDATE user SET access_approved = false WHERE id = ?', (uid,))
     db.commit()
     return redirect(url_for('users.list'))
 
 
-def get_user(id):
+def get_user(uid):
     db = get_db()
-    user = db.execute('SELECT * FROM user WHERE id = ?', (id,)).fetchone()
+    user = db.execute('SELECT * FROM user WHERE id = ?', (uid,)).fetchone()
     return user
 
 
 def generate_form_groups(user):
-    password_href = url_for('users.change_password', id=user['id'])
-    delete_href = url_for('users.delete', id=user['id'])
+    password_href = url_for('users.change_password', uid=user['id'])
+    delete_href = url_for('users.delete', uid=user['id'])
 
     groups = {
         'user': {
