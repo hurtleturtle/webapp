@@ -17,7 +17,9 @@ CREATE TABLE story (
   author TEXT DEFAULT Unknown,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   title TEXT NOT NULL,
-  rating INTEGER
+  rating INTEGER,
+  uploader_id INTEGER NOT NULL,
+  FOREIGN KEY (uploader_id) REFERENCES user (id)
 );
 
 CREATE TABLE chapter (
@@ -27,5 +29,7 @@ CREATE TABLE chapter (
   chapter_number INTEGER NOT NULL,
   chapter_title TEXT,
   chapter_content TEXT,
-  FOREIGN KEY (story_id) REFERENCES story (id)
+  uploader_id TEXT NOT NULL,
+  FOREIGN KEY (story_id) REFERENCES story (id),
+  FOREIGN KEY (uploader_id) REFERENCES user (id)
 );

@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, render_template, request, url_for
-from flask import redirect, current_app, escape
+from flask import redirect, current_app, escape, g
 from werkzeug.utils import secure_filename
 from wuxia.db import get_db
 from wuxia.auth import approval_required, admin_required, write_admin_required
@@ -18,7 +18,7 @@ def list():
     stories = db.execute(
         'SELECT *, (\
             SELECT COUNT(id) FROM chapter WHERE story_id = story.id\
-        ) chapter_count FROM story'
+        ) chapter_count FROM story INNER JOIN user ON story.uploader_id=user.id'
     ).fetchall()
 
     return render_template('story/list.html', stories=stories)
@@ -149,9 +149,9 @@ def add_story_to_db(db):
         flash('A story with that title by that author already exists')
         return False
     else:
-        db.execute(
-            'INSERT INTO story (title, author) VALUES (?, ?)', (title, author)
-        )
+        query = 'INSERT INTO story (title, author, uploader_id) VALUES (?,?,?)'
+        params = (title, author, g.user['id'])
+        db.execute(query, params)
         db.commit()
         return check_story(db, title, author)
 
@@ -170,11 +170,12 @@ def add_chapters_to_db(db, filepath, story_id, chapter_container,
 
     for idx, chapter in enumerate(chapters):
         heading = get_heading(chapter, heading_selector)
-        db.execute(
-            'INSERT INTO chapter (story_id, chapter_number, chapter_title, \
-             chapter_content) VALUES (?, ?, ?, ?)',
-            (int(story_id), idx + 1, heading, chapter.prettify())
-        )
+        query = 'INSERT INTO chapter (story_id, chapter_number, chapter_title, \
+                chapter_content, uploader_id) VALUES (?, ?, ?, ?, ?)'
+        params = (int(story_id), idx + 1, heading, chapter.prettify(),
+                  g.user['id'])
+        db.execute(query, params)
+
     db.commit()
 
 

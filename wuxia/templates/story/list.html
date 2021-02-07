@@ -14,6 +14,7 @@
         <th>Title</th>
         <th>Author</th>
         <th>Chapters</th>
+        <th>Uploaded By</th>
         <th>Date Added</th>
         {% if g.user['admin'] == 'read-write' %}
           <th>Actions</th>
@@ -29,6 +30,7 @@
           </a></td>
           <td>{{ story.author }}</td>
           <td>{{ story.chapter_count }}</td>
+          <td>{{ story.uploader_id }}</td>
           <td>{{ story.created }}</td>
           {% if g.user['admin'] == 'read-write' %}
             <td>
