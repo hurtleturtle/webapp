@@ -13,7 +13,7 @@ bp = Blueprint('story', __name__, url_prefix='/stories')
 
 @bp.route('/')
 @approval_required
-def list():
+def story_list():
     db = get_db()
     stories = db.execute(
         'SELECT *, (\
@@ -41,7 +41,7 @@ def display(id):
     else:
         chapters = []
         flash('No chapters found for that story')
-        return redirect(url_for('story.list'))
+        return redirect(url_for('story.story_list'))
 
     return render_template('story/display.html', chapters=chapters,
                            title=story)

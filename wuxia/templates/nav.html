@@ -3,9 +3,9 @@
   <div class="menu">
     <a href="{{ url_for('index')}}"><i class="fas fa-home"></i></a>
     <div class="dropdown">
-      <a href="{{ url_for('story.list') }}">Stories</a>
+      <a href="{{ url_for('story.story_list') }}">Stories</a>
       <div class="dropdown-content">
-        <a href="{{ url_for('story.list') }}">List</a>
+        <a href="{{ url_for('story.story_list') }}">List</a>
         <a href="{{ url_for('story.add') }}">Add</a>
         <a href="#">Modify</a>
       </div>
