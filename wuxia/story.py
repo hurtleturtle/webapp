@@ -39,7 +39,6 @@ def display(story_id):
     if chapter_rows:
         chapters = [dict(row) for row in chapter_rows]
     else:
-        chapters = []
         flash('No chapters found for that story')
         return redirect(url_for('story.story_list'))
 
@@ -84,12 +83,12 @@ def add():
             return render_template('story/add.html',
                                    form_groups=preserve_form_data(groups))
 
-        story_id = add_story_to_db(db)
-        if not story_id:
+        story = add_story_to_db(db)
+        if not story:
             return render_template('story/add.html',
                                    form_groups=preserve_form_data(groups))
 
-        add_chapters_to_db(db, filepath, story_id['id'],
+        add_chapters_to_db(db, filepath, story['id'],
                            escape(request.form['container']),
                            escape(request.form['heading']))
 
@@ -111,15 +110,15 @@ def delete(story_id):
 
 
 def allowed_file(filename):
-    ALLOWED_EXTENSIONS = {'html', 'htm'}
+    allowed_extensions = {'html', 'htm'}
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 def upload_file():
-    UPLOAD_FOLDER = os.path.join(current_app.instance_path, 'stories')
+    upload_folder = os.path.join(current_app.instance_path, 'stories')
     try:
-        os.makedirs(UPLOAD_FOLDER)
+        os.makedirs(upload_folder)
     except OSError:
         pass
 
@@ -135,7 +134,7 @@ def upload_file():
         return False
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        filepath = os.path.join(upload_folder, filename)
         file.save(filepath)
         return filepath
 
