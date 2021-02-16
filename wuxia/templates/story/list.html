@@ -25,7 +25,7 @@
           {% if g.user['admin'] in g.admin_levels %}
             <td>{{ story.id }}</td>
           {% endif %}
-          <td><a href="{{ url_for('story.display', id=story.id)}}">
+          <td><a href="{{ url_for('story.display', story_id=story.id)}}">
             {{ story.title }}
           </a></td>
           <td>{{ story.author }}</td>
@@ -35,7 +35,7 @@
           {% if g.user['admin'] == 'read-write' %}
             <td>
               <a href="#"><i class="fas fa-edit"></i></a>
-              <a href="{{ url_for('story.delete', id=story.id) }}"
+              <a href="{{ url_for('story.delete', story_id=story.id) }}"
                onclick="return confirm('Are you sure?');" method="delete">
                 <i class="fas fa-trash"></i>
               </a>

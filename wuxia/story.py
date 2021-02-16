@@ -24,16 +24,16 @@ def story_list():
     return render_template('story/list.html', stories=stories)
 
 
-@bp.route('/<int:id>')
+@bp.route('/<int:story_id>')
 @approval_required
-def display(id):
+def display(story_id):
     db = get_db()
     chapter_rows = db.execute(
         'SELECT chapter_title title, chapter_content content FROM chapter \
-         WHERE story_id = ?', (id,)
+         WHERE story_id = ?', (story_id,)
     ).fetchall()
     story = db.execute(
-        'SELECT title FROM story WHERE id = ?', (id,)
+        'SELECT title FROM story WHERE id = ?', (story_id,)
     ).fetchone()['title']
 
     if chapter_rows:
@@ -96,15 +96,15 @@ def add():
     return render_template('story/add.html', form_groups=groups)
 
 
-@bp.route('/<int:id>/delete', methods=['GET', 'DELETE'])
+@bp.route('/<int:story_id>/delete', methods=['GET', 'DELETE'])
 @write_admin_required
-def delete(id):
+def delete(story_id):
     db = get_db()
     db.execute(
-        'DELETE FROM chapter WHERE story_id = ?', (id,)
+        'DELETE FROM chapter WHERE story_id = ?', (story_id,)
     )
     db.execute(
-        'DELETE FROM story WHERE id = ?', (id,)
+        'DELETE FROM story WHERE id = ?', (story_id,)
     )
     db.commit()
     return redirect(url_for('story.list'))
