@@ -106,7 +106,7 @@ def delete(story_id):
         'DELETE FROM story WHERE id = ?', (story_id,)
     )
     db.commit()
-    return redirect(url_for('story.list'))
+    return redirect(url_for('story.story_list'))
 
 
 def allowed_file(filename):
