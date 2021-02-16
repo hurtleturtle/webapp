@@ -1,11 +1,11 @@
-def gen_form_item(id, name=None, placeholder=None,
+def gen_form_item(item_id=None, name=None, placeholder=None,
                   required=False, item_type='text', autocomplete='off',
                   field_type='input', label='', options={}, value='',
                   selected_option='', item_class='', label_class='',
                   field_class='', href=''):
     item = {
-        'id': id,
-        'name': name if name else id,
+        'id': item_id,
+        'name': name if name else item_id,
         'item_class': item_class,
         'label_class': label_class,
         'field_class': field_class,
