@@ -13,7 +13,7 @@
             </label>
           {% endif %}
           {% if not item.field_type or item.field_type == "input" %}
-            <input id="{{ item.id }}" name="{{ item.name}}"
+            <input id="{{ item.id }}" name="{{ item.name }}"
              class="{{ item.field_class }}"
              placeholder="{{ item.placeholder }}" type="{{ item.type }}"
              {% if item.required %}required{% endif %} value="{{ item.value }}"
