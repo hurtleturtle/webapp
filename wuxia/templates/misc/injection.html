@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Template Injection{% endblock %}
+{% block content %}
+<div class="wrapper">
+    <form class="template_injection" method="post">
+        <div class="form-group">
+            <input type="text" placeholder="Jinja2 Injection" name="injection">
+            <input type="submit" class="btn-submit" value="Process">
+        </div>
+    </form>
+    <div class="results">
+        {{ result }}
+    </div>
+</div>
+{% endblock content %}

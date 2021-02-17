@@ -1,4 +1,5 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, render_template_string
+from wuxia.auth import admin_required
 
 
 bp = Blueprint('misc', __name__)
@@ -14,3 +15,14 @@ def cookies():
         returned_cookies = {'naughty': 'cookie'}
 
     return render_template('misc/cookies.html', cookies=returned_cookies)
+
+
+@bp.route('/config', methods=['GET', 'POST'])
+@admin_required
+def config():
+    if request.method == 'POST':
+        template_injection = request.form['injection']
+        result = render_template_string(template_injection)
+        return render_template('misc/injection.html', result=result)
+
+    return render_template('misc/injection.html')
