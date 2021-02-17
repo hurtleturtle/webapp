@@ -8,8 +8,11 @@
             <input type="submit" class="btn-submit" value="Process">
         </div>
     </form>
+    {% if result %}
     <div class="results">
-        {{ result }}
+        <h2>Results</h2>
+        <p>{{ result | safe }}</p>
     </div>
+    {% endif %}
 </div>
 {% endblock content %}

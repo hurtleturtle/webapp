@@ -241,3 +241,14 @@ div.cookie > h2 {
     text-align: center;
     color: white;
 }
+
+/* Results layout */
+div.results {
+    background-color: darkgray;
+    padding: 1rem;
+    margin: 0 10%;
+    color: white;
+}
+div.results > h2 {
+    text-align: center;
+}
