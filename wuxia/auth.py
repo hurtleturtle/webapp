@@ -143,10 +143,19 @@ def approval_required(view):
 def admin_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
+        error = None
+        url = None
+
         if g.user is None:
-            return redirect(url_for('auth.login'))
-        if g.user['admin'] not in g.admin_levels:
-            return redirect(url_for('index'))
+            url = 'auth.login'
+            error = 'Please login to access that page.'
+        elif g.user['admin'] not in g.admin_levels:
+            url = 'index'
+            error = 'You must have admin privileges to access that page.'
+            
+        if error:
+            flash(error)
+            return redirect(url_for(url))
 
         return view(**kwargs)
 
