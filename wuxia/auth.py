@@ -1,6 +1,6 @@
 import functools
 from flask import Blueprint, flash, g, render_template, request, session
-from flask import url_for, redirect, escape
+from flask import url_for, redirect, escape, make_response
 from werkzeug.security import check_password_hash, generate_password_hash
 from wuxia.db import get_db
 from wuxia.forms import gen_form_item
@@ -55,9 +55,12 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('story.story_list'))
+            response = make_response(redirect(url_for('story.story_list')))
+            response.set_cookie('sweet_cookie', value='shiver-me-timbers')
+            return response
 
         flash(error)
+
     return render_template('auth/login.html',
                            form_groups=get_user_form('login'))
 
