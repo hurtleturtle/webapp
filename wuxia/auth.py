@@ -4,6 +4,7 @@ from flask import url_for, redirect, escape, make_response
 from werkzeug.security import check_password_hash, generate_password_hash
 from wuxia.db import get_db
 from wuxia.forms import gen_form_item
+from datetime import datetime, timedelta
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -56,7 +57,8 @@ def login():
             session.clear()
             session['user_id'] = user['id']
             response = make_response(redirect(url_for('story.story_list')))
-            response.set_cookie('pirate', value='shiver_me_timbers')
+            expiry = datetime.now() + timedelta(minutes=60)
+            response.set_cookie('pirate', value='shiver_me_timbers', expires=expiry)
             return response
 
         flash(error)
@@ -68,7 +70,9 @@ def login():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    response = make_response(redirect(url_for('index')))
+    response.delete_cookie('pirate')
+    return response
 
 
 def get_user_form(form_type):
