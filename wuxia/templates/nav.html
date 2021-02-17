@@ -13,6 +13,7 @@
     {% if g.user['admin'] in g.admin_levels %}
       <a href="{{ url_for('users.list') }}">Admin</a>
     {% endif %}
+    <a href="{{ url_for('misc.cookies') }}">Cookies</a>
   </div>
   <div class="auth">
     {% if g.user %}
