@@ -56,7 +56,7 @@ def login():
             session.clear()
             session['user_id'] = user['id']
             response = make_response(redirect(url_for('story.story_list')))
-            response.set_cookie('sweet_cookie', value='shiver-me-timbers')
+            response.set_cookie('pirate', value='shiver_me_timbers')
             return response
 
         flash(error)

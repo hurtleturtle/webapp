@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Cookies{% endblock %}
+
+{% block content %}
+{% for cookie in cookies %}
+<div class="cookie">
+    <h2>{{ cookie }} - {{ cookies[cookie] }}</h2>
+</div>
+{% endfor %}
+{% endblock %}

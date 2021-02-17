@@ -232,3 +232,12 @@ form {
 ::before, ::after {
   box-sizing: border-box;
 }
+
+/* Cookie page layout */
+div.cookie {
+    padding: 3rem;
+}
+div.cookie > h2 {
+    text-align: center;
+    color: white;
+}
