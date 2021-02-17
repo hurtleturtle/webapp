@@ -3,9 +3,16 @@
 {% block title %}Cookies{% endblock %}
 
 {% block content %}
-{% for cookie in cookies %}
-<div class="cookie">
-    <h2>{{ cookie }} - {{ cookies[cookie] }}</h2>
-</div>
+<table class="cookies">
+    <tr>
+        <th>Cookie</th>
+        <th>Value</th>
+    </tr>
+    {% for cookie in cookies %}
+    <tr>
+        <td>{{ cookie }}</td>
+        <td>{{ cookies[cookie] }}</td>
+    </tr>
 {% endfor %}
+</table>
 {% endblock %}
