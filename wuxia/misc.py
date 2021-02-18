@@ -17,7 +17,7 @@ def cookies():
     return render_template('misc/cookies.html', cookies=returned_cookies)
 
 
-@bp.route('/config', methods=['GET', 'POST'])
+@bp.route('/template-injection', methods=['GET', 'POST'])
 @admin_required
 def config():
     if request.method == 'POST':
