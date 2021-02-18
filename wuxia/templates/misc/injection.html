@@ -4,8 +4,12 @@
 <div class="wrapper">
     <form class="template_injection" method="post">
         <div class="form-group">
-            <input type="text" placeholder="Jinja2 Injection" name="injection">
-            <input type="submit" class="btn-submit" value="Process">
+            <div class="form-item">
+                <input type="text" placeholder="Jinja2 Injection" name="injection">
+            </div>
+            <div class="form-item">
+                <input type="submit" class="btn-submit" value="Process">
+            </div>
         </div>
     </form>
     {% if result %}
