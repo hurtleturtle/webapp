@@ -11,6 +11,7 @@ setup(
         'werkzeug',
         'pandas',
         'lipsum',
-        'bs4'
+        'bs4',
+        'lxml'
     ],
 )
