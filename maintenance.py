@@ -65,7 +65,7 @@ class Story:
 
     def create_story(self):
         with open(self.template_path) as f:
-            new_story = BeautifulSoup(f.read())
+            new_story = BeautifulSoup(f.read(), features='lxml')
 
         new_story.title.string = self.title
         return new_story
