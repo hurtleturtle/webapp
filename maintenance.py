@@ -82,7 +82,7 @@ class Story:
 
         for paragraph in range(paragraphs):
             p = soup.new_tag('p')
-            p.text = lipsum.generate_paragraphs(1)
+            p.string = lipsum.generate_paragraphs(1)
             div.append(p)
 
         soup.body.append(div)
