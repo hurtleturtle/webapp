@@ -5,7 +5,13 @@ import sys
 from argparse import ArgumentParser
 
 
-class Database():
+def connect(path):
+    conn = sqlite3.connect(path, detect_types=sqlite3.PARSE_DECLTYPES)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+class Database:
     def __init__(self, path='instance/wuxia.sqlite'):
         self.db = self.connect(path)
         self.execute = self.db.execute
