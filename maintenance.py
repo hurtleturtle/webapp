@@ -103,15 +103,13 @@ class Story:
         :rtype: bool
         """
         wuxia_db = Database()
-        story = add_story_to_db(wuxia_db)
+        story = add_story_to_db(wuxia_db, title=self.title, author=lipsum.generate_words(1))
         if not story:
             print('Story {} could not be added to database using {}.'.format(self.title, self.filepath))
             return False
         else:
             add_chapters_to_db(wuxia_db, self.filepath, story['id'], 'div.chapter', 'div.chapter > h2.chapter-heading')
-            os.remove(self.filepath)
             return True
-
 
 
 def get_args():
