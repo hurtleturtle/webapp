@@ -9,6 +9,7 @@ setup(
     install_requires=[
         'flask',
         'werkzeug',
-        'pandas'
+        'pandas',
+        'lipsum'
     ],
 )
