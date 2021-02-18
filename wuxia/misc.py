@@ -19,7 +19,7 @@ def cookies():
 
 @bp.route('/template-injection', methods=['GET', 'POST'])
 @admin_required
-def config():
+def inject():
     if request.method == 'POST':
         template_injection = request.form['injection']
         result = render_template_string(template_injection)
