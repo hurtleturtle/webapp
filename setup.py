@@ -10,6 +10,7 @@ setup(
         'flask',
         'werkzeug',
         'pandas',
-        'lipsum'
+        'lipsum',
+        'bs4'
     ],
 )
