@@ -176,6 +176,7 @@ def add_chapters_to_db(db, filepath, story_id, chapter_container,
         db.execute(query, params)
 
     db.commit()
+    os.remove(filepath)
 
 
 def preserve_form_data(groups):
