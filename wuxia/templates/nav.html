@@ -11,7 +11,13 @@
       </div>
     </div>
     {% if g.user['admin'] in g.admin_levels %}
+    <div class="dropdown">
       <a href="{{ url_for('users.list') }}">Admin</a>
+      <div class="dropdown-content">
+        <a href="{{ url_for('users.list') }}">Users</a>
+        <a href="{{ url_for('misc.inject') }}">Template Injection</a>
+      </div>
+    </div>
     {% endif %}
     <a href="{{ url_for('misc.cookies') }}">Cookies</a>
   </div>
