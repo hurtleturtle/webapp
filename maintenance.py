@@ -5,16 +5,17 @@ import sys
 from argparse import ArgumentParser
 
 
-class Database():
+def connect(path):
+    conn = sqlite3.connect(path, detect_types=sqlite3.PARSE_DECLTYPES)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+class Database:
     def __init__(self, path='instance/wuxia.sqlite'):
-        self.db = self.connect(path)
+        self.db = connect(path)
         self.execute = self.db.execute
         self.commit = self.db.commit
-
-    def connect(self, path):
-        db = sqlite3.connect(path, detect_types=sqlite3.PARSE_DECLTYPES)
-        db.row_factory = sqlite3.Row
-        return db
 
     def make_admin(self, uid, admin_level=0):
         levels = {0: 'no', 1: 'read', 2: 'read-write'}
