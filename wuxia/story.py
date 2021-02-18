@@ -139,17 +139,21 @@ def upload_file():
         return filepath
 
 
-def add_story_to_db(db):
-    title = escape(request.form.get('title'))
-    author = escape(request.form.get('author', 'Unknown'))
+def add_story_to_db(db, title=None, author=None):
+    title = title if title else escape(request.form.get('title'))
+    author = author if author else escape(request.form.get('author', 'Unknown'))
     story_exists = check_story(db, title, author)
+    try:
+        user = g.user['id']
+    except RuntimeError:
+        user = 1
 
     if story_exists:
         flash('A story with that title by that author already exists')
         return False
     else:
         query = 'INSERT INTO story (title, author, uploader_id) VALUES (?,?,?)'
-        params = (title, author, g.user['id'])
+        params = (title, author, user)
         db.execute(query, params)
         db.commit()
         return check_story(db, title, author)
@@ -166,13 +170,17 @@ def add_chapters_to_db(db, filepath, story_id, chapter_container,
                        heading_selector):
     soup = get_soup(filepath)
     chapters = get_chapters(soup, chapter_container)
+    try:
+        user = g.user['id']
+    except RuntimeError:
+        user = 1
 
     for idx, chapter in enumerate(chapters):
         heading = get_heading(chapter, heading_selector)
         query = 'INSERT INTO chapter (story_id, chapter_number, chapter_title, \
                 chapter_content, uploader_id) VALUES (?, ?, ?, ?, ?)'
         params = (int(story_id), idx + 1, heading, chapter.prettify(),
-                  g.user['id'])
+                  user)
         db.execute(query, params)
 
     db.commit()
