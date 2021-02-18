@@ -136,7 +136,11 @@ def get_args():
 if __name__ == '__main__':
     db = Database()
     args = get_args()
-    user = db.get_user(uid=args.user_id, name=args.username)
+
+    try:
+        user = db.get_user(uid=args.user_id, name=args.username)
+    except sqlite3.OperationalError:
+        user = None
 
     if args.admin is not None:
         if user:
