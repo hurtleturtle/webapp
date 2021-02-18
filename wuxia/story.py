@@ -177,9 +177,12 @@ def add_chapters_to_db(db, filepath, story_id, chapter_container,
 
     for idx, chapter in enumerate(chapters):
         heading = get_heading(chapter, heading_selector)
+        if chapter.name == 'div':
+            chapter = '\n'.join([str(child) for child in chapter.children])
+
         query = 'INSERT INTO chapter (story_id, chapter_number, chapter_title, \
                 chapter_content, uploader_id) VALUES (?, ?, ?, ?, ?)'
-        params = (int(story_id), idx + 1, heading, chapter.prettify(),
+        params = (int(story_id), idx + 1, heading, str(chapter),
                   user)
         db.execute(query, params)
 
