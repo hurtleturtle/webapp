@@ -27,4 +27,7 @@ def inject():
 
     return render_template('injection.html')
 
-    return render_template('misc/injection.html')
+
+@bp.route('/bots', methods=['GET'])
+def bots():
+    return render_template('bots.html')
