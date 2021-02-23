@@ -40,6 +40,8 @@ def register():
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
+    status_code = 200
+
     if request.method == 'POST':
         username = escape(request.form['username'])
         password = escape(request.form['password'])
@@ -61,10 +63,12 @@ def login():
             response.set_cookie('pirate', value='shiver_me_timbers', expires=expiry)
             return response
 
-        flash(error)
+        if error:
+            flash(error)
+            status_code = 401
 
     return render_template('auth/login.html',
-                           form_groups=get_user_form('login'))
+                           form_groups=get_user_form('login')), status_code
 
 
 @bp.route('/logout')
