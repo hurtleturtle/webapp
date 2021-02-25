@@ -41,6 +41,7 @@ def register():
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     status_code = 200
+    referrer = request.args.get('next')
 
     if request.method == 'POST':
         username = escape(request.form['username'])
@@ -58,7 +59,8 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            response = make_response(redirect(url_for('story.story_list')))
+            url = referrer if referrer else url_for('story.story_list')
+            response = make_response(redirect(url))
             expiry = datetime.now() + timedelta(minutes=60)
             response.set_cookie('pirate', value='shiver_me_timbers', expires=expiry)
             return response
@@ -117,7 +119,7 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
+            return redirect_to_referrer()
 
         return view(**kwargs)
 
@@ -130,7 +132,7 @@ def approval_required(view):
         error = None
 
         if g.user is None:
-            return redirect(url_for('auth.login'))
+            return redirect_to_referrer()
         if not g.user['access_approved']:
             error = f'You do not have access to {request.url}. Please contact '
             error += 'support.'
@@ -151,8 +153,8 @@ def admin_required(view):
         url = None
 
         if g.user is None:
-            url = 'auth.login'
-            error = 'Please login to access that page.'
+            flash('Please login to access that page.')
+            return redirect_to_referrer()
         elif g.user['admin'] not in g.admin_levels:
             url = 'index'
             error = 'You must have admin privileges to access that page.'
@@ -170,7 +172,8 @@ def write_admin_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
+            flash('Please login to access that page.')
+            return redirect_to_referrer()
         if g.user['admin'] != 'read-write':
             flash('Write access required')
             return redirect(url_for('index'))
@@ -178,6 +181,11 @@ def write_admin_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+
+def redirect_to_referrer(url='auth.login'):
+    referrer = request.full_path
+    return redirect(url_for(url, next=referrer))
 
 
 @bp.before_app_request
