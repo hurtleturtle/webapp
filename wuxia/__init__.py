@@ -33,6 +33,9 @@ def create_app(test_config=None):
     
     from . import misc
     app.register_blueprint(misc.bp)
+    
+    from . import challenges
+    app.register_blueprint(challenges.bp)
 
     @app.route('/')
     def index():
