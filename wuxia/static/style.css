@@ -17,7 +17,7 @@ section.navbar {
   z-index: 1;
 }
 nav {
-  background: #ff3d00;
+  background: #59028a;
   display: flex;
   flex: 0 1 auto;
   align-items: center;
@@ -34,7 +34,7 @@ nav a, nav span {
 }
 nav a:hover, nav span:hover {
   background: white;
-  color: #ff3d00;
+  color: #59028a;
 }
 nav > div {
   display: flex;
@@ -110,10 +110,10 @@ div.story {
   overflow-y: auto;
   margin: 1em 10%;
   padding: 1em 2em;
-  background-color: #ffd8cc;
-  border: 1px solid #ff3d00;
+  background-color: #ecd9f7;
+  border: 1px solid #59028a;
   border-radius: 0.1em;
-  box-shadow: 0.1em 0.1em 0.25em 0.25em #ff3d00;
+  box-shadow: 0.1em 0.1em 0.25em 0.25em #59028a;
 }
 
 /* Style for home page */
@@ -122,11 +122,11 @@ div.story {
   overflow-y: hidden;
   margin: 40% 30% 0 35%;
   padding: 1em 1.5em;
-  color: #000066;
-  background-color: #e6e6f0;
-  border: 1px solid #000066;
+  color: #e305d6;
+  background-color: #feeeff;
+  border: 1px solid #e305d6;
   border-radius: 0.1em;
-  box-shadow: 0.1em 0.1em 0.25em 0.25em #000066;
+  box-shadow: 0.1em 0.1em 0.25em 0.25em #e305d6;
   opacity: 0.7;
   text-align: center;
 }
@@ -135,8 +135,8 @@ div.story {
 .flash {
   margin: 1rem;
   padding: 1rem;
-  background: #ffd8cc;
-  border: 1px solid #ff3d00;
+  background: #ecd9f7;
+  border: 1px solid #59028a;
 }
 
 /* Standard table format */
@@ -164,17 +164,17 @@ td i.fa-ban {
   color: red;
 }
 th {
-  background: #000066;
+  background: #e305d6;
   color: white;
 }
 tr:nth-child(even) {
   background: white
 }
 tr:nth-child(odd) {
-  background: #e6e6f0;
+  background: #feeeff;
 }
 tr:hover {
-  background: #ffd8cc;
+  background: #ecd9f7;
 }
 
 /* Standard form format */
@@ -182,9 +182,9 @@ form {
   padding: 3rem 30%;
 }
 .form-wrapper {
-  background: #e6e6f0;
-  border: 1px solid #000066;
-  box-shadow: 0.1em 0.1em 0.25em 0.1em #006;
+  background: #feeeff;
+  border: 1px solid #e305d6;
+  box-shadow: 0.1em 0.1em 0.25em 0.1em #e305d6;
 }
 .form-group {
   width: 100%;
@@ -193,7 +193,7 @@ form {
 .form-group-title {
   text-align: center;
   margin: 0;
-  color: #000066;
+  color: #e305d6;
 }
 .form-item {
   padding: 0 0.5em;
@@ -221,7 +221,7 @@ form {
   box-sizing: border-box;
 }
 .form-item input[type="submit"], .form-item a {
-  background-color: #000066;
+  background-color: #e305d6;
   color: white;
   border: none;
   cursor: pointer;
