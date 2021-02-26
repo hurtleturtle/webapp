@@ -13,6 +13,9 @@
     <div class="dropdown">
       <a href="{{ url_for('challenges.show_all') }}">Challenges</a>
     </div>
+    <a href="{{ url_for('misc.cookies') }}">Cookies</a>
+  </div>
+  <div class="auth">
     {% if g.user['admin'] in g.admin_levels %}
     <div class="dropdown">
       <a href="{{ url_for('users.list') }}">Admin</a>
@@ -22,9 +25,6 @@
       </div>
     </div>
     {% endif %}
-    <a href="{{ url_for('misc.cookies') }}">Cookies</a>
-  </div>
-  <div class="auth">
     {% if g.user %}
       <div class="dropdown">
         <span>{{ g.user['username'] }}</span>
