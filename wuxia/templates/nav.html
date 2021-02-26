@@ -10,6 +10,9 @@
         <a href="#">Modify</a>
       </div>
     </div>
+    <div class="dropdown">
+      <a href="{{ url_for('challenges.show_all') }}">Challenges</a>
+    </div>
     {% if g.user['admin'] in g.admin_levels %}
     <div class="dropdown">
       <a href="{{ url_for('users.list') }}">Admin</a>
