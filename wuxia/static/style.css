@@ -273,7 +273,7 @@ div.challenges-container {
   display: block;
   overflow-y: auto;
   margin: 3rem 10% 1rem 10%;
-  padding: 1rem 2rem;
+  padding: 1rem 1rem;
   background-color: #ecd9f7;
   border: 1px solid #59028a;
   border-radius: 0.1em;
@@ -285,7 +285,7 @@ div.challenges-container {
     color: black;
     text-align: center;
     padding: 1rem;
-    margin: 0.25rem;
+    margin: 1rem;
     border-radius: 0.5rem;
     background-color: #40aaf9
 }
