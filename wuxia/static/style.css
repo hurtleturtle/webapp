@@ -14,6 +14,7 @@ html, body {
 /* Navbar */
 section.navbar {
   flex: 0 1 auto;
+  z-index: 1;
 }
 nav {
   background: #ff3d00;
@@ -84,9 +85,23 @@ nav > div.menu {
 /* Background image for home page */
 section.content {
   flex: 1 1 auto;
-  background-image: url(library.jpg);
   background-size: cover;
   overflow-y: auto;
+}
+section.content .background-image {
+  background-image: url(forest.jpg);
+  opacity: 0.4;
+  width: 100%;
+  height: 100%;
+}
+section.content > div.content-wrapper {
+    position: absolute;
+    opacity: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem 0 0 0;
 }
 
 /* Style for story */
