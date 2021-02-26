@@ -11,7 +11,7 @@ test_challenge = {
 
 @bp.route('/', methods=['GET'])
 def show_all():
-    chals = [test_challenge]
+    chals = [test_challenge, {'title': 'A New Problem', 'short_description': 'Who da boss?', 'challenge_id': 2}]
     return render_template('list.html', challenges=chals)
 
 
