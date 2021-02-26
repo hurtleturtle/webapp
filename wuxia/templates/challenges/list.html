@@ -3,7 +3,7 @@
 {% block content %}
 <div class="challenges-container">
     {% for challenge in challenges %}
-    <a class="challenge" href="{{ url_for('challenges.challenge', challenge_id=challenge.challenge_id) }}">
+    <a class="challenge" href="{{ url_for('challenges.show_challenge', challenge_id=challenge.challenge_id) }}">
         <h2>{{ challenge.title }}</h2>
         <p>{{ challenge.short_description }}</p>
     </a>
