@@ -12,6 +12,7 @@ CREATE TABLE users (
     access_approved BOOLEAN NOT NULL DEFAULT false,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_access TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    challenge_approval_requested BOOLEAN NOT NULL DEFAULT false,
     challenge_approved BOOLEAN NOT NULL DEFAULT false
 );
 
