@@ -12,6 +12,8 @@ setup(
         'pandas',
         'lipsum',
         'bs4',
-        'lxml'
+        'lxml',
+        'click',
+        'uwsgi'
     ],
 )
