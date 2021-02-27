@@ -23,7 +23,7 @@ CREATE TABLE stories (
     title TEXT NOT NULL,
     rating INTEGER,
     uploader_id INTEGER NOT NULL,
-    FOREIGN KEY (uploader_id) REFERENCES user (id)
+    FOREIGN KEY (uploader_id) REFERENCES users (id)
 );
 
 CREATE TABLE chapters (
@@ -34,8 +34,8 @@ CREATE TABLE chapters (
     chapter_title TEXT,
     chapter_content TEXT,
     uploader_id TEXT NOT NULL,
-    FOREIGN KEY (story_id) REFERENCES story (id),
-    FOREIGN KEY (uploader_id) REFERENCES user (id)
+    FOREIGN KEY (story_id) REFERENCES stories (id),
+    FOREIGN KEY (uploader_id) REFERENCES users (id)
 );
 
 CREATE TABLE challenges (

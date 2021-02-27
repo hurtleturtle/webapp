@@ -105,7 +105,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute('SELECT * FROM user WHERE id = ?',
+        g.user = get_db().execute('SELECT * FROM users WHERE id = ?',
                                   (user_id,)).fetchone()
 
 
@@ -193,7 +193,7 @@ def update_access_time():
     if g.user is not None:
         db = get_db()
         db.execute(
-            'UPDATE user SET last_access = CURRENT_TIMESTAMP WHERE id = ?',
+            'UPDATE users SET last_access = CURRENT_TIMESTAMP WHERE id = ?',
             (g.user['id'],)
         )
         db.commit()

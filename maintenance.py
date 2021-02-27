@@ -22,7 +22,7 @@ class Database:
 
     def make_admin(self, uid, admin_level=0):
         levels = {0: 'no', 1: 'read', 2: 'read-write'}
-        query = 'UPDATE user SET admin = ? WHERE id = ?'
+        query = 'UPDATE users SET admin = ? WHERE id = ?'
         params = (levels[admin_level], uid)
         self.execute(query, params)
         self.commit()
@@ -35,7 +35,7 @@ class Database:
             return pd.DataFrame()
 
     def get_user(self, uid=None, name=None):
-        query = 'SELECT * FROM user WHERE '
+        query = 'SELECT * FROM users WHERE '
         params = tuple()
 
         if uid:
@@ -48,7 +48,7 @@ class Database:
         return self.execute(query, params).fetchone()
 
     def set_story_access(self, uid, access=True):
-        query = 'UPDATE user SET access_approved = ? WHERE id = ?'
+        query = 'UPDATE users SET access_approved = ? WHERE id = ?'
         params = (int(access), uid)
         self.execute(query, params)
         self.commit()

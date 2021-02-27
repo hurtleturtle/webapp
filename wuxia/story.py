@@ -17,8 +17,8 @@ def story_list():
     db = get_db()
     stories = db.execute(
         'SELECT *, (\
-            SELECT COUNT(id) FROM chapter WHERE story_id = story.id\
-        ) chapter_count FROM story INNER JOIN user ON story.uploader_id=user.id'
+            SELECT COUNT(id) FROM chapters WHERE story_id = stories.id\
+        ) chapter_count FROM stories INNER JOIN users ON stories.uploader_id=user.id'
     ).fetchall()
 
     return render_template('story/list.html', stories=stories)
@@ -29,11 +29,11 @@ def story_list():
 def display(story_id):
     db = get_db()
     chapter_rows = db.execute(
-        'SELECT chapter_title title, chapter_content content FROM chapter \
+        'SELECT chapter_title title, chapter_content content FROM chapters \
          WHERE story_id = ?', (story_id,)
     ).fetchall()
     story = db.execute(
-        'SELECT title FROM story WHERE id = ?', (story_id,)
+        'SELECT title FROM stories WHERE id = ?', (story_id,)
     ).fetchone()['title']
 
     if chapter_rows:
@@ -100,10 +100,10 @@ def add():
 def delete(story_id):
     db = get_db()
     db.execute(
-        'DELETE FROM chapter WHERE story_id = ?', (story_id,)
+        'DELETE FROM chapters WHERE story_id = ?', (story_id,)
     )
     db.execute(
-        'DELETE FROM story WHERE id = ?', (story_id,)
+        'DELETE FROM stories WHERE id = ?', (story_id,)
     )
     db.commit()
     return redirect(url_for('story.story_list'))
@@ -152,7 +152,7 @@ def add_story_to_db(db, title=None, author=None):
         flash('A story with that title by that author already exists')
         return False
     else:
-        query = 'INSERT INTO story (title, author, uploader_id) VALUES (?,?,?)'
+        query = 'INSERT INTO stories (title, author, uploader_id) VALUES (?,?,?)'
         params = (title, author, user)
         db.execute(query, params)
         db.commit()
@@ -161,7 +161,7 @@ def add_story_to_db(db, title=None, author=None):
 
 def check_story(db, title, author):
     story_exists = db.execute(
-        'SELECT id FROM story WHERE title = ? AND author = ?', (title, author)
+        'SELECT id FROM stories WHERE title = ? AND author = ?', (title, author)
     ).fetchone()
     return story_exists
 
@@ -180,7 +180,7 @@ def add_chapters_to_db(db, filepath, story_id, chapter_container,
         if chapter.name == 'div':
             chapter = '\n'.join([str(child) for child in chapter.children])
 
-        query = 'INSERT INTO chapter (story_id, chapter_number, chapter_title, \
+        query = 'INSERT INTO chapters (story_id, chapter_number, chapter_title, \
                 chapter_content, uploader_id) VALUES (?, ?, ?, ?, ?)'
         params = (int(story_id), idx + 1, heading, str(chapter),
                   user)

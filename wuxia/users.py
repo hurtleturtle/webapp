@@ -14,7 +14,7 @@ bp = Blueprint('users', __name__, url_prefix='/users')
 def show_all():
     db = get_db()
     users = db.execute(
-        'SELECT * FROM user'
+        'SELECT * FROM users'
     ).fetchall()
     return render_template('users/list.html', users=users)
 
@@ -32,7 +32,7 @@ def edit(uid):
         access = escape(request.form['access'])
         db = get_db()
         username_new = (username != user['username'])
-        username_exists = db.execute('SELECT id FROM user WHERE username = ?',
+        username_exists = db.execute('SELECT id FROM users WHERE username = ?',
                                      (username,)).fetchone() is not None
 
         if username_new:
@@ -40,12 +40,12 @@ def edit(uid):
                 error = 'Username exists'
             else:
                 db.execute(
-                    'UPDATE user SET username = ? WHERE id = ?',
+                    'UPDATE users SET username = ? WHERE id = ?',
                     (username, uid)
                 )
         if admin in admin_levels:
             db.execute(
-                'UPDATE user SET admin = ? WHERE id = ?', (admin, uid)
+                'UPDATE users SET admin = ? WHERE id = ?', (admin, uid)
             )
         else:
             error = error + '\n' if error else ''
@@ -53,7 +53,7 @@ def edit(uid):
             error += ' {}'.format(', '.join(admin_levels))
 
         db.execute(
-            'UPDATE user SET access_approved = ? WHERE id = ?', (access, uid)
+            'UPDATE users SET access_approved = ? WHERE id = ?', (access, uid)
         )
 
         if error:
@@ -95,7 +95,7 @@ def change_password(uid):
             flash(error)
             return redirect(url_for('users.change_password', uid=uid))
 
-        query = 'UPDATE user SET password = ? WHERE id = ?'
+        query = 'UPDATE users SET password = ? WHERE id = ?'
         params = (generate_password_hash(new_pass), uid)
         db.execute(query, params)
         db.commit()
@@ -111,7 +111,7 @@ def change_password(uid):
 @write_admin_required
 def delete(uid):
     db = get_db()
-    db.execute('DELETE FROM user WHERE id = ?', (uid,))
+    db.execute('DELETE FROM users WHERE id = ?', (uid,))
     db.commit()
     return redirect(url_for('users.show_all'))
 
@@ -120,7 +120,7 @@ def delete(uid):
 @write_admin_required
 def allow(uid):
     db = get_db()
-    db.execute('UPDATE user SET access_approved = true WHERE id = ?', (uid,))
+    db.execute('UPDATE users SET access_approved = true WHERE id = ?', (uid,))
     db.commit()
     return redirect(url_for('users.show_all'))
 
@@ -129,7 +129,7 @@ def allow(uid):
 @write_admin_required
 def disallow(uid):
     db = get_db()
-    db.execute('UPDATE user SET access_approved = false WHERE id = ?', (uid,))
+    db.execute('UPDATE users SET access_approved = false WHERE id = ?', (uid,))
     db.commit()
     return redirect(url_for('users.show_all'))
 
@@ -144,7 +144,7 @@ def request_challenge_permission(uid):
 
 def get_user(uid):
     db = get_db()
-    user = db.execute('SELECT * FROM user WHERE id = ?', (uid,)).fetchone()
+    user = db.execute('SELECT * FROM users WHERE id = ?', (uid,)).fetchone()
     return user
 
 
