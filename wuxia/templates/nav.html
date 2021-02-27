@@ -30,7 +30,7 @@
         <span>{{ g.user['username'] }}</span>
         <div class="dropdown-content align-right">
           <a href="{{ url_for('users.change_password', uid=g.user['id']) }}">Change Password</a>
-          <a href="{{ url_for('users.request_challenge_permission', uid=g.user['id']) }}">
+          <a href="{{ url_for('users.request_challenge_permission', uid=g.user['id'], next=request.full_path) }}">
             Request Challenge Permission</a>
         </div>
       </div>
