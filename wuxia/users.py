@@ -137,7 +137,9 @@ def disallow(uid):
 @bp.route('/<int:uid>/challenge-permission')
 @login_required
 def request_challenge_permission(uid):
-    pass
+    referrer = request.args.get('next', url_for('challenges.show_all'))
+    flash('Permission to submit answers to challenges requested.')
+    return redirect(referrer)
 
 
 def get_user(uid):
