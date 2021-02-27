@@ -2,7 +2,7 @@ from flask import Blueprint, flash, g, render_template, request, url_for
 from flask import redirect, escape
 from werkzeug.security import check_password_hash, generate_password_hash
 from wuxia.db import get_db
-from wuxia.auth import admin_required, write_admin_required
+from wuxia.auth import admin_required, write_admin_required, login_required
 from wuxia.forms import gen_form_item, gen_options
 
 
@@ -11,7 +11,7 @@ bp = Blueprint('users', __name__, url_prefix='/users')
 
 @bp.route('')
 @admin_required
-def list():
+def show_all():
     db = get_db()
     users = db.execute(
         'SELECT * FROM user'
@@ -60,7 +60,7 @@ def edit(uid):
             flash(error)
         else:
             db.commit()
-            return redirect(url_for('users.list'))
+            return redirect(url_for('users.show_all'))
     elif request.method == 'POST' and g.user['admin'] != 'read-write':
         flash('Write access required')
 
@@ -113,7 +113,7 @@ def delete(uid):
     db = get_db()
     db.execute('DELETE FROM user WHERE id = ?', (uid,))
     db.commit()
-    return redirect(url_for('users.list'))
+    return redirect(url_for('users.show_all'))
 
 
 @bp.route('/<int:uid>/allow', methods=['GET', 'POST'])
@@ -122,7 +122,7 @@ def allow(uid):
     db = get_db()
     db.execute('UPDATE user SET access_approved = true WHERE id = ?', (uid,))
     db.commit()
-    return redirect(url_for('users.list'))
+    return redirect(url_for('users.show_all'))
 
 
 @bp.route('/<int:uid>/disallow', methods=['GET', 'POST'])
@@ -131,7 +131,13 @@ def disallow(uid):
     db = get_db()
     db.execute('UPDATE user SET access_approved = false WHERE id = ?', (uid,))
     db.commit()
-    return redirect(url_for('users.list'))
+    return redirect(url_for('users.show_all'))
+
+
+@bp.route('/<int:uid>/challenge-permission')
+@login_required
+def request_challenge_permission(uid):
+    pass
 
 
 def get_user(uid):
