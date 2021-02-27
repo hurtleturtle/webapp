@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Challenges{% endblock %}
 {% block content %}
+<div class="challenge-welcome">
+    <h2>Welcome</h2>
+    <p>Choose a challenge below and do your best to solve it using whichever programming language takes your fancy.
+    Anyone can view and attempt the challenges; however, if you would like to submit your answer to be evaluated
+    then you will need to be a registered user with permission to submit answers (hover over your username and
+    click Request Challenge Permission).</p>
+</div>
 <div class="challenges-container">
     {% for challenge in challenges %}
     <a class="challenge" href="{{ url_for('challenges.show_challenge', challenge_id=challenge.challenge_id) }}">
