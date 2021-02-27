@@ -11,7 +11,7 @@ import os
 bp = Blueprint('story', __name__, url_prefix='/stories')
 
 
-@bp.route('/')
+@bp.route('')
 @approval_required
 def story_list():
     db = get_db()
