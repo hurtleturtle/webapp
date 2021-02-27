@@ -28,7 +28,7 @@ class Database:
         self.commit()
 
     def get_users(self):
-        users = self.execute('SELECT * FROM user').fetchall()
+        users = self.execute('SELECT * FROM users').fetchall()
         if users:
             return pd.DataFrame(users, columns=users[0].keys())
         else:
