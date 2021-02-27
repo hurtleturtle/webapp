@@ -103,9 +103,9 @@ def change_password(uid):
         flash('Password updated.')
         return redirect(url_for('index'))
 
-
     groups = gen_pass_groups(user)
     return render_template('users/edit.html', form_groups=groups)
+
 
 @bp.route('/<int:uid>/delete', methods=['GET', 'POST'])
 @write_admin_required
