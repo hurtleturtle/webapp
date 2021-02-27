@@ -1,6 +1,5 @@
 from flask import Blueprint, flash, g, render_template, request, url_for
 from flask import redirect, escape
-from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from wuxia.db import get_db
 from wuxia.auth import admin_required, write_admin_required
@@ -10,7 +9,7 @@ from wuxia.forms import gen_form_item, gen_options
 bp = Blueprint('users', __name__, url_prefix='/users')
 
 
-@bp.route('/')
+@bp.route('')
 @admin_required
 def list():
     db = get_db()
@@ -67,6 +66,7 @@ def edit(uid):
 
     groups = generate_form_groups(user)
     return render_template('users/edit.html', form_groups=groups)
+
 
 @bp.route('/<int:uid>/change-password', methods=['GET', 'POST'])
 def change_password(uid):
