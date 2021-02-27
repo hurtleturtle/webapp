@@ -273,12 +273,25 @@ div.results > h2 {
 div.challenges-container {
   display: block;
   overflow-y: auto;
-  margin: 4rem 10% 1rem 10%;
+  margin: 2rem 10% 1rem 10%;
   padding: 1rem 1rem;
   background-color: #ecd9f7;
   border: 1px solid #59028a;
   border-radius: 0.1em;
   box-shadow: 0.1em 0.1em 0.25em 0.25em #59028a;
+}
+.challenge-welcome {
+    display: block;
+    margin: 4rem 10% 0rem 10%;
+    padding: 1rem 1rem;
+    background-color: #ecd9f7;
+    border: 1px solid #59028a;
+    border-radius: 0.1em;
+    box-shadow: 0.1em 0.1em 0.25em 0.25em #59028a;
+}
+.challenge-welcome > h2 {
+    color: #59028a;
+    text-align: center;
 }
 .challenge {
     display: block;
