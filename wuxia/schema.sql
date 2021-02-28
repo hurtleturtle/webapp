@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS stories;
 DROP TABLE IF EXISTS chapters;
 DROP TABLE IF EXISTS challenges;
 DROP TABLE IF EXISTS challenge_descriptions;
+DROP TABLE IF EXISTS challenge_files;
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
