@@ -18,7 +18,7 @@ def story_list():
     stories = db.execute(
         'SELECT *, (\
             SELECT COUNT(id) FROM chapters WHERE story_id = stories.id\
-        ) chapter_count FROM stories INNER JOIN users ON stories.uploader_id=user.id'
+        ) chapter_count FROM stories INNER JOIN users ON stories.uploader_id=users.id'
     ).fetchall()
 
     return render_template('story/list.html', stories=stories)
