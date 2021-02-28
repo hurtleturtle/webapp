@@ -31,11 +31,11 @@ class Database:
         self.commit()
 
     def get_users(self, columns=('*',)):
-        users = self.execute('SELECT ' + ','.join(columns) + ' FROM users').fetchall()
+        users = self.execute(get_select_query(columns, 'users')).fetchall()
         return users
 
     def get_user(self, uid=None, name=None, columns=('*',)):
-        query = 'SELECT ' + ','.join(columns) + ' FROM users WHERE '
+        query = get_select_query(columns, 'users') + ' WHERE '
         params = tuple()
 
         if uid:
@@ -79,14 +79,33 @@ class Database:
 
         self.executemany(query, params)
 
-    def get_challenges(self, challenge_id=None, columns=['*']):
-        query = 'SELECT ' + ', '.join(columns) + ' FROM challenges'
+    def get_challenges(self, challenge_id=None, columns=('*',)):
+        query = get_select_query(columns, 'challenges')
         params = tuple()
         if challenge_id:
-            query += ' WHERE challenge_id = ?'
+            query += ' WHERE challenges.id = ?'
             params = (challenge_id, )
 
         return self.execute(query, params).fetchall()
+
+    def get_challenge_description(self, challenge_id, columns=('*',)):
+        query = get_select_query(columns, 'challenge_descriptions') + ' WHERE challenge_id = ?'
+        params = (challenge_id, )
+        return self.execute(query, params).fetchall()
+
+    def get_challenge_files(self, challenge_id, file_types=[], columns=('*',)):
+        query = get_select_query(columns, 'challenge_files') + ' WHERE challenge_id = ?'
+        params = [challenge_id]
+
+        if file_types:
+            query += ' AND (' + (' type = ? OR' * len(file_types))[:-3] + ')'
+            params.extend(file_types)
+
+        return self.execute(query, params).fetchall()
+
+
+def get_select_query(columns, table):
+    return 'SELECT ' + ', '.join(columns) + ' FROM ' + table
 
 
 def save_files(challenge_id, files, file_purpose):
