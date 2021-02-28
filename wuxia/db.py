@@ -27,15 +27,12 @@ class Database:
         self.execute(query, params)
         self.commit()
 
-    def get_users(self):
-        users = self.execute('SELECT * FROM users').fetchall()
-        if users:
-            return pd.DataFrame(users, columns=users[0].keys())
-        else:
-            return pd.DataFrame()
+    def get_users(self, columns=('*',)):
+        users = self.execute('SELECT ' + ','.join(columns) + ' FROM users').fetchall()
+        return users
 
-    def get_user(self, uid=None, name=None):
-        query = 'SELECT * FROM users WHERE '
+    def get_user(self, uid=None, name=None, columns=('*',)):
+        query = 'SELECT ' + ','.join(columns) + ' FROM users WHERE '
         params = tuple()
 
         if uid:
@@ -44,6 +41,8 @@ class Database:
         elif name:
             query += 'username = ?'
             params = (name,)
+        else:
+            return params
 
         return self.execute(query, params).fetchone()
 
