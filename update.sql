@@ -1,7 +1,7 @@
-CREATE TABLE challenge_files (
+DROP TABLE IF EXISTS challenges;
+CREATE TABLE challenges (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    challenge_id INTEGER NOT NULL,
-    type TEXT NOT NULL,
-    file_name TEXT NOT NULL,
-    FOREIGN KEY (challenge_id) REFERENCES challenges (id)
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    title TEXT NOT NULL,
+    short_description TEXT NOT NULL
 );
