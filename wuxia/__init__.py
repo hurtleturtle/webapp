@@ -37,6 +37,9 @@ def create_app(test_config=None):
     from . import challenges
     app.register_blueprint(challenges.bp)
 
+    # Add custom jinja2 filters
+    app.jinja_env.filters['basename'] = os.path.basename
+
     @app.route('/')
     def index():
         return render_template('index.html')
