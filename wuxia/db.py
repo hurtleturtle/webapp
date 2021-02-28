@@ -95,7 +95,7 @@ class Database:
         query += order_query(params, order_by, descending)
         return self.execute(query, params).fetchall()
 
-    def get_challenge_files(self, challenge_id, file_types=[], columns=('*',)):
+    def get_challenge_files(self, challenge_id, file_types=None, columns=('*',)):
         query = get_select_query(columns, 'challenge_files') + ' WHERE challenge_id = ?'
         params = [challenge_id]
 
