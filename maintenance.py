@@ -83,6 +83,7 @@ def get_args():
     parser.add_argument('-c', '--chapters', type=int, default=5, help='Number of chapters to generate')
     parser.add_argument('-t', '--title', default=lipsum.generate_words(1), help='Story title')
     parser.add_argument('-e', '--execute-script', help='Execute SQL script')
+    parser.add_argument('-x', '--experiment', action='store_true')
 
     return parser.parse_args()
 
@@ -118,3 +119,6 @@ if __name__ == '__main__':
         with open(args.execute_script) as f:
             db.executescript(f.read())
         print('Database updated.')
+        
+    if args.experiment:
+        db.add_challenge('A new challenge', 'A very short test challenge', 'Nah\nbro', None, None)
