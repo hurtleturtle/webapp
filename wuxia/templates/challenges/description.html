@@ -3,8 +3,11 @@
 {% block content %}
 <div class="challenge-description">
     <h2>{{ challenge.title }}</h2>
-    {% for line in challenge.long_description %}
-    <p>{{ line }}</p>
+    {% for paragraph in description_paragraphs %}
+    <p>{{ paragraph.description | safe }}</p>
+    {% endfor %}
+    {% for file in files %}
+    <a class="challenge-sample" href="{{ file.file_name }}">{{ file.file_name | basename }}</a>
     {% endfor %}
 </div>
 {% endblock %}
