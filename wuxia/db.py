@@ -78,7 +78,15 @@ class Database:
             params.extend(save_files(challenge_id, samples, 'sample'))
 
         self.executemany(query, params)
-        self.commit()
+
+    def get_challenges(self, challenge_id=None, columns=['*']):
+        query = 'SELECT ' + ', '.join(columns) + ' FROM challenges'
+        params = tuple()
+        if challenge_id:
+            query += ' WHERE challenge_id = ?'
+            params = (challenge_id, )
+
+        return self.execute(query, params).fetchall()
 
 
 def save_files(challenge_id, files, file_purpose):

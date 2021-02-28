@@ -15,9 +15,9 @@ test_challenge = {
 
 @bp.route('', methods=['GET'])
 def show_all():
-    chals = [test_challenge, {'title': 'A New Problem', 'short_description': 'Who da boss?', 'challenge_id': 2},
-             test_challenge, test_challenge, test_challenge, test_challenge, test_challenge, test_challenge]
-    return render_template('list.html', challenges=chals)
+    db = get_db()
+    challenges = db.get_challenges()
+    return render_template('list.html', challenges=challenges)
 
 
 @bp.route('/<int:challenge_id>', methods=['GET'])
