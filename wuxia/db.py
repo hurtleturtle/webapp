@@ -123,9 +123,10 @@ def get_select_query(columns, table):
 def save_files(challenge_id, files, file_purpose):
     params = []
     for f in files:
-        path = get_file_name(f'{file_purpose}/{challenge_id}/{f.filename}')
+        sub_path = f'{file_purpose}/{challenge_id}/{f.filename}'
+        path = get_file_name(sub_path)
         f.save(path)
-        params.append((challenge_id, file_purpose, path))
+        params.append((challenge_id, file_purpose, os.path.join('/challenges/files', sub_path)))
 
     return params
 
@@ -134,8 +135,8 @@ def get_file_name(sub_path):
     instance_path = current_app.instance_path
     filename = secure_filename(basename(sub_path))
     sub_path = os.path.join(dirname(sub_path), filename)
-    path = make_folder(os.path.join(instance_path, sub_path))
-    return path
+    save_path = make_folder(os.path.join(instance_path, sub_path))
+    return save_path
 
 
 def make_folder(path):
