@@ -88,9 +88,12 @@ class Database:
 
         return self.execute(query, params).fetchall()
 
-    def get_challenge_description(self, challenge_id, columns=('*',)):
+    def get_challenge_description(self, challenge_id, columns=('*',), order=None):
         query = get_select_query(columns, 'challenge_descriptions') + ' WHERE challenge_id = ?'
-        params = (challenge_id, )
+        params = [challenge_id]
+        if order:
+            query += ' ORDER BY ?'
+            params.append(order)
         return self.execute(query, params).fetchall()
 
     def get_challenge_files(self, challenge_id, file_types=[], columns=('*',)):
