@@ -52,6 +52,17 @@ class Database:
         self.execute(query, params)
         self.commit()
 
+    def add_challenge(self, title, description, samples=None, verifiers=None):
+        query = 'INSERT INTO challenges (title, short_description, '
+        description_list = description.splitlines()
+
+    def add_challenge_description(self, challenge_id, description=(None,)):
+        query = 'INSERT INTO challenge_descriptions (challenge_id, sequence_num, description) VALUES (?)'
+        params = [(challenge_id, idx, paragraph) for idx, paragraph in enumerate(description)]
+        self.executemany(query, params)
+        self.commit()
+        
+
 
 def get_db():
     if 'db' not in g:
