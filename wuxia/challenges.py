@@ -1,16 +1,11 @@
-from flask import Blueprint, render_template, request, escape, flash, redirect, url_for
-from werkzeug.utils import secure_filename
+from flask import Blueprint, render_template, request, escape, flash, redirect, url_for, current_app
+from flask import send_from_directory
 from wuxia.auth import write_admin_required
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
 
 
 bp = Blueprint('challenges', __name__, url_prefix='/challenges', template_folder='templates/challenges')
-test_challenge = {
-    'challenge_id': 1,
-    'title': 'Test Challenge',
-    'short_description': 'A naughty test challenge'
-}
 
 
 @bp.route('', methods=['GET'])
@@ -28,6 +23,11 @@ def show_challenge(challenge_id):
     sample_files = db.get_challenge_files(challenge_id, file_types=['sample'], columns=['file_name'])
     return render_template('description.html', challenge=challenge, description_paragraphs=description,
                            files=sample_files)
+
+
+@bp.route('/files/<path:path>')
+def serve_files(path):
+    return send_from_directory(current_app.instance_path, path, as_attachment=True)
 
 
 @bp.route('/add', methods=['GET', 'POST'])
