@@ -1,6 +1,8 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, escape, flash, redirect, url_for
+from werkzeug.utils import secure_filename
 from wuxia.auth import write_admin_required
 from wuxia.forms import gen_form_item
+from wuxia.db import get_db
 
 
 bp = Blueprint('challenges', __name__, url_prefix='/challenges', template_folder='templates/challenges')
