@@ -2,7 +2,7 @@ import sqlite3
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
-from os.path import join, dirname
+from os.path import dirname
 import os
 from werkzeug.utils import secure_filename
 
@@ -120,7 +120,7 @@ def save_files(challenge_id, files, file_purpose):
 
 def get_file_name(sub_path):
     instance_path = current_app.instance_path
-    path = secure_filename(make_folder(join(instance_path, sub_path)))
+    path = secure_filename(make_folder(os.path.join(instance_path, sub_path)))
     return path
 
 
