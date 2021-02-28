@@ -120,12 +120,13 @@ div.story {
 .home {
   display: block;
   overflow-y: hidden;
-  margin: 40% 30% 0 35%;
+  margin: 25% 30%;
+  font-size: 28px;
   padding: 1em 1.5em;
   color: #e305d6;
   background-color: #feeeff;
   border: 1px solid #e305d6;
-  border-radius: 0.1em;
+  border-radius: 0.5rem;
   box-shadow: 0.1em 0.1em 0.25em 0.25em #e305d6;
   opacity: 0.7;
   text-align: center;
