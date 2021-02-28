@@ -83,9 +83,8 @@ class Database:
         query = get_select_query(columns, 'challenges')
         params = tuple()
         if challenge_id:
-            query += ' WHERE challenges.id = ?'
+            query += ' WHERE id = ?'
             params = (challenge_id, )
-
         return self.execute(query, params).fetchall()
 
     def get_challenge_description(self, challenge_id, columns=('*',), order=None):
