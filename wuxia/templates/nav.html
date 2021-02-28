@@ -7,11 +7,16 @@
       <div class="dropdown-content">
         <a href="{{ url_for('story.story_list') }}">List</a>
         <a href="{{ url_for('story.add') }}">Add</a>
-        <a href="#">Modify</a>
       </div>
     </div>
     <div class="dropdown">
       <a href="{{ url_for('challenges.show_all') }}">Challenges</a>
+      <div class="dropdown-content">
+        <a href="{{ url_for('challenges.show_all') }}">View</a>
+        {% if g.user['admin'] in g.admin_levels %}
+        <a href="{{ url_for('challenges.add') }}">Add</a>
+        {% endif %}
+      </div>
     </div>
     <a href="{{ url_for('misc.cookies') }}">Cookies</a>
   </div>
