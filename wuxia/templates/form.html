@@ -1,6 +1,6 @@
 {% block form %}
 <!--suppress ALL -->
-<form method="post">
+<form method="post" {% if form_enc %}enctype="{{ form_enc }}"{% endif %}>
   <div class="form-wrapper">
     {% for key, group in form_groups.items() %}
     <div class="form-group">
