@@ -56,22 +56,27 @@ class Database:
         self.commit()
 
     def add_challenge(self, title, short_description, long_description, verifiers, expected_results, samples=None):
-        query = 'INSERT INTO challenges (title, short_description, '
-        description_list = long_description.splitlines()
-
-    def add_challenge_description(self, challenge_id, description=(None,)):
-        query = 'INSERT INTO challenge_descriptions (challenge_id, sequence_num, description) VALUES (?)'
-        params = [(challenge_id, idx, paragraph) for idx, paragraph in enumerate(description)]
-        self.executemany(query, params)
+        query = 'INSERT INTO challenges (title, short_description) VALUES (?, ?)'
+        params = (title, short_description)
+        cursor = self.execute(query, params)
+        challenge_id = cursor.lastrowid
+        
+        self.add_challenge_description(challenge_id, long_description.splitlines())
+        self.add_challenge_files(challenge_id, verifiers, expected_results, samples)
         self.commit()
 
+    def add_challenge_description(self, challenge_id, description=(None,)):
+        query = 'INSERT INTO challenge_descriptions (challenge_id, sequence_num, description) VALUES (?, ?, ?)'
+        params = [(challenge_id, idx, paragraph) for idx, paragraph in enumerate(description)]
+        self.executemany(query, params)
+
     def add_challenge_files(self, challenge_id, verifiers, expected_results, samples=None):
-        query = 'INSERT INTO challenge_files (challenge_id, type, file_name) VALUES (?)'
+        query = 'INSERT INTO challenge_files (challenge_id, type, file_name) VALUES (?, ?, ?)'
         params = save_files(challenge_id, verifiers, 'verifier')
         params.extend(save_files(challenge_id, expected_results, 'result'))
         if samples:
             params.extend(save_files(challenge_id, samples, 'sample'))
-        
+
         self.executemany(query, params)
         self.commit()
 

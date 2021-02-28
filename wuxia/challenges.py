@@ -36,9 +36,11 @@ def add():
         long_description = escape(form.get('long_description'))
         samples = request.files.getlist('sample_files')
         verifiers = request.files.getlist('verification_files')
+        results = request.files.getlist('results_files')
         db = get_db()
-
-        return ''
+        db.add_challenge(title, short_description, long_description, verifiers, results, samples)
+        flash(f'Challenge: "{title}" added to database')
+        return redirect(url_for('challenges.add'))
 
     groups = {
         'details': {
