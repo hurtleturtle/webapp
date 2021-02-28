@@ -109,7 +109,7 @@ class Database:
 def order_query(params, order, descending):
     if order:
         q = ' ORDER BY ? DESC' if descending else ' ORDER BY ?'
-        params.extend(order)
+        params.append(order)
     else:
         q = ''
     
