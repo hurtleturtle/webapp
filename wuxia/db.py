@@ -79,20 +79,20 @@ class Database:
 
         self.executemany(query, params)
 
-    def get_challenges(self, challenge_id=None, columns=('*',)):
+    def get_challenges(self, challenge_id=None, columns=('*',), order_by=None, descending=False):
         query = get_select_query(columns, 'challenges')
-        params = tuple()
+        params = []
         if challenge_id:
             query += ' WHERE id = ?'
-            params = (challenge_id, )
+            params.append(challenge_id)
+
+        query += order_query(params, order_by, descending)
         return self.execute(query, params).fetchall()
 
-    def get_challenge_description(self, challenge_id, columns=('*',), order=None):
+    def get_challenge_description(self, challenge_id, columns=('*',), order_by=None, descending=False):
         query = get_select_query(columns, 'challenge_descriptions') + ' WHERE challenge_id = ?'
         params = [challenge_id]
-        if order:
-            query += ' ORDER BY ?'
-            params.append(order)
+        query += order_query(params, order_by, descending)
         return self.execute(query, params).fetchall()
 
     def get_challenge_files(self, challenge_id, file_types=[], columns=('*',)):
@@ -104,6 +104,16 @@ class Database:
             params.extend(file_types)
 
         return self.execute(query, params).fetchall()
+
+
+def order_query(params, order, descending):
+    if order:
+        q = ' ORDER BY ? DESC' if descending else ' ORDER BY ?'
+        params.extend(order)
+    else:
+        q = ''
+    
+    return q
 
 
 def get_select_query(columns, table):
