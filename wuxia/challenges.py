@@ -30,8 +30,14 @@ def show_challenge(challenge_id):
 @write_admin_required
 def add():
     if request.method == 'POST':
+        form = request.form
+        title = escape(form.get('title'))
+        description = escape(form.get('description'))
+        samples = request.files.getlist('sample_files')
+        verifiers = request.files.getlist('verification_files')
+        db = get_db()
 
-        return 'Posted'
+        return title + description + '\n' + str(samples)
 
     groups = {
         'details': {
@@ -54,4 +60,4 @@ def add():
         },
     }
     
-    return render_template('add.html', form_groups=groups)
+    return render_template('add.html', form_groups=groups, form_enc="multipart/form-data")
