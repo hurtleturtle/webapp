@@ -6,52 +6,7 @@ from bs4 import BeautifulSoup
 from argparse import ArgumentParser
 import os
 from wuxia.story import add_story_to_db, add_chapters_to_db
-
-
-def connect(path):
-    conn = sqlite3.connect(path, detect_types=sqlite3.PARSE_DECLTYPES)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-class Database:
-    def __init__(self, path='instance/wuxia.sqlite'):
-        self.db = connect(path)
-        self.execute = self.db.execute
-        self.commit = self.db.commit
-
-    def make_admin(self, uid, admin_level=0):
-        levels = {0: 'no', 1: 'read', 2: 'read-write'}
-        query = 'UPDATE users SET admin = ? WHERE id = ?'
-        params = (levels[admin_level], uid)
-        self.execute(query, params)
-        self.commit()
-
-    def get_users(self):
-        users = self.execute('SELECT * FROM users').fetchall()
-        if users:
-            return pd.DataFrame(users, columns=users[0].keys())
-        else:
-            return pd.DataFrame()
-
-    def get_user(self, uid=None, name=None):
-        query = 'SELECT * FROM users WHERE '
-        params = tuple()
-
-        if uid:
-            query += 'id = ?'
-            params = (uid,)
-        elif name:
-            query += 'username = ?'
-            params = (name,)
-
-        return self.execute(query, params).fetchone()
-
-    def set_story_access(self, uid, access=True):
-        query = 'UPDATE users SET access_approved = ? WHERE id = ?'
-        params = (int(access), uid)
-        self.execute(query, params)
-        self.commit()
+from wuxia.db import Database
 
 
 class Story:
@@ -127,12 +82,13 @@ def get_args():
     parser.add_argument('-s', '--story', action='store_true', help='Generate lorem ipsum story')
     parser.add_argument('-c', '--chapters', type=int, default=5, help='Number of chapters to generate')
     parser.add_argument('-t', '--title', default=lipsum.generate_words(1), help='Story title')
+    parser.add_argument('-e', '--execute-script', help='Execute SQL script')
 
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    db = Database()
+    db = Database('instance/wuxia.sqlite')
     args = get_args()
 
     try:
@@ -157,3 +113,8 @@ if __name__ == '__main__':
     if args.story:
         s = Story(title=args.title, chapters=args.chapters)
         s.add_to_db()
+        
+    if args.execute_script:
+        with open(args.execute_script) as f:
+            db.executescript(f.read())
+        print('Database updated.')
