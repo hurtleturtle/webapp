@@ -1,4 +1,5 @@
 {% block form %}
+<!--suppress ALL -->
 <form method="post">
   <div class="form-wrapper">
     {% for key, group in form_groups.items() %}
@@ -18,7 +19,9 @@
                class="{{ item.field_class }}"
                placeholder="{{ item.placeholder }}" type="{{ item.type }}"
                {% if item.required %}required{% endif %} value="{{ item.value }}"
-               autocomplete="{{ item.autocomplete }}"/>
+               autocomplete="{{ item.autocomplete }}"
+               {% if item.multiple %}multiple{% endif %}
+              />
             {% elif item.field_type == "select" %}
             <select name="{{ item.name }}" id="{{ item.id }}"
              value="{{ item.value }}" {% if item.required %}required{% endif %}
