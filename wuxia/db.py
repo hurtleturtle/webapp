@@ -124,7 +124,7 @@ def save_files(challenge_id, files, file_purpose):
     params = []
     for f in files:
         if f.filename:
-            sub_path = f'{file_purpose}/{challenge_id}/{f.filename}'
+            sub_path = f'challenges/{challenge_id}/{file_purpose}/{f.filename}'
             path = get_file_name(sub_path)
             f.save(path)
             params.append((challenge_id, file_purpose, os.path.join('/challenges/files', sub_path)))
