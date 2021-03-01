@@ -312,18 +312,25 @@ div.challenges-container {
     background-color: #e305d6;
     color: white;
 }
-.challenge-description {
+.challenge-left {
     width: 50%;
+    float: left;
+}
+.challenge-right {
+    width: 50%;
+    float: right;
+}
+.challenge-box {
     padding: 0 2rem;
-    margin: 4rem 2rem;
+    margin: 4rem 2rem 2rem;
     border: 1px solid #59028a;
     background-color: #ecd9f7;
     color: #59028a;
 }
-.challenge-description > h2 {
+.challenge-box > h2 {
     text-align: center;
 }
-.challenge-description > h3 {
+.challenge-box > h3 {
     margin: 0;
 }
 textarea.challenge-long-description {
@@ -346,4 +353,12 @@ textarea.challenge-long-description {
 .challenge-sample:hover {
     background-color: #e305d6;
     color: white;
+}
+.challenge-submission {
+    padding: 0;
+    margin: 0 2rem;
+}
+.challenge-submission > form {
+    padding: 0;
+    margin: 0;
 }

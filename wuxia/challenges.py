@@ -21,8 +21,16 @@ def show_challenge(challenge_id):
     challenge = db.get_challenges(challenge_id, columns=['title'])[0]
     description = db.get_challenge_description(challenge_id, ['description'], order_by='sequence_num')
     sample_files = db.get_challenge_files(challenge_id, file_types=['sample'], columns=['file_name'])
+
+    groups = {
+        'answer_files': {
+            'group_title': 'Submit Files',
+            'files': gen_form_item('files', item_type='file', required=True, multiple=True),
+            'submit': gen_form_item('btn-submit', item_type='submit', value='Submit')
+        }
+    }
     return render_template('description.html', challenge=challenge, description_paragraphs=description,
-                           files=sample_files)
+                           files=sample_files, form_groups=groups)
 
 
 @bp.route('/files/<path:path>')
