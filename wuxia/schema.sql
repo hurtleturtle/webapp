@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS chapters;
 DROP TABLE IF EXISTS challenges;
 DROP TABLE IF EXISTS challenge_descriptions;
 DROP TABLE IF EXISTS challenge_files;
+DROP TABLE IF EXISTS challenge_answers;
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,4 +61,13 @@ CREATE TABLE challenge_files (
     type TEXT NOT NULL,
     file_name TEXT NOT NULL,
     FOREIGN KEY (challenge_id) REFERENCES challenges (id)
+);
+
+CREATE TABLE challenge_answers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    challenge_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    attempt INTEGER NOT NULL DEFAULT 1,
+    pass BOOLEAN NOT NULL DEFAULT false,
+    evaluation_result TEXT
 );
