@@ -15,10 +15,19 @@
         <a href="{{ url_for('challenges.show_all') }}">View</a>
         {% if g.user['admin'] in g.admin_levels %}
         <a href="{{ url_for('challenges.add') }}">Add</a>
+        <a href="{{ url_for('challenges.modify') }}">Modify</a>
         {% endif %}
       </div>
     </div>
-    <a href="{{ url_for('misc.cookies') }}">Cookies</a>
+    {% if g.user['admin'] in g.admin_levels %}
+    <div class="dropdown">
+      <span>Testing</span>
+      <div class="dropdown-content">
+        <a href="{{ url_for('misc.cookies') }}">Cookies</a>
+        <a href="{{ url_for('misc.inject') }}">Template Injection</a>
+      </div>
+    </div>
+    {% endif %}
   </div>
   <div class="auth">
     {% if g.user['admin'] in g.admin_levels %}
@@ -26,7 +35,7 @@
       <a href="{{ url_for('users.show_all') }}">Admin</a>
       <div class="dropdown-content">
         <a href="{{ url_for('users.show_all') }}">Users</a>
-        <a href="{{ url_for('misc.inject') }}">Template Injection</a>
+        <a href="{{ url_for('challenges.modify') }}">Challenges</a>
       </div>
     </div>
     {% endif %}
