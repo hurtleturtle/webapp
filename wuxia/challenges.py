@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, escape, flash, redirect, url_for, current_app
-from flask import send_from_directory
-from wuxia.auth import write_admin_required
+from flask import send_from_directory, g
+from wuxia.auth import write_admin_required, redirect_to_referrer
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
 
@@ -31,6 +31,25 @@ def show_challenge(challenge_id):
     }
     return render_template('description.html', challenge=challenge, description_paragraphs=description,
                            files=sample_files, form_groups=groups)
+
+
+def accept_answer(challenge_id):
+    error = ''
+    view = None
+    accept = True
+
+    if not g.user:
+        error = 'You must be logged in to submit answers'
+        view = redirect_to_referrer()
+    elif not g.user['submission_approved']:
+        error = 'Please request approval to submit answers. Hover over your username and hit the button.'
+        view = redirect(url_for('challenges.show_challenge', challenge_id=challenge_id))
+
+    if error:
+        flash(error)
+        accept = False
+
+    return accept, view
 
 
 @bp.route('/files/<path:path>')
