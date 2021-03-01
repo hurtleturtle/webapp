@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Modify Challenges{% endblock %}
+{% block content %}
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Short Description</th>
+        <th>Sample Files</th>
+        <th>Result Files</th>
+        <th>Verification Files</th>
+        <th>Actions</th>
+    </tr>
+    {% for challenge in challenges %}
+    <tr>
+        <td>{{ challenge.id }}</td>
+        <td>{{ challenge.title }}</td>
+        <td>{{ challenge.short_description }}</td>
+        <td>{{ sample_files | join(', ') }}</td>
+        <td>{{ result_files | join(', ') }}</td>
+        <td>{{ verification_files | join(', ') }}</td>
+        <td><a href="{{ url_for('challenges.edit', challenge_id=challenge.id) }}"><i class="fas fa-edit"></i></a></td>
+    </tr>
+</table>
+{% endblock %}
