@@ -17,11 +17,17 @@ def show_all():
 
 @bp.route('/<int:challenge_id>', methods=['GET', 'POST'])
 def show_challenge(challenge_id):
+    if request.method == 'POST':
+        accept, view = accept_answer(challenge_id)
+        if not accept:
+            return view
+
+
+    # GET response
     db = get_db()
     challenge = db.get_challenges(challenge_id, columns=['title'])[0]
     description = db.get_challenge_description(challenge_id, ['description'], order_by='sequence_num')
     sample_files = db.get_challenge_files(challenge_id, file_types=['sample'], columns=['file_name'])
-
     groups = {
         'answer_files': {
             'group_title': 'Submit Files',
