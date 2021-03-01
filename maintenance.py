@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
+import os
 import sqlite3
-import pandas as pd
+from argparse import ArgumentParser
 import lipsum
 from bs4 import BeautifulSoup
-from argparse import ArgumentParser
-import os
-from wuxia.story import add_story_to_db, add_chapters_to_db
 from wuxia.db import Database
+from wuxia.story import add_story_to_db, add_chapters_to_db
+import pandas as pd
 
 
 class Story:
@@ -84,6 +84,8 @@ def get_args():
     parser.add_argument('-t', '--title', default=lipsum.generate_words(1), help='Story title')
     parser.add_argument('-e', '--execute-script', help='Execute SQL script')
     parser.add_argument('-x', '--experiment', action='store_true')
+    parser.add_argument('-q', '--query', help='Execute custom query')
+    parser.add_argument('--commit', help='Commit query changes to database')
 
     return parser.parse_args()
 
@@ -122,3 +124,11 @@ if __name__ == '__main__':
         
     if args.experiment:
         db.add_challenge('A new challenge', 'A very short test challenge', 'Nah\nbro', None, None)
+        
+    if args.query:
+        cur = db.execute(args.query)
+        results = cur.fetchall()
+        df = pd.DataFrame(results, columns=results[0].keys())
+        print(df)
+        if args.commit:
+            db.commit()
