@@ -107,3 +107,11 @@ def add():
     }
     
     return render_template('add.html', form_groups=groups, form_enc="multipart/form-data")
+
+
+@bp.route('/modify', methods=['GET'])
+def modify():
+    db = get_db()
+    challenges = db.get_challenges()
+    challenge_ids = []
+    sample_files = db.get_challenge_files(challenge_id, file_types=['sample'], columns=['file_name'])
