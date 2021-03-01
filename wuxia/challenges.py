@@ -15,7 +15,7 @@ def show_all():
     return render_template('list.html', challenges=challenges)
 
 
-@bp.route('/<int:challenge_id>', methods=['GET'])
+@bp.route('/<int:challenge_id>', methods=['GET', 'POST'])
 def show_challenge(challenge_id):
     db = get_db()
     challenge = db.get_challenges(challenge_id, columns=['title'])[0]
