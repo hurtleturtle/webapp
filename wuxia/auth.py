@@ -183,9 +183,9 @@ def write_admin_required(view):
     return wrapped_view
 
 
-def redirect_to_referrer(url='auth.login'):
+def redirect_to_referrer(url='auth.login', **kwargs):
     referrer = request.full_path
-    return redirect(url_for(url, next=referrer))
+    return redirect(url_for(url, next=referrer, **kwargs))
 
 
 @bp.before_app_request
