@@ -21,5 +21,6 @@
         <td>{{ verification_files | join(', ') }}</td>
         <td><a href="{{ url_for('challenges.edit', challenge_id=challenge.id) }}"><i class="fas fa-edit"></i></a></td>
     </tr>
+    {% endfor %}
 </table>
 {% endblock %}
