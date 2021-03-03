@@ -100,7 +100,7 @@ class Database:
         params = [challenge_id]
 
         if file_types:
-            query += ' AND (' + (' type = ? OR' * len(file_types))[:-3] + ')'
+            query += ' AND (' + ('type = ? OR' * len(file_types))[:-3] + ')'
             params.extend(file_types)
 
         return self.execute(query, params).fetchall()

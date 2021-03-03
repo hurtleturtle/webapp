@@ -113,5 +113,22 @@ def add():
 def modify():
     db = get_db()
     challenges = db.get_challenges()
-    challenge_ids = []
-    sample_files = db.get_challenge_files(challenge_id, file_types=['sample'], columns=['file_name'])
+    challenge_ids = [challenge['id'] for challenge in challenges]
+    sample_files, result_files, verification_files = {}, {}, {}
+
+    def get_filenames(rows):
+        return [row['file_name'] for row in rows]
+
+    for cid in challenge_ids:
+        sample_files[cid] = get_filenames(db.get_challenge_files(cid, file_types=['sample'], columns=['file_name']))
+        result_files[cid] = get_filenames(db.get_challenge_files(cid, file_types=['result'], columns=['file_name']))
+        verification_files[cid] = get_filenames(db.get_challenge_files(cid, file_types=['verifier'],
+                                                                       columns=['file_name']))
+
+    return render_template('modify.html', challenges=challenges, sample_files=sample_files, result_files=result_files,
+                           verification_files=verification_files)
+
+
+@bp.route('/edit/<int:challenge_id>', methods=['GET'])
+def edit(challenge_id):
+    return 'Edit ' + str(challenge_id)

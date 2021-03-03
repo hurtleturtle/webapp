@@ -16,9 +16,9 @@
         <td>{{ challenge.id }}</td>
         <td>{{ challenge.title }}</td>
         <td>{{ challenge.short_description }}</td>
-        <td>{{ sample_files | join(', ') }}</td>
-        <td>{{ result_files | join(', ') }}</td>
-        <td>{{ verification_files | join(', ') }}</td>
+        <td>{{ sample_files[challenge.id] | map('basename') | join(', ') }}</td>
+        <td>{{ result_files[challenge.id] | map('basename') | join(', ') }}</td>
+        <td>{{ verification_files[challenge.id] | map('basename') | join(', ') }}</td>
         <td><a href="{{ url_for('challenges.edit', challenge_id=challenge.id) }}"><i class="fas fa-edit"></i></a></td>
     </tr>
     {% endfor %}
