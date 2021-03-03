@@ -64,6 +64,7 @@ class Database:
         self.add_challenge_description(challenge_id, long_description.splitlines())
         self.add_challenge_files(challenge_id, verifiers, expected_results, samples)
         self.commit()
+        return challenge_id
 
     def add_challenge_description(self, challenge_id, description=(None,)):
         query = 'INSERT INTO challenge_descriptions (challenge_id, sequence_num, description) VALUES (?, ?, ?)'
