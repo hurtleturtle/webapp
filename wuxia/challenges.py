@@ -119,12 +119,44 @@ def modify():
 
 @bp.route('/edit/<int:challenge_id>', methods=['GET'])
 def edit(challenge_id):
-    return 'Edit ' + str(challenge_id)
+    challenges, files, description = get_challenge_data(challenge_id=challenge_id, description=True)
+    challenge = challenges[0]
+    groups = {
+        'details': {
+            'group_title': 'Modify Challenge',
+            'challenge_title': gen_form_item('title', placeholder='Title', value=challenge['title'], required=True),
+            'challenge_short_description': gen_form_item('short_description', placeholder='Short Description',
+                                                         value=challenge['short_description'], required=True),
+            'challenge_description': gen_form_item('long_description', placeholder='Description', required=True,
+                                                   field_class='challenge-long-description', field_type='textarea',
+                                                   textarea_text=description[challenge_id]),
+        },
+        'samples': {
+            'group_title': 'Sample Files',
+            'sample': gen_form_item('sample_files', item_type='file', multiple=True),
+        },
+        'verification': {
+            'group_title': 'Verification Files',
+            'verification': gen_form_item('verification_files', item_type='file', multiple=True)
+        },
+        'results': {
+            'group_title': 'Results Files',
+            'results': gen_form_item('results_files', item_type='file', multiple=True)
+        },
+        'submit': {
+            'button': gen_form_item('btn-submit', item_type='submit',
+                                    value='Change')
+        },
+    }
+
+    # TODO: Add POST handler
+
+    return render_template('add.html', form_groups=groups, form_enc="multipart/form-data")
 
 
-def get_challenge_data(file_types=('sample', 'result', 'verifier'), description=False):
+def get_challenge_data(challenge_id=None, file_types=('sample', 'result', 'verifier'), description=False):
     db = get_db()
-    challenges = db.get_challenges()
+    challenges = db.get_challenges() if not challenge_id else db.get_challenges(challenge_id)
     challenge_ids = [challenge['id'] for challenge in challenges]
     files = {}
     descriptions = {}
@@ -141,6 +173,7 @@ def get_challenge_data(file_types=('sample', 'result', 'verifier'), description=
     if description:
         for cid in challenge_ids:
             paragraphs = db.get_challenge_description(cid, columns=('description',), order_by='sequence_num')
-            descriptions[cid] = '\n'.join(paragraphs)
+            paras = [p['description'] for p in paragraphs]
+            descriptions[cid] = '\n'.join(paras)
 
     return challenges, files, descriptions
