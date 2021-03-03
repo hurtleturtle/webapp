@@ -111,24 +111,36 @@ def add():
 
 @bp.route('/modify', methods=['GET'])
 def modify():
-    db = get_db()
-    challenges = db.get_challenges()
-    challenge_ids = [challenge['id'] for challenge in challenges]
-    sample_files, result_files, verification_files = {}, {}, {}
+    challenges, files, _ = get_challenge_data()
 
-    def get_filenames(rows):
-        return [row['file_name'] for row in rows]
-
-    for cid in challenge_ids:
-        sample_files[cid] = get_filenames(db.get_challenge_files(cid, file_types=['sample'], columns=['file_name']))
-        result_files[cid] = get_filenames(db.get_challenge_files(cid, file_types=['result'], columns=['file_name']))
-        verification_files[cid] = get_filenames(db.get_challenge_files(cid, file_types=['verifier'],
-                                                                       columns=['file_name']))
-
-    return render_template('modify.html', challenges=challenges, sample_files=sample_files, result_files=result_files,
-                           verification_files=verification_files)
+    return render_template('modify.html', challenges=challenges, sample_files=files['sample'],
+                           result_files=files['result'], verification_files=files['verifier'])
 
 
 @bp.route('/edit/<int:challenge_id>', methods=['GET'])
 def edit(challenge_id):
     return 'Edit ' + str(challenge_id)
+
+
+def get_challenge_data(file_types=('sample', 'result', 'verifier'), description=False):
+    db = get_db()
+    challenges = db.get_challenges()
+    challenge_ids = [challenge['id'] for challenge in challenges]
+    files = {}
+    descriptions = {}
+
+    def get_filenames(rows):
+        return [row['file_name'] for row in rows]
+
+    for file_type in file_types:
+        files[file_type] = {}
+        for cid in challenge_ids:
+            files[file_type][cid] = get_filenames(db.get_challenge_files(cid, file_types=[file_type],
+                                                                         columns=['file_name']))
+
+    if description:
+        for cid in challenge_ids:
+            paragraphs = db.get_challenge_description(cid, columns=('description',), order_by='sequence_num')
+            descriptions[cid] = '\n'.join(paragraphs)
+
+    return challenges, files, descriptions
