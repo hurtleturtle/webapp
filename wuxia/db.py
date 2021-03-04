@@ -96,13 +96,16 @@ class Database:
         query += order_query(params, order_by, descending)
         return self.execute(query, params).fetchall()
 
-    def get_challenge_files(self, challenge_id, file_types=None, columns=('*',)):
+    def get_challenge_files(self, challenge_id, user_id=None, file_types=None, columns=('*',)):
         query = get_select_query(columns, 'challenge_files') + ' WHERE challenge_id = ?'
         params = [challenge_id]
 
         if file_types:
             query += ' AND (' + ('type = ? OR' * len(file_types))[:-3] + ')'
             params.extend(file_types)
+        if user_id:
+            query += ' AND user_id = ?'
+            params.append(user_id)
 
         return self.execute(query, params).fetchall()
 
