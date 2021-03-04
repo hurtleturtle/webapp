@@ -13,8 +13,8 @@ client = docker.from_env()
 
 def check_docker_images(image_name='validator:latest', path=None, dockerfile_template=None):
     image = None
-    dockerfile = 'Dockerfile'
-    dockerfile_template = dockerfile_template if dockerfile_template else 'Dockerfile.j2'
+    dockerfile = 'docker_files/Dockerfile'
+    dockerfile_template = dockerfile_template if dockerfile_template else 'docker_files/Dockerfile.j2'
 
     try:
         image = client.images.get(image_name)
@@ -35,7 +35,8 @@ def check_docker_images(image_name='validator:latest', path=None, dockerfile_tem
     return image
 
 
-def generate_entrypoint(user_id, verifier_filename, template='validate.j2', destination='validate.sh'):
+def generate_entrypoint(user_id, verifier_filename, template='docker_files/validate.j2',
+                        destination='docker_files/validate.sh'):
     with open(template) as f1, open(destination, 'w') as f2:
         entrypoint = Template(f1.read())
         f2.write(entrypoint.render(user_id=user_id, verifier_filename=verifier_filename))
@@ -58,7 +59,8 @@ class Validator:
         self.user_file = db.get_challenge_files(challenge_id, user_id=user_id, file_types=['user'],
                                                 columns=['file_name'])
         self.verification_script = 'validate.sh'
-        generate_entrypoint(self.user_id, self.verifier_filename, destination=self.verification_script)
+        generate_entrypoint(self.user_id, self.verifier_filename, destination=os.path.join('docker_files/',
+                                                                                           self.verification_script))
         self.image = check_docker_images()
 
     # TODO: generate output from user code with JSONs and compare to expected output text
