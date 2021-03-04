@@ -1,6 +1,9 @@
 FROM python:3
+SHELL ["/bin/bash", "-lc"]
 RUN apt-get update && apt-get install --yes php nodejs
-RUN mkdir -p /mnt/validation
+RUN mkdir -p /tmp/validation/files
 RUN useradd --non-unique --no-create-home --user-group --shell /bin/bash --uid {{ uid }} webapp
+WORKDIR /tmp/validation
+COPY validate.sh validate.sh
+RUN chown webapp:webapp /tmp/validation validate.sh
 USER webapp
-WORKDIR /mnt/validation
