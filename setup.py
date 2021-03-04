@@ -15,6 +15,7 @@ setup(
         'lxml',
         'click',
         'uwsgi',
-        'docker'
+        'docker',
+        'jinja2'
     ],
 )
