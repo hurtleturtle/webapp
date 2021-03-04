@@ -18,3 +18,4 @@ launch
 run*.sh
 config.py
 docker
+Dockerfile
