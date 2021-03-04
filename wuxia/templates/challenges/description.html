@@ -31,7 +31,13 @@
     </div>
     <div class="challenge-box challenge-results">
         <h2>Results</h2>
-        <p>Your results here.</p>
+        <p>{{ user_result | default('No results to show') }}</p>
+        {% if user_error %}
+        <h2>Errors</h2>
+        {% for e in user_error %}
+        <p>{{ e }}</p>
+        {% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -3,9 +3,11 @@ from flask import current_app
 from flask.cli import with_appcontext
 import click
 import docker
-from docker.errors import ImageNotFound
+from docker.errors import ImageNotFound, ContainerError
 from jinja2 import Template
 import os
+from string import ascii_letters
+from random import choices
 
 
 client = docker.from_env()
@@ -72,12 +74,20 @@ class Validator:
                 'mode': 'rw'
             }
         }
+        container_name = 'validate_c' + str(self.challenge_id) + '_u' + str(self.user_id) + '_' +\
+                         ''.join(choices(ascii_letters, k=8))
 
         results = error = None
         try:
-            results = client.containers.run(image.tags[0], f'./{self.verification_script}', volumes=volumes).decode()
+            results = client.containers.run(image.tags[0], f'./{self.verification_script}', volumes=volumes,
+                                            name=container_name)
+        except ContainerError as e:
+            error = client.containers.get(container_name).logs()
+            error = error.decode().splitlines()
+
         except Exception as e:
             error = e
+
         return results, error
 
     def compare_results(self, user_results):
