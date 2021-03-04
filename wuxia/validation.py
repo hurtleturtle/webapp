@@ -69,7 +69,7 @@ class Validator:
             }
         }
 
-        results = client.containers.run(image.tags[0], f'{self.verification_script}', volumes=volumes).decode()
+        results = client.containers.run(image.tags[0], f'./{self.verification_script}', volumes=volumes).decode()
         return results
 
 
