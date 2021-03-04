@@ -3,6 +3,7 @@ from flask import send_from_directory, g
 from wuxia.auth import write_admin_required, redirect_to_referrer
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
+from wuxia.validation import Validator
 
 
 bp = Blueprint('challenges', __name__, url_prefix='/challenges', template_folder='templates/challenges')
@@ -17,13 +18,6 @@ def show_all():
 
 @bp.route('/<int:challenge_id>', methods=['GET', 'POST'])
 def show_challenge(challenge_id):
-    if request.method == 'POST':
-        accept, view = accept_answer(challenge_id)
-        if not accept:
-            return view
-
-
-    # GET response
     db = get_db()
     challenge = db.get_challenges(challenge_id, columns=['title'])[0]
     description = db.get_challenge_description(challenge_id, ['description'], order_by='sequence_num')
@@ -31,12 +25,28 @@ def show_challenge(challenge_id):
     groups = {
         'answer_files': {
             'group_title': 'Submit Files',
-            'files': gen_form_item('files', item_type='file', required=True, multiple=True),
+            'files': gen_form_item('answer_file', item_type='file', required=True),
             'submit': gen_form_item('btn-submit', item_type='submit', value='Submit')
         }
     }
+
+    if request.method == 'POST':
+        user_id, view = accept_answer(challenge_id)
+        if not user_id:
+            return view
+
+        user_code = request.files['answer_file']
+        db.add_challenge_file(user_code, challenge_id, 'user', str(user_id), user_id=user_id)
+        validator = Validator(challenge_id, user_id)
+        result, error = validator.validate()
+
+        return render_template('description.html', challenge=challenge, description_paragraphs=description,
+                               files=sample_files, form_groups=groups, form_enc='multipart/form-data',
+                               user_result=result, user_error=error)
+
+    # GET response
     return render_template('description.html', challenge=challenge, description_paragraphs=description,
-                           files=sample_files, form_groups=groups)
+                           files=sample_files, form_groups=groups, form_enc='multipart/form-data')
 
 
 def accept_answer(challenge_id):
