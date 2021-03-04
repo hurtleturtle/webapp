@@ -85,7 +85,7 @@ def get_args():
     parser.add_argument('-e', '--execute-script', help='Execute SQL script')
     parser.add_argument('-x', '--experiment', action='store_true')
     parser.add_argument('-q', '--query', help='Execute custom query')
-    parser.add_argument('--commit', help='Commit query changes to database')
+    parser.add_argument('--commit', action='store_true', help='Commit query changes to database')
 
     return parser.parse_args()
 
@@ -128,7 +128,10 @@ if __name__ == '__main__':
     if args.query:
         cur = db.execute(args.query)
         results = cur.fetchall()
-        df = pd.DataFrame(results, columns=results[0].keys())
-        print(df)
+        try:
+            df = pd.DataFrame(results, columns=results[0].keys())
+            print(df)
+        except IndexError:
+            print('No results returned')
         if args.commit:
             db.commit()
