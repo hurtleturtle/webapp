@@ -43,6 +43,10 @@ def generate_entrypoint(user_id, verifier_filename, template='validate.j2', dest
     os.chmod(destination, 0o755)
 
 
+def get_filename(row, column='file_name'):
+    return row[0][column]
+
+
 class Validator:
     def __init__(self, challenge_id, user_id):
         db = get_db()
@@ -69,15 +73,30 @@ class Validator:
             }
         }
 
-        results = client.containers.run(image.tags[0], f'./{self.verification_script}', volumes=volumes).decode()
-        return results
+        results = error = None
+        try:
+            results = client.containers.run(image.tags[0], f'./{self.verification_script}', volumes=volumes).decode()
+        except Exception as e:
+            error = e.message
+        return results, error
+
+    def compare_results(self, user_results):
+        result_file = get_filename(self.results)
+        with open(result_file) as f:
+            results = f.read()
+
+        return user_results.strip() == results.strip()
+    
+    def validate(self):
+        results, error = self.generate_user_output()
+        return self.compare_results(results), error
 
 
 @click.command('check-validator')
 @with_appcontext
 def check_validator():
     v = Validator(1, 1)
-    print(v.generate_user_output())
+    print(v.validate())
 
 
 def init_app(app):
