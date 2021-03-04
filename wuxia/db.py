@@ -80,6 +80,16 @@ class Database:
 
         self.executemany(query, params)
 
+    def add_challenge_file(self, new_file, challenge_id, file_type, file_name, user_id=None):
+        query = 'INSERT INTO challenge_files (challenge_id, type, file_name' + ', user_id)' if user_id else ')'
+        query += ' VALUES (?, ?, ?' + ', ?)' if user_id else ')'
+        params = save_files(challenge_id, [new_file], file_type, file_name)[0]
+        if user_id:
+            params.append(user_id)
+
+        self.execute(query, params)
+        self.commit()
+
     def get_challenges(self, challenge_id=None, columns=('*',), order_by=None, descending=False):
         query = get_select_query(columns, 'challenges')
         params = []
@@ -124,14 +134,15 @@ def get_select_query(columns, table):
     return 'SELECT ' + ', '.join(columns) + ' FROM ' + table
 
 
-def save_files(challenge_id, files, file_purpose):
+def save_files(challenge_id, files, file_purpose, file_name=None):
     params = []
     for f in files:
         if f.filename:
-            sub_path = f'challenges/{challenge_id}/{file_purpose}/{f.filename}'
+            file_name = file_name if file_name else f.filename
+            sub_path = f'challenges/{challenge_id}/{file_purpose}/{file_name}'
             path = get_file_name(sub_path)
             f.save(path)
-            params.append((challenge_id, file_purpose, os.path.join('/challenges/files', sub_path)))
+            params.append([challenge_id, file_purpose, os.path.join('/challenges/files', sub_path)])
 
     return params
 
