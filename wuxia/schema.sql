@@ -44,7 +44,8 @@ CREATE TABLE challenges (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     title TEXT NOT NULL,
-    short_description TEXT NOT NULL
+    short_description TEXT NOT NULL,
+    verifier_filename TEXT NOT NULL
 );
 
 CREATE TABLE challenge_descriptions (
