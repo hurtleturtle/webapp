@@ -85,7 +85,7 @@ class Validator:
         with open(result_file) as f:
             results = f.read()
 
-        return user_results.strip() == results.strip()
+        return user_results.strip() == results.strip() if user_results else False
     
     def validate(self):
         results, error = self.generate_user_output()
