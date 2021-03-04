@@ -14,6 +14,7 @@ setup(
         'bs4',
         'lxml',
         'click',
-        'uwsgi'
+        'uwsgi',
+        'docker'
     ],
 )
