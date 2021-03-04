@@ -59,9 +59,11 @@ CREATE TABLE challenge_descriptions (
 CREATE TABLE challenge_files (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     challenge_id INTEGER NOT NULL,
+    user_id INTEGER DEFAULT 0,
     type TEXT NOT NULL,
     file_name TEXT NOT NULL,
-    FOREIGN KEY (challenge_id) REFERENCES challenges (id)
+    FOREIGN KEY (challenge_id) REFERENCES challenges (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE challenge_answers (
