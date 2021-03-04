@@ -1,6 +1,6 @@
 FROM python:3
 RUN apt-get update && apt-get install --yes php nodejs
 RUN mkdir -p /mnt/validation
-RUN adduser webapp --no-create-home --uid {{ uid }} --gid {{ gid }}
+RUN useradd --non-unique --no-create-home --user-group --shell /bin/bash --uid {{ uid }} webapp
 USER webapp
 WORKDIR /mnt/validation
