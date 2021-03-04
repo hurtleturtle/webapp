@@ -57,9 +57,11 @@ def accept_answer(challenge_id):
     if not g.user:
         error = 'You must be logged in to submit answers'
         view = redirect_to_referrer()
-    elif not g.user['submission_approved']:
-        error = 'Please request approval to submit answers. Hover over your username and hit the button.'
-        view = redirect(url_for('challenges.show_challenge', challenge_id=challenge_id))
+    # elif not g.user['submission_approved']:
+    #     error = 'Please request approval to submit answers. Hover over your username and hit the button.'
+    #     view = redirect(url_for('challenges.show_challenge', challenge_id=challenge_id))
+    else:
+        accept = g.user['id']
 
     if error:
         flash(error)
