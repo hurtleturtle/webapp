@@ -63,8 +63,6 @@ class Validator:
                                                                                            self.verification_script))
         self.image = check_docker_images()
 
-    # TODO: generate output from user code with JSONs and compare to expected output text
-    @with_appcontext
     def generate_user_output(self,  image=None):
         image = image if image else self.image
         challenge_folder = os.path.join(current_app.instance_path, 'challenges/', str(self.challenge_id))
@@ -79,7 +77,7 @@ class Validator:
         try:
             results = client.containers.run(image.tags[0], f'./{self.verification_script}', volumes=volumes).decode()
         except Exception as e:
-            error = e.message
+            error = e
         return results, error
 
     def compare_results(self, user_results):
