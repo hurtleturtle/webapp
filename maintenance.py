@@ -111,7 +111,8 @@ if __name__ == '__main__':
         db.set_story_access(user['id'], False)
 
     if args.list:
-        print(db.get_users())
+        users = db.get_users()
+        print(pd.DataFrame(users, columns=users[0].keys()))
 
     if args.story:
         s = Story(title=args.title, chapters=args.chapters)
