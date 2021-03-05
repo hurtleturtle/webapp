@@ -27,7 +27,8 @@ def check_docker_images(image_name='validator:latest', path=None, dockerfile_tem
 
         completed_template = template.render(uid=str(os.getuid()))
         print(completed_template)
-        with current_app.open_resource(dockerfile, 'w') as f:
+        write_path = os.path.join(current_app.root_path, dockerfile)
+        with open(write_path, 'w') as f:
             f.write(completed_template)
 
         path = path if path else os.getcwd()
@@ -39,7 +40,8 @@ def check_docker_images(image_name='validator:latest', path=None, dockerfile_tem
 
 def generate_entrypoint(user_id, verifier_filename, template='docker_files/validate.j2',
                         destination='docker_files/validate.sh'):
-    with current_app.open_resource(template) as f1, current_app.open_resource(destination, 'w') as f2:
+    write_destination = os.path.join(current_app.root_path, destination)
+    with current_app.open_resource(template) as f1, open(write_destination, 'w') as f2:
         entrypoint = Template(f1.read())
         f2.write(entrypoint.render(user_id=user_id, verifier_filename=verifier_filename))
 
