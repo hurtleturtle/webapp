@@ -91,7 +91,7 @@ def add():
         challenge_id = db.add_challenge(title, short_description, long_description, verification_file_name, verifiers,
                                         results, samples)
         flash(f'Challenge: "{title}" added to database')
-        return redirect(url_for('challenges.add'))
+        return redirect(url_for('challenges.show_all'))
 
     groups = {
         'details': {
