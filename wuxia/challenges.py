@@ -21,7 +21,7 @@ def show_challenge(challenge_id):
     db = get_db()
     challenge = db.get_challenges(challenge_id, columns=['title'])[0]
     description = db.get_challenge_description(challenge_id, ['description'], order_by='sequence_num')
-    sample_files = db.get_challenge_files(challenge_id, file_types=['sample'], columns=['file_name'])
+    sample_files = db.get_challenge_file_urls(challenge_id, file_types=['sample'])
     groups = {
         'answer_files': {
             'group_title': 'Submit Files',
