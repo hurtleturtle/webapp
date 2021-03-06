@@ -59,10 +59,9 @@ class Validator:
         self.user_id = user_id
         self.challenge_parent_folder = challenge_parent_folder
         self.verifier_filename = db.get_challenges(challenge_id, ['verifier_filename'])[0]['verifier_filename']
-        self.verifiers = db.get_challenge_files(challenge_id, file_types=['verifier'], columns=['file_name'])
-        self.results = db.get_challenge_files(challenge_id, file_types=['result'], columns=['file_name'])
-        self.user_file = db.get_challenge_files(challenge_id, user_id=user_id, file_types=['user'],
-                                                columns=['file_name'])
+        self.verifiers = db.get_challenge_file_paths(challenge_id, file_types=['verifier'])
+        self.results = db.get_challenge_file_paths(challenge_id, file_types=['result'])
+        self.user_file = db.get_challenge_file_paths(challenge_id, user_id=user_id, file_types=['user'])
         self.verification_script = 'validate.sh'
         generate_entrypoint(self.user_id, self.verifier_filename, destination=os.path.join('docker_files/',
                                                                                            self.verification_script))
@@ -95,8 +94,7 @@ class Validator:
         return results, error
 
     def compare_results(self, user_results):
-        result_file = get_filename(self.results)
-        with open(result_file) as f:
+        with open(self.results[0]) as f:
             results = f.read()
 
         return user_results.strip() == results.strip() if user_results else False
