@@ -56,9 +56,10 @@ class Database:
         self.execute(query, params)
         self.commit()
 
-    def add_challenge(self, title, short_description, long_description, verifiers, expected_results, samples=None):
-        query = 'INSERT INTO challenges (title, short_description) VALUES (?, ?)'
-        params = (title, short_description)
+    def add_challenge(self, title, short_description, long_description, verification_file_name, verifiers,
+                      expected_results, samples=None):
+        query = 'INSERT INTO challenges (title, short_description, verifier_filename) VALUES (?, ?, ?)'
+        params = (title, short_description, verification_file_name)
         cursor = self.execute(query, params)
         challenge_id = cursor.lastrowid
         

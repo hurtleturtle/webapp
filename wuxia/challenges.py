@@ -83,11 +83,13 @@ def add():
         title = escape(form.get('title'))
         short_description = escape(form.get('short_description'))
         long_description = escape(form.get('long_description'))
+        verification_file_name = escape(form.get('verification_file_name'))
         samples = request.files.getlist('sample_files')
         verifiers = request.files.getlist('verification_files')
         results = request.files.getlist('results_files')
         db = get_db()
-        db.add_challenge(title, short_description, long_description, verifiers, results, samples)
+        challenge_id = db.add_challenge(title, short_description, long_description, verification_file_name, verifiers,
+                                        results, samples)
         flash(f'Challenge: "{title}" added to database')
         return redirect(url_for('challenges.add'))
 
@@ -106,6 +108,8 @@ def add():
         },
         'verification': {
             'group_title': 'Verification Files',
+            'verification_file_name': gen_form_item('verification_file_name', placeholder='Verification File Name',
+                                                  required=True),
             'verification': gen_form_item('verification_files', item_type='file', multiple=True)
         },
         'results': {
