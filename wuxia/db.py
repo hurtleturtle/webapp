@@ -22,6 +22,7 @@ class Database:
         self.close = self.db.close
         self.executemany = self.db.executemany
         self.executescript = self.db.executescript
+        self.challenge_parent_folder = 'challenges'
 
     def make_admin(self, uid, admin_level=0):
         levels = {0: 'no', 1: 'read', 2: 'read-write'}
@@ -73,17 +74,17 @@ class Database:
 
     def add_challenge_files(self, challenge_id, verifiers, expected_results, samples=None):
         query = 'INSERT INTO challenge_files (challenge_id, type, file_name) VALUES (?, ?, ?)'
-        params = save_files(challenge_id, verifiers, 'verifier')
-        params.extend(save_files(challenge_id, expected_results, 'result'))
+        params = save_files(challenge_id, verifiers, 'verifier', self.challenge_parent_folder)
+        params.extend(save_files(challenge_id, expected_results, 'result', self.challenge_parent_folder))
         if samples:
-            params.extend(save_files(challenge_id, samples, 'sample'))
+            params.extend(save_files(challenge_id, samples, 'sample', self.challenge_parent_folder))
 
         self.executemany(query, params)
 
     def add_challenge_file(self, new_file, challenge_id, file_type, file_name, user_id=None):
         query = 'INSERT INTO challenge_files (challenge_id, type, file_name' + ', user_id)' if user_id else ')'
         query += ' VALUES (?, ?, ?' + ', ?)' if user_id else ')'
-        params = save_files(challenge_id, [new_file], file_type, file_name)[0]
+        params = save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, file_name)[0]
         if user_id:
             params.append(user_id)
 
@@ -134,12 +135,12 @@ def get_select_query(columns, table):
     return 'SELECT ' + ', '.join(columns) + ' FROM ' + table
 
 
-def save_files(challenge_id, files, file_purpose, file_name=None):
+def save_files(challenge_id, files, file_purpose, parent_folder, file_name=None):
     params = []
     for f in files:
         if f.filename:
             file_name = file_name if file_name else f.filename
-            path = get_file_path(challenge_id, file_purpose, file_name)
+            path = get_file_path(challenge_id, file_purpose, file_name, parent_folder)
             f.save(path)
             params.append([challenge_id, file_purpose, basename(path)])
 
