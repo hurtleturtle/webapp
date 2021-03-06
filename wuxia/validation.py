@@ -53,10 +53,11 @@ def get_filename(row, column='file_name'):
 
 
 class Validator:
-    def __init__(self, challenge_id, user_id):
+    def __init__(self, challenge_id, user_id, challenge_parent_folder='challenges'):
         db = get_db()
         self.challenge_id = challenge_id
         self.user_id = user_id
+        self.challenge_parent_folder = challenge_parent_folder
         self.verifier_filename = db.get_challenges(challenge_id, ['verifier_filename'])[0]['verifier_filename']
         self.verifiers = db.get_challenge_files(challenge_id, file_types=['verifier'], columns=['file_name'])
         self.results = db.get_challenge_files(challenge_id, file_types=['result'], columns=['file_name'])
@@ -67,9 +68,10 @@ class Validator:
                                                                                            self.verification_script))
         self.image = check_docker_images()
 
-    def generate_user_output(self,  image=None):
+    def generate_user_output(self,  image=None, challenge_parent_folder='challenges'):
         image = image if image else self.image
-        challenge_folder = os.path.join(current_app.instance_path, 'challenges/', str(self.challenge_id))
+        challenge_parent_folder = challenge_parent_folder if challenge_parent_folder else self.challenge_parent_folder
+        challenge_folder = os.path.join(current_app.instance_path, challenge_parent_folder, str(self.challenge_id))
         volumes = {
             challenge_folder: {
                 'bind': '/tmp/validation/files',
