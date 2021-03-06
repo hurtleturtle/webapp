@@ -120,6 +120,24 @@ class Database:
 
         return self.execute(query, params).fetchall()
 
+    def get_challenge_file_paths(self, challenge_id, file_types=None, user_id=None):
+        file_types = file_types if file_types else ['sample']
+        files = self.get_challenge_files(challenge_id, user_id=user_id, file_types=file_types,
+                                         columns=('type', 'file_name'))
+        full_paths = []
+        
+        for f in files:
+            path = get_file_path(challenge_id, f['type'], f['file_name'], self.challenge_parent_folder)
+            full_paths.append(path)
+
+        return full_paths
+
+    def get_challenge_file_urls(self, challenge_id, file_types=None, url_prefix='/challenges/files'):
+        files = self.get_challenge_file_paths(challenge_id, file_types)
+        parent_folder = current_app.instance_path
+        urls = [f.replace(parent_folder, url_prefix) for f in files]
+        return urls
+
 
 def order_query(params, order, descending):
     if order:
