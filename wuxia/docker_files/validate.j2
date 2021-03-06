@@ -1,11 +1,14 @@
 #!/bin/bash
 
 VERIFIER_FILES=files/verifier/*
+VERIFICATION_FILE="$1"
 USER_FILE=files/user/{{ user_id }}
+
+chmod u+x "$USER_FILE"
 
 # shellcheck disable=SC1073
 for f in $VERIFIER_FILES;
 do
-  cp "$f" {{ verifier_filename }};
+  cp "$f" "$VERIFICATION_FILE";
   ./"$USER_FILE";
 done;

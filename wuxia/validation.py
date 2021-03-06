@@ -82,8 +82,8 @@ class Validator:
 
         results = error = None
         try:
-            results = client.containers.run(image.tags[0], f'./{self.verification_script}', volumes=volumes,
-                                            name=container_name)
+            results = client.containers.run(image.tags[0], f'./{self.verification_script} {self.verifier_filename}',
+                                            volumes=volumes, name=container_name).decode()
         except ContainerError as e:
             error = client.containers.get(container_name).logs()
             error = error.decode().splitlines()
