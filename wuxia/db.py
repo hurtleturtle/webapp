@@ -139,14 +139,20 @@ def save_files(challenge_id, files, file_purpose, file_name=None):
     for f in files:
         if f.filename:
             file_name = file_name if file_name else f.filename
-            sub_path = f'challenges/{challenge_id}/{file_purpose}/{file_name}'
-            path = get_file_name(sub_path)
+            path = get_file_path(challenge_id, file_purpose, file_name)
             f.save(path)
-            params.append([challenge_id, file_purpose, os.path.join('/challenges/files', sub_path)])
+            params.append([challenge_id, file_purpose, basename(path)])
 
     return params
 
 
+def get_file_path(challenge_id, purpose, file_name, parent_folder='challenges'):
+    path = os.path.join(current_app.instance_path, parent_folder, str(challenge_id), purpose)
+    path = make_folder(os.path.join(path, secure_filename(file_name)))
+    return path
+
+
+# TODO: build filename dynamically
 def get_file_name(sub_path):
     instance_path = current_app.instance_path
     filename = secure_filename(basename(sub_path))
