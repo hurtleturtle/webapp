@@ -32,11 +32,11 @@ class Database:
         self.commit()
 
     def get_users(self, columns=('*',)):
-        users = self.execute(get_select_query(columns, 'users')).fetchall()
+        users = self.execute(select(columns, 'users')).fetchall()
         return users
 
     def get_user(self, uid=None, name=None, columns=('*',)):
-        query = get_select_query(columns, 'users') + ' WHERE '
+        query = select(columns, 'users') + ' WHERE '
         params = tuple()
 
         if uid:
@@ -93,7 +93,7 @@ class Database:
         self.commit()
 
     def get_challenges(self, challenge_id=None, columns=('*',), order_by=None, descending=False):
-        query = get_select_query(columns, 'challenges')
+        query = select(columns, 'challenges')
         params = []
         if challenge_id:
             query += ' WHERE id = ?'
@@ -103,13 +103,13 @@ class Database:
         return self.execute(query, params).fetchall()
 
     def get_challenge_description(self, challenge_id, columns=('*',), order_by=None, descending=False):
-        query = get_select_query(columns, 'challenge_descriptions') + ' WHERE challenge_id = ?'
+        query = select(columns, 'challenge_descriptions') + ' WHERE challenge_id = ?'
         params = [challenge_id]
         query += order_query(params, order_by, descending)
         return self.execute(query, params).fetchall()
 
     def get_challenge_files(self, challenge_id, user_id=None, file_types=None, columns=('*',)):
-        query = get_select_query(columns, 'challenge_files') + ' WHERE challenge_id = ?'
+        query = select(columns, 'challenge_files') + ' WHERE challenge_id = ?'
         params = [challenge_id]
 
         if file_types:
@@ -183,7 +183,7 @@ def order_query(params, order, descending):
     return q
 
 
-def get_select_query(columns, table):
+def select(columns, table):
     return 'SELECT ' + ', '.join(columns) + ' FROM ' + table
 
 
