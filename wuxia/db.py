@@ -195,6 +195,7 @@ def save_files(challenge_id, files, file_purpose, parent_folder, file_name=None)
             path = get_file_path(challenge_id, file_purpose, file_name, parent_folder)
             f.save(path)
             params.append([challenge_id, file_purpose, basename(path)])
+            file_name = None
 
     return params
 
