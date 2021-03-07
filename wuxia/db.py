@@ -83,14 +83,17 @@ class Database:
         self.executemany(query, params)
 
     def add_challenge_file(self, new_file, challenge_id, file_type, file_name, user_id=None):
-        query = 'INSERT INTO challenge_files (challenge_id, type, file_name' + ', user_id)' if user_id else ')'
-        query += ' VALUES (?, ?, ?' + ', ?)' if user_id else ')'
-        params = save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, file_name)[0]
-        if user_id:
-            params.append(user_id)
-
-        self.execute(query, params)
-        self.commit()
+        # Check whether user code file already exists
+        if user_id and self.get_challenge_files(challenge_id, user_id, ['user']):
+            return save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, file_name)[0]
+        else:
+            query = 'INSERT INTO challenge_files (challenge_id, type, file_name' + ', user_id)' if user_id else ')'
+            query += ' VALUES (?, ?, ?' + ', ?)' if user_id else ')'
+            params = save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, file_name)[0]
+            if user_id:
+                params.append(user_id)
+            self.execute(query, params)
+            self.commit()
 
     def get_challenges(self, challenge_id=None, columns=('*',), order_by=None, descending=False):
         query = select(columns, 'challenges')
