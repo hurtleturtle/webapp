@@ -139,6 +139,39 @@ class Database:
         urls = [f.replace(parent_folder, url_prefix) for f in files]
         return urls
 
+    def delete_challenge(self, challenge_id):
+        query = 'DELETE FROM challenges WHERE id = ?'
+        params = [challenge_id]
+        self.execute(query, params)
+        self.delete_challenge_files(challenge_id)
+        self.delete_challenge_description(challenge_id)
+        self.commit()
+
+    def delete_challenge_description(self, challenge_id, seq=None, commit=False):
+        query = 'DELETE FROM challenge_descriptions WHERE challenge_id = ?'
+        params = [challenge_id]
+        if seq:
+            query += ' AND sequence_num = ?'
+            params.append(seq)
+
+        self.execute(query, params)
+        if commit:
+            self.commit()
+
+    def delete_challenge_files(self, challenge_id, file_types=None, user_id=None, commit=False):
+        query = 'DELETE FROM challenge_files WHERE challenge_id = ?'
+        params = [challenge_id]
+        if file_types:
+            query += ' AND (' + ('type = ? OR' * len(file_types))[:-3] + ')'
+            params.extend(file_types)
+        if user_id:
+            query += ' AND user_id = ?'
+            params.append(user_id)
+
+        self.execute(query, params)
+        if commit:
+            self.commit()
+
 
 def order_query(params, order, descending):
     if order:

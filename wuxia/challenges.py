@@ -49,6 +49,7 @@ def show_challenge(challenge_id):
                            files=sample_files, form_groups=groups, form_enc='multipart/form-data')
 
 
+# TODO: handle approval requests
 def accept_answer(challenge_id):
     error = ''
     view = None
@@ -109,7 +110,7 @@ def add():
         'verification': {
             'group_title': 'Verification Files',
             'verification_file_name': gen_form_item('verification_file_name', placeholder='Verification File Name',
-                                                  required=True),
+                                                    required=True),
             'verification': gen_form_item('verification_files', item_type='file', multiple=True)
         },
         'results': {
@@ -131,6 +132,15 @@ def modify():
 
     return render_template('modify.html', challenges=challenges, sample_files=files['sample'],
                            result_files=files['result'], verification_files=files['verifier'])
+
+
+@bp.route('/delete', methods=['GET'])
+@write_admin_required
+def delete():
+    challenge_id = request.args.get('challenge_id')
+    db = get_db()
+    db.delete_challenge(challenge_id)
+    return redirect(url_for('challenges.modify'))
 
 
 @bp.route('/edit/<int:challenge_id>', methods=['GET'])

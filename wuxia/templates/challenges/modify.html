@@ -19,7 +19,10 @@
         <td>{{ sample_files[challenge.id] | map('basename') | join(', ') }}</td>
         <td>{{ result_files[challenge.id] | map('basename') | join(', ') }}</td>
         <td>{{ verification_files[challenge.id] | map('basename') | join(', ') }}</td>
-        <td><a href="{{ url_for('challenges.edit', challenge_id=challenge.id) }}"><i class="fas fa-edit"></i></a></td>
+        <td>
+            <a href="{{ url_for('challenges.edit', challenge_id=challenge.id) }}"><i class="fas fa-edit"></i></a>
+            <a href="{{ url_for('challenges.delete', challenge_id=challenge.id) }}"><i class="fas fa-trash"></i></a>
+        </td>
     </tr>
     {% endfor %}
 </table>
