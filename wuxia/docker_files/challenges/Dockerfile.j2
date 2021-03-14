@@ -4,6 +4,6 @@ RUN apt-get update && apt-get install --yes php nodejs
 RUN mkdir -p /tmp/validation/files
 RUN useradd --non-unique --no-create-home --user-group --shell /bin/bash --uid {{ uid }} webapp
 WORKDIR /tmp/validation
-COPY docker_files/validate.sh validate.sh
+COPY docker_files/challenges/validate.sh validate.sh
 RUN chown webapp:webapp /tmp/validation validate.sh
 USER webapp
