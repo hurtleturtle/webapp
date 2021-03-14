@@ -22,19 +22,19 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
-    from . import auth
+    from wuxia.routes import auth
     app.register_blueprint(auth.bp)
 
-    from . import users
+    from wuxia.routes import users
     app.register_blueprint(users.bp)
 
-    from . import story
+    from wuxia.routes import story
     app.register_blueprint(story.bp)
-    
-    from . import misc
+
+    from wuxia.routes import misc
     app.register_blueprint(misc.bp)
-    
-    from . import challenges
+
+    from wuxia.routes import challenges
     app.register_blueprint(challenges.bp)
 
     from . import validation

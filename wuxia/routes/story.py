@@ -2,9 +2,9 @@ from flask import Blueprint, flash, render_template, request, url_for
 from flask import redirect, current_app, escape, g
 from werkzeug.utils import secure_filename
 from wuxia.db import get_db
-from wuxia.auth import approval_required, write_admin_required
+from wuxia.routes.auth import approval_required, write_admin_required
 from wuxia.forms import gen_form_item
-from wuxia.chapters import get_soup, get_chapters, get_heading
+from wuxia.routes.chapters import get_soup, get_chapters, get_heading
 import os
 
 

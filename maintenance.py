@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 import lipsum
 from bs4 import BeautifulSoup
 from wuxia.db import Database
-from wuxia.story import add_story_to_db, add_chapters_to_db
+from wuxia.routes.story import add_story_to_db, add_chapters_to_db
 import pandas as pd
 
 

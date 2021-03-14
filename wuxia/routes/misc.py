@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, render_template_string
-from wuxia.auth import admin_required
+from wuxia.routes.auth import admin_required
 
 
 bp = Blueprint('misc', __name__, template_folder='templates/misc')

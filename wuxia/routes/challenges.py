@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, escape, flash, redirect, url_for, current_app
 from flask import send_from_directory, g
-from wuxia.auth import write_admin_required, redirect_to_referrer
+from wuxia.routes.auth import write_admin_required, redirect_to_referrer
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
 from wuxia.validation import Validator
