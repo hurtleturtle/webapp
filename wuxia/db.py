@@ -215,9 +215,11 @@ def save_files(challenge_id, files, file_purpose, parent_folder, file_name=None)
     return params
 
 
-def get_file_path(challenge_id, purpose, file_name, parent_folder):
+def get_file_path(challenge_id, purpose, file_name, parent_folder, make_folders=True):
     path = os.path.join(current_app.instance_path, parent_folder, str(challenge_id), purpose)
-    path = make_folder(os.path.join(path, secure_filename(file_name)))
+    path = os.path.join(path, secure_filename(file_name))
+    if make_folders:
+        return make_folder(path)
     return path
 
 
