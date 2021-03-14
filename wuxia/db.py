@@ -1,10 +1,11 @@
 import sqlite3
 import click
-from flask import current_app, g
+from flask import current_app, g, flash
 from flask.cli import with_appcontext
 from os.path import dirname, basename
 import os
 from werkzeug.utils import secure_filename
+from shutil import rmtree
 
 
 def connect(path):
@@ -149,6 +150,17 @@ class Database:
         self.delete_challenge_files(challenge_id)
         self.delete_challenge_description(challenge_id)
         self.commit()
+        flash(f'Deleted challenge {challenge_id} from database.')
+        # Remove challenge files from file system
+        try:
+            challenge_id = int(challenge_id)
+            challenge_folder = os.path.join(current_app.instance_path, self.challenge_parent_folder, str(challenge_id))
+            rmtree(challenge_folder)
+            flash(f'Deleted files for challenge {challenge_id}.')
+        except ValueError:
+            flash(f'Could not delete files for challenge {challenge_id}.')
+        except FileNotFoundError:
+            pass
 
     def delete_challenge_description(self, challenge_id, seq=None, commit=False):
         query = 'DELETE FROM challenge_descriptions WHERE challenge_id = ?'
