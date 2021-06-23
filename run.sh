@@ -1,4 +1,5 @@
 #!/bin/bash
 
-source $0/venv/bin/activate
-echo "uwsgi --socket localhost:8000 --wsgi-app $0/wsgi.py"
+source $PWD/venv/bin/activate
+pkill uwsgi
+echo "uwsgi --socket 192.168.1.224:5000 --wsgi-file $PWD/wsgi.py"
