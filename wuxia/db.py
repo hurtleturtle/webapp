@@ -1,4 +1,4 @@
-import sqlite3
+import mysql.connector
 import click
 from flask import current_app, g, flash
 from flask.cli import with_appcontext
@@ -6,24 +6,32 @@ from os.path import dirname, basename
 import os
 from werkzeug.utils import secure_filename
 from shutil import rmtree
-
-
-def connect(path):
-    conn = sqlite3.connect(path, detect_types=sqlite3.PARSE_DECLTYPES)
-    conn.row_factory = sqlite3.Row
-    return conn
+from getpass import getpass
 
 
 class Database:
-    def __init__(self, path=None):
-        path = path if path else current_app.config['DATABASE']
-        self.db = connect(path)
-        self.execute = self.db.execute
+    def __init__(self, db_name='wuxia'):
+        self.db_name = db_name
+        self.db = self.connect()
+        self.cursor = self.db.cursor()
+        self.execute = self.cursor.execute
         self.commit = self.db.commit
         self.close = self.db.close
-        self.executemany = self.db.executemany
-        self.executescript = self.db.executescript
+        self.executemany = self.cursor.executemany
+        self.executescript = self.cursor.executescript
         self.challenge_parent_folder = 'challenges'
+
+    def connect(self, db_host=None, db_user=None):
+        db_host = db_host if db_host else current_app.config['DATABASE_HOST']
+        db_user = db_user if db_user else current_app.config['DATABASE_USER']
+        db_pass = current_app.config['DATABASE_PASS'] if current_app.config['DATABASE_PASS'] else getpass('Enter database password: ')
+        connection = mysql.connector.connect(
+            host=db_host,
+            user=db_user,
+            password=db_pass,
+            database=self.db_name
+        )
+        return connection
 
     def make_admin(self, uid, admin_level=0):
         levels = {0: 'no', 1: 'read', 2: 'read-write'}
