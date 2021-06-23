@@ -18,7 +18,6 @@ class Database:
         self.commit = self.db.commit
         self.close = self.db.close
         self.executemany = self.cursor.executemany
-        self.executescript = self.cursor.executescript
         self.challenge_parent_folder = 'challenges'
 
     def connect(self, db_host=None, db_user=None):
@@ -32,6 +31,10 @@ class Database:
             database=self.db_name
         )
         return connection
+
+    def executescript(self, script):
+        self.execute(script, multi=True)
+        self.commit()
 
     def make_admin(self, uid, admin_level=0):
         levels = {0: 'no', 1: 'read', 2: 'read-write'}
