@@ -15,7 +15,6 @@ dist/
 build/
 *.egg-info/
 launch
-run*.sh
 config.py
 docker
 Dockerfile
