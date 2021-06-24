@@ -19,6 +19,7 @@ class Database:
         self.close = self.db.close
         self.executemany = self.cursor.executemany
         self.challenge_parent_folder = 'challenges'
+        self.check_schema()
 
     def connect(self, db_host=None, db_user=None):
         db_host = db_host if db_host else current_app.config['DATABASE_HOST']
@@ -33,8 +34,20 @@ class Database:
         return connection
 
     def executescript(self, script):
-        self.execute(script, multi=True)
+        for result in self.execute(script, multi=True):
+            print(result)
         self.commit()
+
+    def check_schema(self):
+        query = 'SELECT table_name FROM information_schema.tables WHERE table_schema = %s'
+        params = ('wuxia',)
+        self.execute(query, params)
+        tables = self.cursor.fetchall()
+        print(f'Currently existing tables: {tables}')
+
+        if len(tables) != 7:
+            with current_app.open_resource('schema.sql') as f:
+                self.executescript(f.read().decode('utf8'))
 
     def make_admin(self, uid, admin_level=0):
         levels = {0: 'no', 1: 'read', 2: 'read-write'}
