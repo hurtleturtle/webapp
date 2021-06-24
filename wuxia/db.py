@@ -7,6 +7,7 @@ import os
 from werkzeug.utils import secure_filename
 from shutil import rmtree
 from getpass import getpass
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class Database:
@@ -76,6 +77,13 @@ class Database:
 
         self.execute(query, params)
         return self.cursor.fetchone()
+
+    def add_user(self, username, password, admin_level='no'):
+        query = 'INSERT INTO users (username, password, admin) VALUES (?, ?, ?)'
+        params = (username, generate_password_hash(password), admin_level)
+        self.execute(query, params)
+        self.commit()
+
 
     def set_story_access(self, uid, access=True):
         query = 'UPDATE users SET access_approved = ? WHERE id = ?'
