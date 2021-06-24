@@ -84,6 +84,12 @@ class Database:
         self.execute(query, params)
         self.commit()
 
+    def update_user_access_time(self, uid):
+        query = 'UPDATE users SET last_access = CURRENT_TIMESTAMP WHERE id = ?'
+        params = (uid,)
+        self.execute(query, params)
+        self.commit()
+
 
     def set_story_access(self, uid, access=True):
         query = 'UPDATE users SET access_approved = ? WHERE id = ?'

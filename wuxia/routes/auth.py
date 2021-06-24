@@ -45,8 +45,7 @@ def login():
         password = escape(request.form['password'])
         db = get_db()
         error = None
-        user = db.execute('SELECT * FROM users WHERE username = ?',
-                          (username,)).fetchone()
+        user = db.get_user(name=username)
 
         if user is None:
             error = 'Incorrect username.'
@@ -102,8 +101,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute('SELECT * FROM users WHERE id = ?',
-                                  (user_id,)).fetchone()
+        g.user = get_db().get_user(uid=user_id)
 
 
 @bp.before_app_request
@@ -189,8 +187,4 @@ def redirect_to_referrer(url='auth.login', **kwargs):
 def update_access_time():
     if g.user is not None:
         db = get_db()
-        db.execute(
-            'UPDATE users SET last_access = CURRENT_TIMESTAMP WHERE id = ?',
-            (g.user['id'],)
-        )
-        db.commit()
+        db.update_user_access_time(g.user['id'])
