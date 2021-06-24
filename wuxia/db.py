@@ -112,8 +112,9 @@ class Database:
                       expected_results, samples=None):
         query = 'INSERT INTO challenges (title, short_description, verifier_filename) VALUES (%s, %s, %s)'
         params = (title, short_description, verification_file_name)
-        cursor = self.execute(query, params)
-        challenge_id = cursor.lastrowid
+        self.execute(query, params)
+        self.commit()
+        challenge_id = self.cursor.lastrowid
         
         self.add_challenge_description(challenge_id, long_description.splitlines())
         self.add_challenge_files(challenge_id, verifiers, expected_results, samples)
@@ -126,24 +127,22 @@ class Database:
         self.executemany(query, params)
 
     def add_challenge_files(self, challenge_id, verifiers, expected_results, samples=None):
-        query = 'INSERT INTO challenge_files (challenge_id, type, file_name) VALUES (%s, %s, %s)'
-        params = save_files(challenge_id, verifiers, 'verifier', self.challenge_parent_folder)
-        params.extend(save_files(challenge_id, expected_results, 'result', self.challenge_parent_folder))
+        query = 'INSERT INTO challenge_files (challenge_id, type, file_name, user_id) VALUES (%s, %s, %s, %s)'
+        params = save_files(challenge_id, verifiers, 'verifier', self.challenge_parent_folder, g.user['id'])
+        params.extend(save_files(challenge_id, expected_results, 'result', self.challenge_parent_folder, g.user['id']))
         if samples:
-            params.extend(save_files(challenge_id, samples, 'sample', self.challenge_parent_folder))
+            params.extend(save_files(challenge_id, samples, 'sample', self.challenge_parent_folder, g.user['id']))
 
         self.executemany(query, params)
 
-    def add_challenge_file(self, new_file, challenge_id, file_type, file_name, user_id=None):
+    def add_challenge_file(self, new_file, challenge_id, file_type, file_name, user_id):
         # Check whether user code file already exists
         if user_id and self.get_challenge_files(challenge_id, user_id, ['user']):
-            return save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, file_name)[0]
+            return save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, user_id, file_name)[0]
         else:
-            query = 'INSERT INTO challenge_files (challenge_id, type, file_name' + ', user_id)' if user_id else ')'
-            query += ' VALUES (%s, %s, %s' + ', %s)' if user_id else ')'
-            params = save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, file_name)[0]
-            if user_id:
-                params.append(user_id)
+            query = 'INSERT INTO challenge_files (challenge_id, type, file_name, user_id)'
+            query += ' VALUES (%s, %s, %s, %s)'
+            params = save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, user_id, file_name)[0]
             self.execute(query, params)
             self.commit()
 
@@ -256,14 +255,14 @@ def select(columns, table):
     return 'SELECT ' + ', '.join(columns) + ' FROM ' + table
 
 
-def save_files(challenge_id, files, file_purpose, parent_folder, file_name=None):
+def save_files(challenge_id, files, file_purpose, parent_folder, uid, file_name=None):
     params = []
     for f in files:
         if f.filename:
             file_name = file_name if file_name else f.filename
             path = get_file_path(challenge_id, file_purpose, file_name, parent_folder)
             f.save(path)
-            params.append([challenge_id, file_purpose, basename(path)])
+            params.append([challenge_id, file_purpose, basename(path), uid])
             file_name = None
 
     return params
@@ -271,7 +270,7 @@ def save_files(challenge_id, files, file_purpose, parent_folder, file_name=None)
 
 def get_file_path(challenge_id, purpose, file_name, parent_folder, make_folders=True):
     path = os.path.join(current_app.instance_path, parent_folder, str(challenge_id), purpose)
-    path = os.path.join(path, secure_filename(file_name))
+    path = os.path.join(path, secure_filename(str(file_name)))
     if make_folders:
         return make_folder(path)
     return path
