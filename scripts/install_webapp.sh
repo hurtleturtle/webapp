@@ -6,11 +6,13 @@ INSTANCE_HOME="$WEBAPP_HOME/instance"
 
 # Install webapp
 echo 'Installing webapp...'
-$WEBAPP_HOME/setup.py install
+cd $WEBAPP_HOME
+pip install .
+mkdir instance
 
 echo 'Creating webapp service...'
-sed -E 's+(ExecStart=)(.*)$+\1'"$SCRIPTS_DIR\/run.sh+" webapp.service > webapp.service
-cp webapp.service /lib/systemd/system/
+cat webapp.service
+sed -E 's+(ExecStart=)(.*)$+\1'"$SCRIPTS_DIR\/run.sh+" webapp.service > /lib/systemd/system/webapp.service
 
 echo 'Creating log folder...'
 mkdir -p /var/log/webapp
