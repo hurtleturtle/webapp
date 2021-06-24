@@ -104,7 +104,7 @@ def delete(uid):
 @write_admin_required
 def allow(uid):
     db = get_db()
-    db.update_user(uid, 'access_approved', 'true')
+    db.update_user(uid, 'access_approved', True)
     return redirect(url_for('users.show_all'))
 
 
@@ -112,7 +112,7 @@ def allow(uid):
 @write_admin_required
 def disallow(uid):
     db = get_db()
-    db.update_user(uid, 'access_approved', 'false')
+    db.update_user(uid, 'access_approved', False)
     return redirect(url_for('users.show_all'))
 
 
