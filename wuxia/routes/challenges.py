@@ -3,7 +3,7 @@ from flask import send_from_directory, g
 from wuxia.routes.auth import write_admin_required, redirect_to_referrer
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
-from wuxia.validation import Validator
+# from wuxia.validation import Validator
 
 
 bp = Blueprint('challenges', __name__, url_prefix='/challenges', template_folder='templates/challenges')
