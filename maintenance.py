@@ -86,13 +86,16 @@ def get_args():
     parser.add_argument('-x', '--experiment', action='store_true')
     parser.add_argument('-q', '--query', help='Execute custom query')
     parser.add_argument('--commit', action='store_true', help='Commit query changes to database')
+    parser.add_argument('--db-user', default='webapp', help='Database user')
+    parser.add_argument('--db-pass', help='Password to login to database')
+    parser.add_argument('--db-host', help='IP address of database')
 
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    db = Database('instance/wuxia.sqlite')
     args = get_args()
+    db = Database(db_host=args.db_host, db_user=args.db_user, db_pass=args.db_pass)
 
     try:
         user = db.get_user(uid=args.user_id, name=args.username)
@@ -112,7 +115,10 @@ if __name__ == '__main__':
 
     if args.list:
         users = db.get_users()
-        print(pd.DataFrame(users, columns=users[0].keys()))
+        try:
+            print(pd.DataFrame(users, columns=users[0].keys()))
+        except IndexError:
+            print('No users')
 
     if args.story:
         s = Story(title=args.title, chapters=args.chapters)

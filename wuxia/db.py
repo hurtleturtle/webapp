@@ -10,9 +10,9 @@ from getpass import getpass
 
 
 class Database:
-    def __init__(self, db_name='wuxia'):
+    def __init__(self, db_name='wuxia', db_host=None, db_user=None, db_pass=None):
         self.db_name = db_name
-        self.db = self.connect()
+        self.db = self.connect(db_host, db_user, db_pass)
         self.cursor = self.db.cursor()
         self.execute = self.cursor.execute
         self.commit = self.db.commit
@@ -21,10 +21,11 @@ class Database:
         self.challenge_parent_folder = 'challenges'
         self.check_schema()
 
-    def connect(self, db_host=None, db_user=None):
+    def connect(self, db_host=None, db_user=None, db_pass=None):
         db_host = db_host if db_host else current_app.config['DATABASE_HOST']
         db_user = db_user if db_user else current_app.config['DATABASE_USER']
-        db_pass = current_app.config['DATABASE_PASS'] if current_app.config['DATABASE_PASS'] else getpass('Enter database password: ')
+        db_pass = db_pass if db_pass else (current_app.config['DATABASE_PASS']\
+             if current_app.config['DATABASE_PASS'] else getpass('Enter database password: '))
         connection = mysql.connector.connect(
             host=db_host,
             user=db_user,
@@ -43,7 +44,6 @@ class Database:
         params = ('wuxia',)
         self.execute(query, params)
         tables = self.cursor.fetchall()
-        print(f'Currently existing tables: {tables}')
 
         if len(tables) != 7:
             with current_app.open_resource('schema.sql') as f:
