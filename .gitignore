@@ -15,7 +15,6 @@ dist/
 build/
 *.egg-info/
 launch
-config.py
 docker
 Dockerfile
 validate.sh
