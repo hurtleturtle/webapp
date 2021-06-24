@@ -37,8 +37,8 @@ def create_app(test_config=None):
     from wuxia.routes import challenges
     app.register_blueprint(challenges.bp)
 
-    from . import validation
-    validation.init_app(app)
+    # from . import validation
+    # validation.init_app(app)
 
     # Add custom jinja2 filters
     app.jinja_env.filters['basename'] = os.path.basename
