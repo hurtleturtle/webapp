@@ -9,6 +9,7 @@ echo 'Installing webapp...'
 cd $WEBAPP_HOME
 pip install .
 mkdir instance
+cd $SCRIPTS_DIR
 
 echo 'Creating webapp service...'
 cat webapp.service
