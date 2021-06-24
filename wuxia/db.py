@@ -57,7 +57,8 @@ class Database:
         self.commit()
 
     def get_users(self, columns=('*',)):
-        users = self.execute(select(columns, 'users')).fetchall()
+        self.execute(select(columns, 'users'))
+        users = self.cursor.fetchall()
         return users
 
     def get_user(self, uid=None, name=None, columns=('*',)):
@@ -73,7 +74,8 @@ class Database:
         else:
             return params
 
-        return self.execute(query, params).fetchone()
+        self.execute(query, params)
+        return self.cursor.fetchone()
 
     def set_story_access(self, uid, access=True):
         query = 'UPDATE users SET access_approved = ? WHERE id = ?'
@@ -128,13 +130,15 @@ class Database:
             params.append(challenge_id)
 
         query += order_query(params, order_by, descending)
-        return self.execute(query, params).fetchall()
+        self.execute(query, params)
+        return self.cursor.fetchall()
 
     def get_challenge_description(self, challenge_id, columns=('*',), order_by=None, descending=False):
         query = select(columns, 'challenge_descriptions') + ' WHERE challenge_id = ?'
         params = [challenge_id]
         query += order_query(params, order_by, descending)
-        return self.execute(query, params).fetchall()
+        self.execute(query, params)
+        return self.cursor.fetchall()
 
     def get_challenge_files(self, challenge_id, user_id=None, file_types=None, columns=('*',)):
         query = select(columns, 'challenge_files') + ' WHERE challenge_id = ?'
@@ -147,7 +151,8 @@ class Database:
             query += ' AND user_id = ?'
             params.append(user_id)
 
-        return self.execute(query, params).fetchall()
+        self.execute(query, params)
+        return self.cursor.fetchall()
 
     def get_challenge_file_paths(self, challenge_id, file_types=None, user_id=None):
         file_types = file_types if file_types else ['sample']
