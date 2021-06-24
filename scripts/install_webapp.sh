@@ -23,8 +23,8 @@ echo 'Creating config...'
 cp config.py $INSTANCE_HOME
 read -p "Enter IP address of database host: " DATABASE
 read -s -p "Enter database password: " PASSWORD
-sed -E 's/(DATABASE_HOST\s*=\s*).*$/\1'"\'$DATABASE\'"'/' $INSTANCE_HOME/config.py > $INSTANCE_HOME/config.py
-sed -E 's/(DATABASE_PASS\s*=\s*).*$/\1'"\'$PASSWORD\'"'/' $INSTANCE_HOME/config.py > $INSTANCE_HOME/config.py
+sed -E 's/<host>/'"$DATABASE"'/' $INSTANCE_HOME/config_template.py > $INSTANCE_HOME/config.py
+sed -E 's/<password>/'"$PASSWORD"'/' $INSTANCE_HOME/config_template.py > $INSTANCE_HOME/config.py
 
 echo 'Installing service...'
 systemctl enable webapp
