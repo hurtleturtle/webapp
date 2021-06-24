@@ -14,7 +14,7 @@ class Database:
     def __init__(self, db_name='wuxia', db_host=None, db_user=None, db_pass=None):
         self.db_name = db_name
         self.db = self.connect(db_host, db_user, db_pass)
-        self.cursor = self.db.cursor()
+        self.cursor = self.db.cursor(dictionary=True)
         self.execute = self.cursor.execute
         self.commit = self.db.commit
         self.close = self.db.close
@@ -52,7 +52,7 @@ class Database:
 
     def make_admin(self, uid, admin_level=0):
         levels = {0: 'no', 1: 'read', 2: 'read-write'}
-        query = 'UPDATE users SET admin = ? WHERE id = ?'
+        query = 'UPDATE users SET admin = %s WHERE id = %s'
         params = (levels[admin_level], uid)
         self.execute(query, params)
         self.commit()
@@ -67,10 +67,10 @@ class Database:
         params = tuple()
 
         if uid:
-            query += 'id = ?'
+            query += 'id = %s'
             params = (uid,)
         elif name:
-            query += 'username = ?'
+            query += 'username = %s'
             params = (name,)
         else:
             return params
@@ -79,27 +79,38 @@ class Database:
         return self.cursor.fetchone()
 
     def add_user(self, username, password, admin_level='no'):
-        query = 'INSERT INTO users (username, password, admin) VALUES (?, ?, ?)'
+        query = 'INSERT INTO users (username, password, admin) VALUES (%s, %s, %s)'
         params = (username, generate_password_hash(password), admin_level)
         self.execute(query, params)
         self.commit()
 
+    def update_user(self, uid, column, value):
+        query = f'UPDATE users SET {column} = %s WHERE id = %s'
+        params = (value, uid)
+        self.execute(query, params)
+        self.commit()
+
     def update_user_access_time(self, uid):
-        query = 'UPDATE users SET last_access = CURRENT_TIMESTAMP WHERE id = ?'
+        query = 'UPDATE users SET last_access = CURRENT_TIMESTAMP WHERE id = %s'
         params = (uid,)
         self.execute(query, params)
         self.commit()
 
+    def delete_user(self, uid):
+        query = 'DELETE FROM users WHERE id = %s'
+        params = (uid,)
+        self.execute(query, params)
+        self.commit()
 
     def set_story_access(self, uid, access=True):
-        query = 'UPDATE users SET access_approved = ? WHERE id = ?'
+        query = 'UPDATE users SET access_approved = %s WHERE id = %s'
         params = (int(access), uid)
         self.execute(query, params)
         self.commit()
 
     def add_challenge(self, title, short_description, long_description, verification_file_name, verifiers,
                       expected_results, samples=None):
-        query = 'INSERT INTO challenges (title, short_description, verifier_filename) VALUES (?, ?, ?)'
+        query = 'INSERT INTO challenges (title, short_description, verifier_filename) VALUES (%s, %s, %s)'
         params = (title, short_description, verification_file_name)
         cursor = self.execute(query, params)
         challenge_id = cursor.lastrowid
@@ -110,12 +121,12 @@ class Database:
         return challenge_id
 
     def add_challenge_description(self, challenge_id, description=(None,)):
-        query = 'INSERT INTO challenge_descriptions (challenge_id, sequence_num, description) VALUES (?, ?, ?)'
+        query = 'INSERT INTO challenge_descriptions (challenge_id, sequence_num, description) VALUES (%s, %s, %s)'
         params = [(challenge_id, idx, paragraph) for idx, paragraph in enumerate(description)]
         self.executemany(query, params)
 
     def add_challenge_files(self, challenge_id, verifiers, expected_results, samples=None):
-        query = 'INSERT INTO challenge_files (challenge_id, type, file_name) VALUES (?, ?, ?)'
+        query = 'INSERT INTO challenge_files (challenge_id, type, file_name) VALUES (%s, %s, %s)'
         params = save_files(challenge_id, verifiers, 'verifier', self.challenge_parent_folder)
         params.extend(save_files(challenge_id, expected_results, 'result', self.challenge_parent_folder))
         if samples:
@@ -129,7 +140,7 @@ class Database:
             return save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, file_name)[0]
         else:
             query = 'INSERT INTO challenge_files (challenge_id, type, file_name' + ', user_id)' if user_id else ')'
-            query += ' VALUES (?, ?, ?' + ', ?)' if user_id else ')'
+            query += ' VALUES (%s, %s, %s' + ', %s)' if user_id else ')'
             params = save_files(challenge_id, [new_file], file_type, self.challenge_parent_folder, file_name)[0]
             if user_id:
                 params.append(user_id)
@@ -140,7 +151,7 @@ class Database:
         query = select(columns, 'challenges')
         params = []
         if challenge_id:
-            query += ' WHERE id = ?'
+            query += ' WHERE id = %s'
             params.append(challenge_id)
 
         query += order_query(params, order_by, descending)
@@ -148,21 +159,21 @@ class Database:
         return self.cursor.fetchall()
 
     def get_challenge_description(self, challenge_id, columns=('*',), order_by=None, descending=False):
-        query = select(columns, 'challenge_descriptions') + ' WHERE challenge_id = ?'
+        query = select(columns, 'challenge_descriptions') + ' WHERE challenge_id = %s'
         params = [challenge_id]
         query += order_query(params, order_by, descending)
         self.execute(query, params)
         return self.cursor.fetchall()
 
     def get_challenge_files(self, challenge_id, user_id=None, file_types=None, columns=('*',)):
-        query = select(columns, 'challenge_files') + ' WHERE challenge_id = ?'
+        query = select(columns, 'challenge_files') + ' WHERE challenge_id = %s'
         params = [challenge_id]
 
         if file_types:
-            query += ' AND (' + ('type = ? OR' * len(file_types))[:-3] + ')'
+            query += ' AND (' + ('type = %s OR' * len(file_types))[:-3] + ')'
             params.extend(file_types)
         if user_id:
-            query += ' AND user_id = ?'
+            query += ' AND user_id = %s'
             params.append(user_id)
 
         self.execute(query, params)
@@ -187,7 +198,7 @@ class Database:
         return urls
 
     def delete_challenge(self, challenge_id):
-        query = 'DELETE FROM challenges WHERE id = ?'
+        query = 'DELETE FROM challenges WHERE id = %s'
         params = [challenge_id]
         self.execute(query, params)
         self.delete_challenge_files(challenge_id)
@@ -206,10 +217,10 @@ class Database:
             pass
 
     def delete_challenge_description(self, challenge_id, seq=None, commit=False):
-        query = 'DELETE FROM challenge_descriptions WHERE challenge_id = ?'
+        query = 'DELETE FROM challenge_descriptions WHERE challenge_id = %s'
         params = [challenge_id]
         if seq:
-            query += ' AND sequence_num = ?'
+            query += ' AND sequence_num = %s'
             params.append(seq)
 
         self.execute(query, params)
@@ -217,13 +228,13 @@ class Database:
             self.commit()
 
     def delete_challenge_files(self, challenge_id, file_types=None, user_id=None, commit=False):
-        query = 'DELETE FROM challenge_files WHERE challenge_id = ?'
+        query = 'DELETE FROM challenge_files WHERE challenge_id = %s'
         params = [challenge_id]
         if file_types:
-            query += ' AND (' + ('type = ? OR' * len(file_types))[:-3] + ')'
+            query += ' AND (' + ('type = %s OR' * len(file_types))[:-3] + ')'
             params.extend(file_types)
         if user_id:
-            query += ' AND user_id = ?'
+            query += ' AND user_id = %s'
             params.append(user_id)
 
         self.execute(query, params)
@@ -233,7 +244,7 @@ class Database:
 
 def order_query(params, order, descending):
     if order:
-        q = ' ORDER BY ? DESC' if descending else ' ORDER BY ?'
+        q = ' ORDER BY %s DESC' if descending else ' ORDER BY %s'
         params.append(order)
     else:
         q = ''
