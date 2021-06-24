@@ -13,16 +13,15 @@ bp = Blueprint('users', __name__, url_prefix='/users')
 @admin_required
 def show_all():
     db = get_db()
-    users = db.execute(
-        'SELECT * FROM users'
-    ).fetchall()
+    users = db.get_users()
     return render_template('users/list.html', users=users)
 
 
 @bp.route('/<int:uid>/edit', methods=['GET', 'POST'])
 @admin_required
 def edit(uid):
-    user = get_user(uid)
+    db = get_db()
+    user = db.get_user(uid)
     admin_levels = g.privilege_levels
 
     if request.method == 'POST' and g.user['admin'] == 'read-write':
@@ -30,36 +29,25 @@ def edit(uid):
         username = escape(request.form['username'])
         admin = request.form['admin']
         access = escape(request.form['access'])
-        db = get_db()
         username_new = (username != user['username'])
-        username_exists = db.execute('SELECT id FROM users WHERE username = ?',
-                                     (username,)).fetchone() is not None
+        username_exists = db.get_user(name=username) is not None
 
         if username_new:
             if username_exists:
                 error = 'Username exists'
             else:
-                db.execute(
-                    'UPDATE users SET username = ? WHERE id = ?',
-                    (username, uid)
-                )
+                db.update_user(uid, 'username', username)
         if admin in admin_levels:
-            db.execute(
-                'UPDATE users SET admin = ? WHERE id = ?', (admin, uid)
-            )
+            db.update_user(uid, 'admin', admin)
         else:
             error = error + '\n' if error else ''
             error += f'{admin}\nAdmin Status must be one of:'
             error += ' {}'.format(', '.join(admin_levels))
 
-        db.execute(
-            'UPDATE users SET access_approved = ? WHERE id = ?', (access, uid)
-        )
-
         if error:
             flash(error)
         else:
-            db.commit()
+            db.update_user(uid, 'access_approved', access)
             return redirect(url_for('users.show_all'))
     elif request.method == 'POST' and g.user['admin'] != 'read-write':
         flash('Write access required')
@@ -70,8 +58,8 @@ def edit(uid):
 
 @bp.route('/<int:uid>/change-password', methods=['GET', 'POST'])
 def change_password(uid):
-    user = get_user(uid)
     db = get_db()
+    user = db.get_user(uid)
 
     if (not g.user or g.user['id'] != uid) and g.user['admin'] != 'read-write':
         error = 'Could not change password for the specified user.'
@@ -95,10 +83,7 @@ def change_password(uid):
             flash(error)
             return redirect(url_for('users.change_password', uid=uid))
 
-        query = 'UPDATE users SET password = ? WHERE id = ?'
-        params = (generate_password_hash(new_pass), uid)
-        db.execute(query, params)
-        db.commit()
+        db.update_user(uid, 'password', generate_password_hash(new_pass))
 
         flash('Password updated.')
         return redirect(url_for('index'))
@@ -111,8 +96,7 @@ def change_password(uid):
 @write_admin_required
 def delete(uid):
     db = get_db()
-    db.execute('DELETE FROM users WHERE id = ?', (uid,))
-    db.commit()
+    db.delete_user(uid)
     return redirect(url_for('users.show_all'))
 
 
@@ -120,8 +104,7 @@ def delete(uid):
 @write_admin_required
 def allow(uid):
     db = get_db()
-    db.execute('UPDATE users SET access_approved = true WHERE id = ?', (uid,))
-    db.commit()
+    db.update_user(uid, 'access_approved', 'true')
     return redirect(url_for('users.show_all'))
 
 
@@ -129,8 +112,7 @@ def allow(uid):
 @write_admin_required
 def disallow(uid):
     db = get_db()
-    db.execute('UPDATE users SET access_approved = false WHERE id = ?', (uid,))
-    db.commit()
+    db.update_user(uid, 'access_approved', 'false')
     return redirect(url_for('users.show_all'))
 
 
@@ -140,12 +122,6 @@ def request_challenge_permission(uid):
     referrer = request.args.get('next', url_for('challenges.show_all'))
     flash('Permission to submit answers to challenges requested.')
     return redirect(referrer)
-
-
-def get_user(uid):
-    db = get_db()
-    user = db.execute('SELECT * FROM users WHERE id = ?', (uid,)).fetchone()
-    return user
 
 
 def generate_form_groups(user):
