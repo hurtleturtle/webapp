@@ -240,6 +240,60 @@ class Database:
         if commit:
             self.commit()
 
+    def get_stories(self):
+        #query = 'SELECT *, (SELECT COUNT(id) FROM chapters WHERE story_id = stories.id'
+        #query += ') chapter_count FROM stories INNER JOIN users ON stories.uploader_id=users.id'
+        query = 'SELECT * FROM stories'
+        self.execute(query)
+        return self.cursor.fetchall()
+
+    def get_story(self, story_id, columns=('*',)):
+        query = f'SELECT {",".join(columns)} FROM stories WHERE id = %s'
+        params = (story_id,)
+        self.execute(query, params)
+        return self.cursor.fetchone()
+
+    def check_story(self, title, author):
+        query = 'SELECT id FROM stories WHERE title = %s AND author = %s'
+        params = (title, author)
+        self.execute(query, params)
+        return self.cursor.fetchone()
+    
+    def get_chapters(self, story_id, columns=('*',)):
+        query = f'SELECT {",".join(columns)} FROM chapters WHERE story_id = %s'
+        params = (story_id,)
+        self.execute(query, params)
+        return self.cursor.fetchall()
+
+    def add_story(self, title, author, uploader):
+        query = 'INSERT INTO stories (title, author, uploader_id) VALUES (%s,%s,%s)'
+        params = (title, author, uploader)
+        self.execute(query, params)
+        self.commit()
+
+    def add_chapter(self, story_id, chapter_title, chapter_content, chapter_num,
+                    uploader_id, commit=True):
+        query = 'INSERT INTO chapters (story_id, chapter_number, chapter_title, \
+                chapter_content, uploader_id) VALUES (%s, %s, %s, %s, %s)'
+        params = (int(story_id), chapter_num, chapter_title, chapter_content,
+                  uploader_id)
+        self.execute(query, params)
+        if commit:
+            self.commit()
+
+    def delete_story(self, story_id):
+        self.delete_chapters(story_id)
+        query = 'DELETE FROM stories WHERE story_id = %s'
+        params = (story_id,)
+        self.execute(query, params)
+        self.commit()
+
+    def delete_chapters(self, story_id):
+        query = 'DELETE FROM chapters WHERE story_id = %s'
+        params = (story_id,)
+        self.execute(query, params)
+        self.commit()
+
 
 def order_query(params, order, descending):
     if order:

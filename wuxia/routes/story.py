@@ -15,12 +15,8 @@ bp = Blueprint('story', __name__, url_prefix='/stories')
 @approval_required
 def story_list():
     db = get_db()
-    stories = db.execute(
-        'SELECT *, (\
-            SELECT COUNT(id) FROM chapters WHERE story_id = stories.id\
-        ) chapter_count FROM stories INNER JOIN users ON stories.uploader_id=users.id'
-    ).fetchall()
-
+    stories = db.get_stories()
+    print(stories)
     return render_template('story/list.html', stories=stories)
 
 
@@ -28,21 +24,14 @@ def story_list():
 @approval_required
 def display(story_id):
     db = get_db()
-    chapter_rows = db.execute(
-        'SELECT chapter_title title, chapter_content content FROM chapters \
-         WHERE story_id = ?', (story_id,)
-    ).fetchall()
-    story = db.execute(
-        'SELECT title FROM stories WHERE id = ?', (story_id,)
-    ).fetchone()['title']
+    chapter_rows = db.get_chapters(story_id, columns=['chapter_content'])
+    story = db.get_story(story_id, ['title'])['title']
 
-    if chapter_rows:
-        chapters = [dict(row) for row in chapter_rows]
-    else:
+    if not chapter_rows:
         flash('No chapters found for that story')
         return redirect(url_for('story.story_list'))
 
-    return render_template('story/display.html', chapters=chapters,
+    return render_template('story/display.html', chapters=chapter_rows,
                            title=story)
 
 
@@ -78,6 +67,8 @@ def add():
     }
 
     if request.method == 'POST':
+        print(request)
+        print(request.__dict__)
         filepath = upload_file()
         if not filepath:
             return render_template('story/add.html',
@@ -92,20 +83,14 @@ def add():
                            escape(request.form['container']),
                            escape(request.form['heading']))
 
-    return render_template('story/add.html', form_groups=groups)
+    return render_template('story/add.html', form_groups=groups, form_enc='multipart/form-data')
 
 
 @bp.route('/<int:story_id>/delete', methods=['GET', 'DELETE'])
 @write_admin_required
 def delete(story_id):
     db = get_db()
-    db.execute(
-        'DELETE FROM chapters WHERE story_id = ?', (story_id,)
-    )
-    db.execute(
-        'DELETE FROM stories WHERE id = ?', (story_id,)
-    )
-    db.commit()
+    db.delete_story(story_id)
     return redirect(url_for('story.story_list'))
 
 
@@ -125,6 +110,7 @@ def upload_file():
     # check if the post request has the file part
     if 'file' not in request.files:
         flash('No file part')
+        print(request.files)
         return False
     file = request.files['file']
     # if user does not select file, browser also
@@ -142,7 +128,7 @@ def upload_file():
 def add_story_to_db(db, title=None, author=None):
     title = title if title else escape(request.form.get('title'))
     author = author if author else escape(request.form.get('author', 'Unknown'))
-    story_exists = check_story(db, title, author)
+    story_exists = db.check_story(title, author)
     try:
         user = g.user['id']
     except RuntimeError:
@@ -152,18 +138,8 @@ def add_story_to_db(db, title=None, author=None):
         flash('A story with that title by that author already exists')
         return False
     else:
-        query = 'INSERT INTO stories (title, author, uploader_id) VALUES (?,?,?)'
-        params = (title, author, user)
-        db.execute(query, params)
-        db.commit()
-        return check_story(db, title, author)
-
-
-def check_story(db, title, author):
-    story_exists = db.execute(
-        'SELECT id FROM stories WHERE title = ? AND author = ?', (title, author)
-    ).fetchone()
-    return story_exists
+        db.add_story(title, author, user)
+        return db.check_story(title, author)
 
 
 def add_chapters_to_db(db, filepath, story_id, chapter_container,
@@ -180,12 +156,8 @@ def add_chapters_to_db(db, filepath, story_id, chapter_container,
         if chapter.name == 'div':
             chapter = '\n'.join([str(child) for child in chapter.children])
 
-        query = 'INSERT INTO chapters (story_id, chapter_number, chapter_title, \
-                chapter_content, uploader_id) VALUES (?, ?, ?, ?, ?)'
-        params = (int(story_id), idx + 1, heading, str(chapter),
-                  user)
-        db.execute(query, params)
-
+        db.add_chapter(int(story_id), heading, str(chapter), idx + 1, user, False)
+        
     db.commit()
     os.remove(filepath)
 
