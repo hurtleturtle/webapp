@@ -1,5 +1,4 @@
-from flask import render_template, g, flash
-from wuxia import app
+from flask import render_template, g, flash, app
 from mysql.connector import Error as SQLError
 
 
