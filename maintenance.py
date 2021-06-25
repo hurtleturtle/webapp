@@ -7,11 +7,12 @@ from bs4 import BeautifulSoup
 from wuxia.db import Database
 from wuxia.routes.story import add_story_to_db, add_chapters_to_db
 import pandas as pd
+from random import randint
 
 
 class Story:
-    def __init__(self, title, chapters=10, template_path=None):
-        self.title = title
+    def __init__(self, title=None, chapters=10, template_path=None):
+        self.title = title if title else lipsum.generate_words(randint(2, 5)).capitalize().replace('?', '')
         self.chapters = chapters
         self.template_path = template_path if template_path else 'wuxia/routes/templates/story/story.html'
         self.html = self.create_story()
@@ -58,7 +59,7 @@ class Story:
         :rtype: bool
         """
         wuxia_db = Database()
-        story = add_story_to_db(wuxia_db, title=self.title, author=lipsum.generate_words(1))
+        story = add_story_to_db(wuxia_db, title=self.title, author=lipsum.generate_words(2).replace('?', ''))
         if not story:
             print('Story {} could not be added to database using {}.'.format(self.title, self.filepath))
             return False
@@ -81,7 +82,7 @@ def get_args():
                         help='Remove story access')
     parser.add_argument('-s', '--story', action='store_true', help='Generate lorem ipsum story')
     parser.add_argument('-c', '--chapters', type=int, default=5, help='Number of chapters to generate')
-    parser.add_argument('-t', '--title', default=lipsum.generate_words(1), help='Story title')
+    parser.add_argument('-t', '--title', help='Story title')
     parser.add_argument('-e', '--execute-script', help='Execute SQL script')
     parser.add_argument('-x', '--experiment', action='store_true')
     parser.add_argument('-q', '--query', help='Execute custom query')
