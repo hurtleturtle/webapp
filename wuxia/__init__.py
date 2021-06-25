@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, flash
+from mysql.connector import Error as SQLError
 
 
 def create_app(test_config=None):
@@ -37,8 +38,6 @@ def create_app(test_config=None):
     from wuxia.routes import challenges
     app.register_blueprint(challenges.bp)
 
-    from wuxia import errors
-
     # from . import validation
     # validation.init_app(app)
 
@@ -48,5 +47,16 @@ def create_app(test_config=None):
     @app.route('/')
     def index():
         return render_template('index.html')
+
+    @app.errorhandler(500)
+    def handle_internal_server_error(e):
+        error = ''
+        if isinstance(e, SQLError):
+            error = 'Database error. Please try again or contact the administrator.'
+        else:
+            error = 'Application error. Please try again or contact the administrator.'
+        
+        flash(error)
+        return render_template('base.html')
 
     return app
