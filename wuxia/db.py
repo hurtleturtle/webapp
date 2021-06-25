@@ -323,7 +323,7 @@ def save_files(challenge_id, files, file_purpose, parent_folder, uid, file_name=
 
 
 def get_file_path(challenge_id, purpose, file_name, parent_folder, make_folders=True):
-    path = os.path.join(current_app.instance_path, parent_folder, str(challenge_id), purpose)
+    path = os.path.join(os.path.abspath(current_app.instance_path), parent_folder, str(challenge_id), purpose)
     path = os.path.join(path, secure_filename(str(file_name)))
     if make_folders:
         return make_folder(path)
@@ -343,7 +343,7 @@ def make_folder(path):
     try:
         os.makedirs(dirname(path))
     except OSError:
-        pass
+        print(f'Could not make path {path}')
     return path
 
 
