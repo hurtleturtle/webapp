@@ -11,10 +11,11 @@ from random import randint
 
 
 class Story:
-    def __init__(self, title=None, chapters=10, template_path=None):
+    def __init__(self, title=None, chapters=10, template_path=None, db=None):
         self.title = title if title else lipsum.generate_words(randint(2, 5)).capitalize().replace('?', '')
         self.chapters = chapters
         self.template_path = template_path if template_path else 'wuxia/routes/templates/story/story.html'
+        self.db = db if db else Database()
         self.html = self.create_story()
         self.generate_chapters(self.chapters)
         self.filepath = self._save_story()
@@ -50,7 +51,7 @@ class Story:
             os.makedirs(os.path.dirname(filepath))
         except OSError:
             pass
-        
+
         with open(filepath, 'w') as f:
             f.write(self.html.prettify())
         return filepath
@@ -64,7 +65,7 @@ class Story:
         Add story and chapters to database
         :rtype: bool
         """
-        wuxia_db = Database()
+        wuxia_db = self.db
         story = add_story_to_db(wuxia_db, title=self.title, author=lipsum.generate_words(2).replace('?', ''))
         if not story:
             print('Story {} could not be added to database using {}.'.format(self.title, self.filepath))
@@ -128,7 +129,7 @@ if __name__ == '__main__':
             print('No users')
 
     if args.story:
-        s = Story(title=args.title, chapters=args.chapters)
+        s = Story(title=args.title, chapters=args.chapters, db=db)
         s.add_to_db()
         
     if args.execute_script:
