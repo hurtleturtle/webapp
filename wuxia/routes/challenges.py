@@ -38,7 +38,7 @@ def show_challenge(challenge_id):
         user_code = request.files['answer_file']
         db.add_challenge_file(user_code, challenge_id, 'user', str(user_id), user_id=user_id)
         # validator = Validator(challenge_id, user_id)
-        # result, error = validator.validate()
+        result, error = 'No result', 'No validation performed' #validator.validate()
 
         return render_template('description.html', challenge=challenge, description_paragraphs=description,
                                files=sample_files, form_groups=groups, form_enc='multipart/form-data',
