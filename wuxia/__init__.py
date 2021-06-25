@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, flash
-from mysql.connector import DatabaseError
+from mysql.connector import Error as SQLError
 
 
 def create_app(test_config=None):
@@ -50,13 +50,13 @@ def create_app(test_config=None):
 
     @app.errorhandler(500)
     def handle_internal_server_error(e):
-        error = ''
-        if isinstance(e, DatabaseError):
-            error = 'Database error. Please try again or contact the administrator.'
-        else:
-            error = 'Application error. Please try again or contact the administrator.'
-        
+        error = 'Application error. Please try again or contact the administrator.'
         flash(error)
+        return render_template('base.html')
+
+    @app.errorhandler(SQLError)
+    def handle_db_error(e):
+        flash('Database error. Please try again or contact the administrator.')
         return render_template('base.html')
 
     return app
