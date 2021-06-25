@@ -45,6 +45,12 @@ class Story:
 
     def _save_story(self, filepath=None):
         filepath = filepath if filepath else os.path.join('instance/stories', self.title.replace(' ', '_'))
+
+        try:
+            os.makedirs(os.path.dirname(filepath))
+        except OSError:
+            pass
+        
         with open(filepath, 'w') as f:
             f.write(self.html.prettify())
         return filepath
