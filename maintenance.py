@@ -13,7 +13,7 @@ class Story:
     def __init__(self, title, chapters=10, template_path=None):
         self.title = title
         self.chapters = chapters
-        self.template_path = template_path if template_path else 'wuxia/templates/story/story.html'
+        self.template_path = template_path if template_path else 'wuxia/routes/templates/story/story.html'
         self.html = self.create_story()
         self.generate_chapters(self.chapters)
         self.filepath = self._save_story()
