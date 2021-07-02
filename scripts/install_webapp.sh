@@ -12,12 +12,18 @@ mkdir instance
 cd $SCRIPTS_DIR
 
 echo 'Creating webapp service...'
-cat webapp.service
 sed -E 's+(ExecStart=)(.*)$+\1'"$SCRIPTS_DIR\/run.sh+" webapp.service > /lib/systemd/system/webapp.service
 
 echo 'Creating log folder...'
-mkdir -p /var/log/webapp
-ln -s /var/log/webapp $INSTANCE_HOME/logs
+LOG_FOLDER="/var/log/webapp"
+mkdir -p $LOG_FOLDER 
+ln -s $LOG_FOLDER $INSTANCE_HOME/logs
+
+echo 'Configuring logging...'
+LOG_FILE="$LOG_FOLDER/webapp.log"
+cp run.sh run.sh.old
+sed -E 's/<log_file>/'"$LOG_FILE" run.sh.old > run.sh
+echo "The application will log to $LOG_FILE"
 
 echo 'Creating config...'
 read -p "Enter IP address of database host: " DATABASE
