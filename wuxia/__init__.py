@@ -54,6 +54,16 @@ def create_app(test_config=None):
         flash(error)
         return render_template('base.html')
 
+    @app.errorhandler(504)
+    def handle_gateway_error(e):
+        flash('Gateway error.')
+        return render_template('base.html')
+
+    @app.errorhandler(Exception)
+    def handle_generic_errors(e):
+        flash('Generic application error.')
+        return render_template('base.html')
+
     @app.errorhandler(SQLError)
     def handle_db_error(e):
         flash('Database error. Please try again or contact the administrator.')

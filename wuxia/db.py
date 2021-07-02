@@ -31,7 +31,8 @@ class Database:
             host=db_host,
             user=db_user,
             password=db_pass,
-            database=self.db_name
+            database=self.db_name,
+            connection_timeout=2
         )
         return connection
 
