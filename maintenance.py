@@ -37,7 +37,7 @@ class Story:
         heading.string = 'Chapter ' + str(index)
         div.append(heading)
 
-        for paragraph in range(paragraphs):
+        for _ in range(paragraphs):
             p = soup.new_tag('p')
             p.string = lipsum.generate_paragraphs(1)
             div.append(p)
@@ -138,7 +138,7 @@ if __name__ == '__main__':
         print('Database updated.')
         
     if args.experiment:
-        db.add_challenge('A new challenge', 'A very short test challenge', 'Nah\nbro', None, None)
+        db.add_challenge('A new challenge', 'A very short test challenge', 'Nah\nbro', None,  None, None)
         
     if args.query:
         cur = db.execute(args.query)
