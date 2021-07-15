@@ -42,7 +42,7 @@ def create_app(test_config=None):
     # validation.init_app(app)
 
     # Add custom jinja2 filters
-    app.jinja_env.filters['basename'] = os.path.basename
+    app.add_template_filter(os.path.basename, 'basename')
 
     @app.route('/')
     def index():
