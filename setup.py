@@ -16,6 +16,7 @@ setup(
         'click',
         'uwsgi',
         'docker',
-        'jinja2'
+        'jinja2',
+        'mysql-connector-python'
     ],
 )
