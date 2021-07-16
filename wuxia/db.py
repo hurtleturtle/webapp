@@ -350,7 +350,7 @@ def make_folder(path):
 
 def get_db():
     if 'db' not in g:
-        g['db'] = Database()
+        g.db = Database()
 
     return g.db
 
