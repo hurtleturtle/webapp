@@ -2,14 +2,29 @@
 {% block title %}Challenges{% endblock %}
 {% block content %}
 <div class="challenge-welcome">
-    <h2>Welcome</h2>
-    <p>Choose a challenge below and do your best to solve it using whichever programming language takes your fancy.
-    Anyone can view and attempt the challenges; however, if you would like to submit your answer to be evaluated
-    then you will need to be a registered user with permission to submit answers (hover over your username and
-    click Request Challenge Permission).</p>
-    <p>Note that you must use either a compiled language (such as C or Fortran) and submit a compiled executable or
-    use an interpreted language for which there is an interpreter on a standard GNU/Linux system (e.g. Python, PHP or
-    Perl). If you use an interpreted language, you must include a shebang as the first line of your code.</p>
+    <h2>BT Distributed Web Application</h2>
+    <p>This web application is built using the following elements:</p>>
+    <ol>
+        <li>nginx
+            <ul>
+                <li>Acting as a proxy</li>
+                <li>Version 1.18.0</li>
+                <li>Running on Ubuntu Server 20.04.2 LTS</li>
+            </ul>
+        </li>
+        <li>web app
+            <ul>
+                <li>A Python web application built with Python 3.8.10/Flask 2.0.1</li>
+                <li>Running on Ubuntu Server 20.04.2 LTS</li>
+            </ul>
+        </li>
+        <li>database
+            <ul>
+                <li>MySQL 8.0.25</li>
+                <li>Running on Server 20.04.2 LTS</li>
+            </ul>
+        </li>
+    </ol>
 </div>
 <div class="challenges-container">
     {% for challenge in challenges %}
