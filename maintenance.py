@@ -9,6 +9,7 @@ from wuxia.db import Database
 from wuxia.routes.story import add_story_to_db, add_chapters_to_db
 import pandas as pd
 from random import randint
+from getpass import getpass
 
 
 class Story:
@@ -98,7 +99,7 @@ def get_args():
     parser.add_argument('--db-user', default='webapp', help='Database user')
     parser.add_argument('--db-pass', help='Password to login to database')
     parser.add_argument('--db-host', help='IP address of database')
-    parser.add_argument('--reset-password', dest='new_password', help='Specify new password for user')
+    parser.add_argument('--reset-password', action='store_true', help='Reset password for user')
 
     return parser.parse_args()
 
@@ -165,9 +166,11 @@ if __name__ == '__main__':
     if args.experiment:
         db.add_challenge('A new challenge', 'A very short test challenge', 'Nah\nbro', None,  None, None)
 
-    if args.new_password:
+    if args.reset_password:
         if user:
-            db.change_password(user['id'], args.new_password)
+            password = getpass(f'Enter new password for {user.username}: ')
+            if password == getpass('Re-enter password to confirm change: '):
+                db.change_password(user['id'], password)
         else:
             print('Please specify the user whose password you want to reset.')
         
