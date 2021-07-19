@@ -2,6 +2,7 @@
 import os
 import sqlite3
 from argparse import ArgumentParser
+from configparser import ConfigParser
 import lipsum
 from bs4 import BeautifulSoup
 from wuxia.db import Database
@@ -97,13 +98,35 @@ def get_args():
     parser.add_argument('--db-user', default='webapp', help='Database user')
     parser.add_argument('--db-pass', help='Password to login to database')
     parser.add_argument('--db-host', help='IP address of database')
+    parser.add_argument('--reset-password', dest='new_password', help='Specify new password for user')
 
     return parser.parse_args()
 
 
+def get_database_details(host, user, password, config_path='instance/config.py'):
+    if not all(host, user, password):
+        config = ConfigParser()
+        try:
+            config.read(config_path)
+            default = config['DEFAULT']
+            host = default.get('DATABASE_HOST') if not host else host
+            user = default.get('DATABASE_USER') if not user else user
+            password = default.get('DATABASE_PASS') if not password else password
+        except OSError:
+            print(f'Error reading database details from {config_path}. Please supply DB details.')
+            exit()
+    
+    details = {
+        'db_host': host,
+        'db_user': user,
+        'db_pass': password
+    }
+    return details
+
+
 if __name__ == '__main__':
     args = get_args()
-    db = Database(db_host=args.db_host, db_user=args.db_user, db_pass=args.db_pass)
+    db = Database(**get_database_details(args.db_host, args.db_user, args.db_pass))
 
     try:
         user = db.get_user(uid=args.user_id, name=args.username)
@@ -139,6 +162,12 @@ if __name__ == '__main__':
         
     if args.experiment:
         db.add_challenge('A new challenge', 'A very short test challenge', 'Nah\nbro', None,  None, None)
+
+    if args.new_password:
+        if user:
+            db.change_password(user['id'], args.new_password)
+        else:
+            print('Please specify the user whose password you want to reset.')
         
     if args.query:
         cur = db.execute(args.query)
