@@ -2,7 +2,7 @@
 import os
 import sqlite3
 from argparse import ArgumentParser
-from configparser import ConfigParser
+import shlex
 import lipsum
 from bs4 import BeautifulSoup
 from wuxia.db import Database
@@ -105,13 +105,15 @@ def get_args():
 
 def get_database_details(host, user, password, config_path='instance/config.py'):
     if not all((host, user, password)):
-        config = ConfigParser()
+        config = {}
         try:
-            config.read(config_path)
-            default = config['DEFAULT']
-            host = default.get('DATABASE_HOST') if not host else host
-            user = default.get('DATABASE_USER') if not user else user
-            password = default.get('DATABASE_PASS') if not password else password
+            with open(config_path) as f:
+                for line in f:
+                    key, equals, value = shlex.split(line)
+                    config[key] = value
+            host = config.get('DATABASE_HOST') if not host else host
+            user = config.get('DATABASE_USER') if not user else user
+            password = config.get('DATABASE_PASS') if not password else password
         except OSError:
             print(f'Error reading database details from {config_path}. Please supply DB details.')
             exit()
