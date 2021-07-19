@@ -168,7 +168,7 @@ if __name__ == '__main__':
 
     if args.reset_password:
         if user:
-            password = getpass(f'Enter new password for {user.username}: ')
+            password = getpass(f'Enter new password for {user['username']}: ')
             if password == getpass('Re-enter password to confirm change: '):
                 db.change_password(user['id'], password)
         else:
