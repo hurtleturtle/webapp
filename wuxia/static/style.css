@@ -4,6 +4,11 @@ html, body {
   font-family: sans-serif;
 }
 
+html {
+  background: url(forest_translucent.png) no-repeat center center fixed;
+  background-size: cover;
+}
+
 /* Flexbox wrapper for base page */
 .wrapper {
   display: flex;

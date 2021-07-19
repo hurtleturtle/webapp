@@ -12,14 +12,11 @@
   <div class="wrapper">
     <section class="navbar">{% include "nav.html" %}</section>
     <section class="content">
-      <div class="background-image"></div>
-      <div class="content-wrapper">
       {% for message in get_flashed_messages() %}
         <div class="flash">{{ message }}</div>
       {% endfor %}
       {% block content %}
       {% endblock -%}
-      </div>
     </section>
   </div>
 </body>
