@@ -91,6 +91,11 @@ class Database:
         self.execute(query, params)
         self.commit()
 
+    def change_password(self, uid, new_password):
+        column = 'password'
+        password_hash = generate_password_hash(new_password)
+        self.update_user(uid, column, password_hash)
+
     def update_user_access_time(self, uid):
         query = 'UPDATE users SET last_access = CURRENT_TIMESTAMP WHERE id = %s'
         params = (uid,)
