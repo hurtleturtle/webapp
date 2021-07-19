@@ -104,7 +104,7 @@ def get_args():
 
 
 def get_database_details(host, user, password, config_path='instance/config.py'):
-    if not all(host, user, password):
+    if not all((host, user, password)):
         config = ConfigParser()
         try:
             config.read(config_path)
