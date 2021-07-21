@@ -70,7 +70,7 @@ class Story:
                 chapter = '\n'.join([str(child) for child in chapter.children])
                 self.db.add_chapter(story_id=story['id'], chapter_title=title, chapter_content=chapter, chapter_num=idx + 1, uploader_id=user)
 
-            return True, self.title
+            return True, f'Story <i>{escape(self.title)}</i> added to database.'
 
 
 @bp.route('')
@@ -149,7 +149,7 @@ def add():
 
 
 @bp.route('/add-random', methods=['GET', 'POST'])
-@write_admin_required
+@approval_required
 def add_random():
     db = get_db()
     groups = {
@@ -157,8 +157,8 @@ def add_random():
             'group_title': 'Add Random Story',
             'story_title': gen_form_item('title', placeholder='Title (optional)'),
             'author': gen_form_item('author', placeholder='Author (optional)'),
-            'num_chapters': gen_form_item('chapters', placeholder='Number of chapters', item_type='number', 
-                                          value='5', extra_attrs={'min': 1, 'max': 20})
+            'num_chapters': gen_form_item('chapters', placeholder='Number of chapters (optional)', item_type='number', 
+                                          extra_attrs={'min': 1, 'max': 20})
         },
         'submit': {
             'button': gen_form_item('btn-submit', item_type='submit', value='Add')
@@ -168,7 +168,8 @@ def add_random():
     if request.method == 'POST':
         story_title = escape(request.form.get('title', lipsum.generate_words(count=randint(2, 6))[:-1]))
         story_author = escape(request.form.get('author', lipsum.generate_words(count=2)[:-1]))
-        story_chapters = int(escape(request.form.get('chapters', randint(2, 10))))
+        story_chapters = escape(request.form.get('chapters'))
+        story_chapters = int(story_chapters) if story_chapters else randint(2, 10)
         new_story = Story(title=story_title, author=story_author, chapters=story_chapters, db=db)
         status, message = new_story.add_to_db()
 
