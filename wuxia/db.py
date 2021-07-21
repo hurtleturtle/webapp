@@ -289,7 +289,7 @@ class Database:
 
     def delete_story(self, story_id):
         self.delete_chapters(story_id)
-        query = 'DELETE FROM stories WHERE story_id = %s'
+        query = 'DELETE FROM stories WHERE id = %s'
         params = (story_id,)
         self.execute(query, params)
         self.commit()
