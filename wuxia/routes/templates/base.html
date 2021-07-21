@@ -13,7 +13,7 @@
     <section class="navbar">{% include "nav.html" %}</section>
     <section class="content">
       {% for message in get_flashed_messages() %}
-        <div class="flash">{{ message }}</div>
+        <div class="flash">{{ message | safe }}</div>
       {% endfor %}
       {% block content %}
       {% endblock -%}
