@@ -264,6 +264,7 @@ div.results {
     padding: 1rem;
     margin: 0 10%;
     color: white;
+    overflow-x: auto;
 }
 div.results > h2 {
     text-align: center;
