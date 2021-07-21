@@ -5,7 +5,13 @@
 {% if result %}
 <div class="results">
     <h2>Results</h2>
-    <p>{{ result | safe }}</p>
+    {% if result.sequence -%}
+        {%- for line in result.data -%}
+            <p>{{ line | safe }}</p>
+        {%- endfor -%}
+    {%- else -%}
+        <p>{{ result | safe }}</p>
+    {%- endif %}
 </div>
 {% endif %}
 {% endblock content %}
