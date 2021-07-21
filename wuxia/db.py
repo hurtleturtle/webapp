@@ -247,8 +247,8 @@ class Database:
             self.commit()
 
     def get_stories(self):
-        query = 'SELECT *, (SELECT COUNT(id) FROM chapters WHERE story_id = stories.id'
-        query += ') chapter_count FROM stories INNER JOIN users ON stories.uploader_id=users.id'
+        query = 'SELECT stories.*, (SELECT COUNT(chapters.id) FROM chapters WHERE story_id = stories.id'
+        query += ') chapter_count, users.username FROM stories INNER JOIN users ON stories.uploader_id=users.id'
         #query = 'SELECT * FROM stories'
         self.execute(query)
         return self.cursor.fetchall()
