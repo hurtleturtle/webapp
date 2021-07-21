@@ -106,8 +106,8 @@ def load_logged_in_user():
 
 @bp.before_app_request
 def load_admin_levels():
-    g.privilege_levels = ['no', 'read', 'read-write']
     g.admin_levels = ['read', 'read-write']
+    g.privilege_levels = ['no', 'test'] + g.admin_levels
 
 
 def login_required(view):
@@ -138,6 +138,20 @@ def approval_required(view):
 
         return view(**kwargs)
 
+    return wrapped_view
+
+
+def test_access_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if not g.user:
+            flash('Please login to access that page.')
+            return redirect_to_referrer()
+        elif g.user['admin'] == 'no':
+            flash('You do not have sufficient privileges to access that page.')
+            return redirect(url_for('index'))
+        
+        return view(**kwargs)
     return wrapped_view
 
 
