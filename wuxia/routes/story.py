@@ -62,7 +62,7 @@ class Story:
         """
         story = add_story_to_db(self.db, title=self.title, author=str(self.author))
         if not story:
-            return False, 'Story {} could not be added to database using {}.'.format(self.title, self.filepath)
+            return False, 'Story {} could not be added to database using {}.'.format(self.title, self.author)
         else:
             #add_chapters_to_db(wuxia_db, self.filepath, story['id'], 'div.chapter', 'div.chapter > h2.chapter-heading')
             user = get_current_user_id()
