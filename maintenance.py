@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     try:
         user = db.get_user(uid=args.user_id, name=args.username)
-    except sqlite3.OperationalError:
+    except Exception:
         user = None
 
     if args.admin is not None:
