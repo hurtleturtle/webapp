@@ -20,7 +20,7 @@
         {% endif %}
       </div>
     </div>
-    {% if g.user and g.user['admin'] in g.admin_levels %}
+    {% if g.user and g.user['admin'] != 'no' %}
     <div class="dropdown">
       <span>Testing</span>
       <div class="dropdown-content">
