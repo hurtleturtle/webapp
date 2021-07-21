@@ -21,8 +21,8 @@ def gen_form_item(item_id=None, name=None, placeholder=None,
         'selected_option': selected_option,
         'href': href,
         'multiple': multiple,
-        'rows': rows,
-        'columns': columns,
+        'rows': rows if rows else 10,
+        'columns': columns if columns else 120,
         'textarea_text': textarea_text,
         'extra_attrs': extra_attrs
     }
