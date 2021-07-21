@@ -41,9 +41,9 @@ def create_app(test_config=None):
     # from . import validation
     # validation.init_app(app)
 
-    # Add custom jinja2 filters
+     # Add custom jinja2 filters
     app.add_template_filter(os.path.basename, 'basename')
-
+ 
     @app.route('/')
     def index():
         return render_template('index.html')
@@ -59,9 +59,9 @@ def create_app(test_config=None):
         flash('Gateway error.')
         return render_template('base.html')
 
-    @app.errorhandler(SQLError)
-    def handle_db_error(e):
-        flash('Database error. Please try again or contact the administrator.')
-        return render_template('base.html')
+    # @app.errorhandler(SQLError)
+    # def handle_db_error(e):
+    #     flash('Database error. Please try again or contact the administrator.')
+    #     return render_template('base.html')
 
     return app
