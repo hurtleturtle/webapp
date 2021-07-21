@@ -149,8 +149,7 @@ def generate_form_groups(user):
                                     selected_option=user['access_approved']),
             'admin': gen_form_item('admin', required=True, label='Admin',
                                    field_type='select',
-                                   options=gen_options(['None', 'Read Only',
-                                                        'Read & Write'],
+                                   options=gen_options(g.privilege_levels,
                                                        g.privilege_levels),
                                    value=user['admin'],
                                    selected_option=user['admin'])
