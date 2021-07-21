@@ -78,7 +78,6 @@ class Story:
 def story_list():
     db = get_db()
     stories = db.get_stories()
-    print(stories)
     return render_template('story/list.html', stories=stories)
 
 
@@ -166,8 +165,9 @@ def add_random():
     }
 
     if request.method == 'POST':
-        story_title = escape(request.form.get('title', lipsum.generate_words(count=randint(2, 6))[:-1]))
-        story_author = escape(request.form.get('author', lipsum.generate_words(count=2)[:-1]))
+        story_title = escape(request.form.get('title'))
+        story_author = escape(request.form.get('author'))
+        story_author = story_author if story_author else lipsum.generate_words(2)[:-1]
         story_chapters = escape(request.form.get('chapters'))
         story_chapters = int(story_chapters) if story_chapters else randint(2, 10)
         new_story = Story(title=story_title, author=story_author, chapters=story_chapters, db=db)
