@@ -31,6 +31,7 @@ def get_args():
     parser.add_argument('--db-pass', help='Password to login to database')
     parser.add_argument('--db-host', help='IP address of database')
     parser.add_argument('--reset-password', action='store_true', help='Reset password for user')
+    parser.add_argument('--list-stories', action='store_true', help='List all stories in the database')
 
     return parser.parse_args()
 
@@ -58,6 +59,13 @@ def get_database_details(host, user, password, config_path='instance/config.py')
     return details
 
 
+def print_results(rows, err_message='No results returned'):
+    try:
+        print(pd.DataFrame(rows, columns=rows[0].keys()))
+    except IndexError:
+        print(err_message)
+
+
 if __name__ == '__main__':
     args = get_args()
     db = Database(**get_database_details(args.db_host, args.db_user, args.db_pass))
@@ -80,10 +88,11 @@ if __name__ == '__main__':
 
     if args.list:
         users = db.get_users()
-        try:
-            print(pd.DataFrame(users, columns=users[0].keys()))
-        except IndexError:
-            print('No users')
+        print_results(users)
+
+    if args.list_stories:
+        stories = db.get_stories()
+        print_results(stories)
 
     if args.story:
         s = Story(title=args.title, chapters=args.chapters, db=db)
@@ -106,12 +115,9 @@ if __name__ == '__main__':
             print('Please specify the user whose password you want to reset.')
         
     if args.query:
-        cur = db.execute(args.query)
-        results = cur.fetchall()
-        try:
-            df = pd.DataFrame(results, columns=results[0].keys())
-            print(df)
-        except IndexError:
-            print('No results returned')
+        db.execute(args.query)
+        results = db.cursor.fetchall()
+        print_results(results)
+
         if args.commit:
             db.commit()
