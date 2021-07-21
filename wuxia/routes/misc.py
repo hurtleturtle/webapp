@@ -1,9 +1,11 @@
 from flask import Blueprint, request, render_template, render_template_string
-from wuxia.routes.auth import admin_required, write_admin_required
+from wuxia.routes.auth import admin_required, write_admin_required, test_access_required
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
+from urllib.parse import unquote_plus
 from mysql.connector import Error as SQLError
 from pandas import DataFrame
+from bs4 import BeautifulSoup
 
 bp = Blueprint('misc', __name__, template_folder='templates/misc')
 
@@ -21,14 +23,31 @@ def cookies():
 
 
 @bp.route('/template-injection', methods=['GET', 'POST'])
-@admin_required
+@test_access_required
 def inject():
-    if request.method == 'POST':
-        template_injection = request.form['injection']
-        result = render_template_string(template_injection)
-        return render_template('injection.html', result=result)
+    groups = {
+        'injection': {
+            'group_title': 'Jinja2 Template Injection',
+            'injection_string': gen_form_item('injection', name='injection', placeholder='Type Jinja2 SSTI here.\n\n'
+                                              "E.g. {{ ''.__class__.__mro__[1].__subclasses__()[216]('id', stdout=-1)"
+                                              '.communicate()[0].decode() }}', field_type='textarea')
+        },
+        'submit': {
+            'btn-submit': gen_form_item('btn-submit', item_type='submit', value='Submit')
+        }
+    }
 
-    return render_template('injection.html')
+    if request.method == 'POST':
+        injection_string = request.form.get('injection')
+        injection_template = render_template_string(injection_string).split('\n')
+        result = {
+            'sequence': True,
+            'data': injection_template
+        }
+        
+        return render_template('misc/query.html', form_groups=groups, result=injection_template)
+
+    return render_template('misc/query.html', form_groups=groups)
 
 
 @bp.route('/bots', methods=['GET'])
@@ -37,12 +56,12 @@ def bots():
 
 
 @bp.route('/query', methods=['GET', 'POST'])
-@write_admin_required
+@test_access_required
 def query():
     groups = {
         'query': {
             'group_title': 'SQL Query',
-            'query_string': gen_form_item('query', name='query', placeholder='Type SQL query here (no commits)', field_type='textarea')
+            'query_string': gen_form_item('query', name='query', placeholder='Type SQL query here\n\nE.g. SELECT * FROM stories', field_type='textarea')
         },
         'submit': {
             'btn-submit': gen_form_item('btn-submit', item_type='submit', value='Submit')
