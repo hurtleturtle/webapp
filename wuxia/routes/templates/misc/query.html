@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Query{% endblock %}
+{% block content %}
+{% include "form.html" %}
+{% if result %}
+<div class="results">
+    <h2>Results</h2>
+    <p>{{ result | safe }}</p>
+</div>
+{% endif %}
+{% endblock content %}

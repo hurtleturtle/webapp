@@ -216,6 +216,11 @@ form {
     font-family: sans-serif;
     font-size: 14px;
 }
+.form-item textarea {
+  width: 100% !important;
+  padding: 0.5em;
+  line-height: 1.25;
+}
 .form-item input[type="submit"], .form-item a {
   background-color: #e305d6;
   color: white;
@@ -262,6 +267,9 @@ div.results {
 }
 div.results > h2 {
     text-align: center;
+}
+div.results table {
+  color: #59028a;
 }
 
 /* Style for challenges */
@@ -323,11 +331,7 @@ div.challenges-container {
 .challenge-box > h3 {
     margin: 0;
 }
-textarea.challenge-long-description {
-    width: 100% !important;
-    padding: 0.5em;
-    line-height: 1.25;
-}
+
 .challenge-files {
     display: flex;
 }
