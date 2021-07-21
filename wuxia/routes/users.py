@@ -124,6 +124,15 @@ def request_challenge_permission(uid):
     return redirect(referrer)
 
 
+def get_current_user_id(default_uid=1):
+    try:
+        user = g.user['id']
+    except RuntimeError:
+        user = default_uid
+    
+    return user
+
+
 def generate_form_groups(user):
     password_href = url_for('users.change_password', uid=user['id'])
     delete_href = url_for('users.delete', uid=user['id'])
