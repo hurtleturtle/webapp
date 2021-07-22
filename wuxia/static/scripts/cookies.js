@@ -19,7 +19,7 @@ function fill_browser_cookies_into_table(params) {
         browser_cookie_value = cookie_dict[cell_cookie]
 
         if (browser_cookie_value) {
-            cell.innerHTML = browser_cookie_value
+            cell.innerHTML = browser_cookie_value.slice(1, -1)
         }
         else {
             cell.innerHTML = 'Cookie inaccessible with JavaScript'
