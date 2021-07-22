@@ -135,6 +135,8 @@ div.story {
 .content table {
   margin: 4rem 2.5%;
   width: 95%;
+  table-layout: fixed;
+  overflow-wrap: break-word;
 }
 table, th, td {
   border-collapse: collapse;
