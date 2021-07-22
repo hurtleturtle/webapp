@@ -42,8 +42,12 @@ def inject():
     if request.method == 'POST':
         injection_string = request.form.get('injection')
         injection_template = render_template_string(injection_string).split('\n')
-        return render_template('misc/query.html', form_groups=groups, result=injection_template)
-
+        result = {
+                'sequence': True,
+                'data': injection_template
+        }
+        return render_template('misc/query.html', form_groups=groups, result=result)
+            
     return render_template('misc/query.html', form_groups=groups, title='Template Injection')
 
 
