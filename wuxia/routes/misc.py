@@ -7,7 +7,7 @@ from mysql.connector import Error as SQLError
 from pandas import DataFrame
 from bs4 import BeautifulSoup
 
-bp = Blueprint('misc', __name__, template_folder='templates/misc')
+bp = Blueprint('misc', __name__, url_prefix='/testing', template_folder='templates/misc')
 
 
 @bp.route('/cookies', methods=['GET'])
@@ -42,11 +42,6 @@ def inject():
     if request.method == 'POST':
         injection_string = request.form.get('injection')
         injection_template = render_template_string(injection_string).split('\n')
-        result = {
-            'sequence': True,
-            'data': injection_template
-        }
-        
         return render_template('misc/query.html', form_groups=groups, result=injection_template)
 
     return render_template('misc/query.html', form_groups=groups)
@@ -82,6 +77,30 @@ def query():
             result = f'SQL error encountered:<br />{e}'
         
         return render_template('misc/query.html', form_groups=groups, result=result)
+
+    return render_template('misc/query.html', form_groups=groups)
+
+
+@bp.route('/file-upload', methods=['GET', 'POST'])
+@test_access_required
+def upload_file():
+    groups = {
+        'file': {
+            'group_title': 'File Upload',
+            'file': gen_form_item('file', item_type='file')
+        },
+        'submit': {
+            'btn-submit': gen_form_item('btn-submit', item_type='submit', value='Submit')
+        }
+    }
+
+    if request.method == 'POST':
+        uploaded_file = request.form.get('file')
+        print(uploaded_file)
+        if uploaded_file:
+            flash(f'<b>{uploaded_file}</b> successfully received by server')
+        else:
+            flash(f'File not received by server')
 
     return render_template('misc/query.html', form_groups=groups)
 
