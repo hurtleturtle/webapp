@@ -6,12 +6,14 @@
 <table class="cookies">
     <tr>
         <th>Cookie</th>
-        <th>Value</th>
+        <th>Value on Server</th>
+        <th>Value on Browser</th>
     </tr>
     {% for cookie in cookies %}
     <tr>
         <td>{{ cookie }}</td>
         <td>{{ cookies[cookie] }}</td>
+        <td id={{ cookie }}></td>
     </tr>
 {% endfor %}
 </table>

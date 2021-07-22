@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, render_template_string
+from flask import Blueprint, request, render_template, render_template_string, flash
 from wuxia.routes.auth import admin_required, write_admin_required, test_access_required
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
@@ -12,12 +12,14 @@ bp = Blueprint('misc', __name__, template_folder='templates/misc')
 
 @bp.route('/cookies', methods=['GET'])
 def cookies():
-    allowed_cookie = {'pirate': 'shiver_me_timbers'}
+    test_cookies = {'test-cookie'}
+    request_cookie_keys = dict(request.cookies).keys()
     
-    if allowed_cookie.items() <= dict(request.cookies).items():
+    if test_cookies <= request_cookie_keys:
         returned_cookies = request.cookies
     else:
-        returned_cookies = {'naughty': 'cookie'}
+        flash(f'The following cookies have expired:\n<p>{test_cookies - request_cookie_keys}</p>\nLogin again to reset.')
+        returned_cookies = request.cookies
 
     return render_template('cookies.html', cookies=returned_cookies)
 

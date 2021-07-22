@@ -58,7 +58,7 @@ def login():
             url = referrer if referrer else url_for('story.story_list')
             response = make_response(redirect(url))
             expiry = datetime.now() + timedelta(minutes=60)
-            response.set_cookie('pirate', value='shiver_me_timbers', expires=expiry)
+            response.set_cookie('test-cookie', value='this_cookie_expires_at_' + str(expiry), expires=expiry)
             return response
 
         if error:
