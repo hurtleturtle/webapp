@@ -2,6 +2,10 @@
 
 {% block title %}Cookies{% endblock %}
 
+{% block scripts %}
+<script src="/static/scripts/cookies.js"></script>
+{% endblock %}
+
 {% block content %}
 <table class="cookies">
     <tr>
@@ -13,7 +17,7 @@
     <tr>
         <td>{{ cookie }}</td>
         <td>{{ cookies[cookie] }}</td>
-        <td id={{ cookie }}></td>
+        <td class="browser-cookie" id={{ cookie }}></td>
     </tr>
 {% endfor %}
 </table>
