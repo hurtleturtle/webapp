@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Query{% endblock %}
+{% block title %}{% if title %}{{ title }}{% else %}Query{% endif %}{% endblock %}
 {% block content %}
 {% include "form.html" %}
 {% if result %}

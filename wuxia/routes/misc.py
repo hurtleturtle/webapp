@@ -44,7 +44,7 @@ def inject():
         injection_template = render_template_string(injection_string).split('\n')
         return render_template('misc/query.html', form_groups=groups, result=injection_template)
 
-    return render_template('misc/query.html', form_groups=groups)
+    return render_template('misc/query.html', form_groups=groups, title='Template Injection')
 
 
 @bp.route('/bots', methods=['GET'])
@@ -95,14 +95,14 @@ def upload_file():
     }
 
     if request.method == 'POST':
-        uploaded_file = request.form.get('file')
+        uploaded_file = request.files.get('file')
         print(uploaded_file)
         if uploaded_file:
-            flash(f'<b>{uploaded_file}</b> successfully received by server')
+            flash(f'<b>{uploaded_file.filename}</b> successfully received by server')
         else:
             flash(f'File not received by server')
 
-    return render_template('misc/query.html', form_groups=groups)
+    return render_template('misc/query.html', form_groups=groups, form_enc='multipart/form-data', title='File Upload')
 
 
 class QueryResult(DataFrame):
