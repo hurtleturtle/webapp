@@ -76,7 +76,7 @@ def query():
 
         try:
             db.execute(query)
-            result = QueryResult(db.cursor.fetchall()).to_html()
+            result = QueryResult(db.cursor.fetchall()).to_html(index=False)
         except SQLError as e:
             result = f'SQL error encountered:<br />{e}'
         
