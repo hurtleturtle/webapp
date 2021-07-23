@@ -46,6 +46,7 @@ def inject():
                 'sequence': True,
                 'data': injection_template
         }
+        groups['injection']['injection_string']['textarea_text'] = injection_string
         return render_template('misc/query.html', form_groups=groups, result=result)
             
     return render_template('misc/query.html', form_groups=groups, title='Template Injection')
@@ -77,6 +78,7 @@ def query():
         try:
             db.execute(query)
             result = QueryResult(db.cursor.fetchall()).to_html(index=False)
+            groups['query']['query_string']['textarea_text'] = query
         except SQLError as e:
             result = f'SQL error encountered:<br />{e}'
         
