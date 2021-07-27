@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, render_template_string, flash
+from flask import Blueprint, request, render_template, render_template_string, flash, current_app
 from wuxia.routes.auth import admin_required, write_admin_required, test_access_required
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
@@ -6,6 +6,8 @@ from urllib.parse import unquote_plus
 from mysql.connector import Error as SQLError
 from pandas import DataFrame
 from bs4 import BeautifulSoup
+from lipsum import generate_paragraphs
+import os
 
 bp = Blueprint('misc', __name__, url_prefix='/testing', template_folder='templates/misc')
 
@@ -109,6 +111,18 @@ def upload_file():
             flash(f'File not received by server')
 
     return render_template('misc/query.html', form_groups=groups, form_enc='multipart/form-data', title='File Upload')
+
+
+@bp.route('/compression', methods=['GET'])
+@test_access_required
+def compress():
+    large_text_file_name = 'large.txt'
+    large_text_file_path = os.path.join(os.path.abspath(current_app.root_path), 'static', large_text_file_name)
+
+    with open(large_text_file_path) as f:
+        file_contents = f.read()
+
+    return render_template('misc/compress.html', file_contents=file_contents)
 
 
 class QueryResult(DataFrame):
