@@ -3,6 +3,7 @@ from flask import send_from_directory, g
 from wuxia.routes.auth import write_admin_required, redirect_to_referrer
 from wuxia.forms import gen_form_item
 from wuxia.db import get_db
+import os
 # from wuxia.validation import Validator
 
 
@@ -73,7 +74,8 @@ def accept_answer(challenge_id):
 
 @bp.route('/files/<path:path>')
 def serve_files(path):
-    return send_from_directory(current_app.instance_path, path, as_attachment=True)
+    path_prefix = 'challenges'
+    return send_from_directory(os.path.join(current_app.instance_path, path_prefix), path, as_attachment=True)
 
 
 @bp.route('/add', methods=['GET', 'POST'])
