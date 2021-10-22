@@ -123,6 +123,10 @@ def request_challenge_permission(uid):
     flash('Permission to submit answers to challenges requested.')
     return redirect(referrer)
 
+@bp.route('/<int:uid>/clear-session')
+@write_admin_required
+def clear_session(uid):
+    db = get_db()
 
 def get_current_user_id(default_uid=1):
     try:
