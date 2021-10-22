@@ -17,6 +17,7 @@ setup(
         'uwsgi',
         'docker',
         'jinja2',
-        'mysql-connector-python'
+        'mysql-connector-python',
+        'cryptography'
     ],
 )

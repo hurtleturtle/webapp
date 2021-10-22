@@ -8,6 +8,8 @@ from pandas import DataFrame
 from bs4 import BeautifulSoup
 from lipsum import generate_paragraphs
 import os
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
 
 bp = Blueprint('misc', __name__, url_prefix='/testing', template_folder='templates/misc')
 
@@ -125,6 +127,32 @@ def compress():
     return render_template('misc/compress.html', file_contents=file_contents)
 
 
+@bp.route('/padding-oracle', methods=['GET', 'POST'])
+def oracle():
+    groups = {
+        'attack': {
+            'group_title': 'Paddig Oracle Attack',
+            'attack_text': gen_form_item('attack', placeholder='Input padding oracle initialisation vector and ciphertext', field_type='textarea')
+        },
+        'submit': {
+            'btn-submit': gen_form_item('btn-submit', item_type='submit', value='Submit')
+        }
+    }
+
+    if request.method == 'POST':
+        attack = request.form.get('attack')
+        db = get_db()
+        result = ''
+       
+        return render_template('misc/query.html', form_groups=groups, result=result)
+
+    return render_template('misc/query.html', form_groups=groups)
+
 class QueryResult(DataFrame):
     def __bool__(self):
         return self.empty
+
+
+class PaddingOracleAttack:
+    def __init__(self, attack_string=''):
+        self.attack_string = attack_string
