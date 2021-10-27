@@ -59,10 +59,20 @@ def mask(message, number_of_zeroes):
     return message & set_mask(number_of_zeroes, message.bit_length()) #if number_of_zeros else iv
 
 
-def separate(message: int, length=16):
-    bit_length = message.bit_length()
-    
+def separate(message: int, block_size=BLOCK_SIZE):
+    '''
+        Separate the message into block_size chunks consisting of the IV first,
+        followed by the message in hexadecimal
+    '''
 
+    num_characters = block_size // 4
+    str_message = display(message)[2:]
+    extra_zeroes = (num_characters - (len(str_message) % num_characters)) % num_characters
+    str_message = str_message.zfill(extra_zeroes + len(str_message))
+    num_elements = ceil(len(str_message) / num_characters)
+    elements = [str_message[start * num_characters:(start + 1) * num_characters] for start in range(num_elements)]
+    return elements if len(elements) > 1 else ['0' * num_characters, *elements]
+    
 
 def get_args():
     parser = ArgumentParser()
@@ -82,8 +92,8 @@ if __name__ == '__main__':
     decrypted_message = decrypt(enc_message, cipher)
     unpadded_message = unpad(decrypted_message)
     padding_oracle_attack_msg = mask(joined_message, args.num_zeroes)
-    padding_oracle_encrypted_msg = padding_oracle_attack_msg.bit_length
-    padding_oracle_decrypted_msg = decrypt(int(display(padding_oracle_attack_msg)[-16:], 16).to_bytes(16, sys.byteorder), cipher)
+    padding_oracle_iv, *padding_oracle_encrypted_msg = separate(padding_oracle_attack_msg)
+    padding_oracle_decrypted_msg = decrypt(int(''.join(padding_oracle_encrypted_msg), 16).to_bytes(16, sys.byteorder), cipher)
 
     try:
         padding_oracle_unpadded_msg = unpad(padding_oracle_decrypted_msg)
@@ -93,7 +103,8 @@ if __name__ == '__main__':
     output = f'*** Initial Conditions ***\nKey: {display(key)}\nInitialisation Vector (IV): {display(iv)}\n\n'
     output += f'*** Encryption ***\nOriginal Message: {message}\nPadded Message:{display(padded_message)}\nEncrypted message: {display(enc_message)}\n\n'
     output += f'*** Padding Oracle Attack ***\nOriginal IV & Encrypted Message:\t{display(joined_message)}\n'
-    output += f'Attack Message:\t\t{display(padding_oracle_attack_msg)}\n\n'
+    output += f'Attack Message:\t\t{display(padding_oracle_attack_msg)}\n'
+    output += f'Components:\n\tIV: {padding_oracle_iv}\n\tMessage: {padding_oracle_encrypted_msg}\n\n'
     output += f'*** Decryption ***\nDecrypted Message: {display(decrypted_message)}\nUnpadded message: {unpadded_message}\n\n'
     output += f'*** Padding Oracle Decryption ***\nDecrypted Message: {display(padding_oracle_decrypted_msg)}\nUnpadded Message: {padding_oracle_unpadded_msg}\n'
     print(output)
