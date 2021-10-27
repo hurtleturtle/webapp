@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 import sys
 from math import ceil
 
+
 BLOCK_SIZE = 128
 
 
