@@ -38,6 +38,9 @@ def create_app(test_config=None):
     from wuxia.routes import challenges
     app.register_blueprint(challenges.bp)
 
+    from wuxia.api import testing
+    app.register_blueprint(testing.bp)
+
     # from . import validation
     # validation.init_app(app)
 
