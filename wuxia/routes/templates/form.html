@@ -48,6 +48,10 @@
           <a class="{{ item.field_class }}" href="{{ item.href }}">
             {{ item.value }}
           </a>
+          {% elif item.field_type == "text" %}
+          <div class="{{ item.field_class }}">
+            {{- item.value | safe -}}
+          </div>
           {% endif %}
           </div>
         {% endfor %}
