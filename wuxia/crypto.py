@@ -10,70 +10,84 @@ from math import ceil
 BLOCK_SIZE = 128
 
 
-def pad(message, block_size=BLOCK_SIZE):
-    message_bytes = bytes(message, encoding='utf8')
-    padder = PKCS7(block_size).padder()
-    return padder.update(message_bytes) + padder.finalize()
+class PaddingOracleAttack:
+    def __init__(self, message: str, iv=None, verbosity=0) -> None:
+        self.verbosity = verbosity
+        self.message = message
+        self.iv = urandom(BLOCK_SIZE / 8) if not iv else iv
+        self.cipher = self._create_cipher()
+
+    def _create_cipher(self, key_length=32):
+        key = urandom(key_length)
+        cipher = Cipher(algorithms.AES(key.to_bytes(key_length, sys.byteorder)), modes.CBC(self.iv.to_bytes(len(self.iv), sys.byteorder)))
+        return cipher
+
+    def encrypt(self, message_bytes: bytes):
+        # message_bytes = bytes(message, encoding='utf8')
+        encryptor = self.cipher.encryptor()
+        return encryptor.update(message_bytes) + encryptor.finalize()
+
+    def decrypt(self, message_bytes: bytes):
+        decryptor = self.cipher.decryptor()
+        return decryptor.update(message_bytes) + decryptor.finalize()
+
+    def pad(self, message: str, block_size=BLOCK_SIZE):
+        message_bytes = bytes(message, encoding='utf8')
+        padder = PKCS7(block_size).padder()
+        return padder.update(message_bytes) + padder.finalize()
+
+    def unpad(self, message_bytes: bytes, block_size=BLOCK_SIZE):
+        unpadder = PKCS7(block_size).unpadder()
+        return unpadder.update(message_bytes) + unpadder.finalize()
+
+    def separate(self, message: int, block_size=BLOCK_SIZE):
+        '''
+            Separate the message into block_size chunks consisting of the IV first,
+            followed by the message in hexadecimal
+        '''
+        num_characters = block_size // 4
+        str_message = display(message)[2:]
+        extra_zeroes = (num_characters - (len(str_message) % num_characters)) % num_characters
+        str_message = str_message.zfill(extra_zeroes + len(str_message))
+        num_elements = ceil(len(str_message) / num_characters)
+        elements = [str_message[start * num_characters:(start + 1) * num_characters] for start in range(num_elements)]
+        return elements if len(elements) > 1 else ['0' * num_characters, *elements]
+
+    def decrypt_padding_oracle_attack(self, message: str) -> str:
+        '''
+            Decrypt and unpad a padding oracle attack
+        '''
+        return ''
 
 
-def encrypt(message_bytes, cipher):
-    # message_bytes = bytes(message, encoding='utf8')
-    encryptor = cipher.encryptor()
-    return encryptor.update(message_bytes) + encryptor.finalize()
+def set_mask(self, number_of_zeroes, block_size=BLOCK_SIZE, verbosity=0):
+    num_blocks = max(ceil(number_of_zeroes / (block_size / 8)), 1)
+    mask = (2 ** (num_blocks * block_size)) - 1
+    zero_mask = ((2 ** (number_of_zeroes * 8)) - 1) 
+    zero_mask = zero_mask << (block_size - zero_mask.bit_length())
+    
+    if verbosity:
+        print(f'Mask: {mask:#x}\nZero Mask: {zero_mask:#x}')
+        print(f'Bit lengths:', end='\n\t')
+        print(f'Mask: {mask.bit_length()}', f'Zero Mask: {zero_mask.bit_length()}', 
+                f'Block size: {block_size}', f'Num zeroes: {number_of_zeroes}', f'Num blocks: {num_blocks}\n', sep="\n\t")
+
+    return mask ^ zero_mask
 
 
-def decrypt(message_bytes, cipher):
-    decryptor = cipher.decryptor()
-    return decryptor.update(message_bytes) + decryptor.finalize()
-
-
-def unpad(message_bytes, block_size=BLOCK_SIZE):
-    unpadder = PKCS7(block_size).unpadder()
-    return unpadder.update(message_bytes) + unpadder.finalize()
-
+def mask(self, message, number_of_zeroes):
+    if isinstance(message, bytes):
+        message = int.from_bytes(message, sys.byteorder)
+    return message & set_mask(number_of_zeroes, message.bit_length())
+    
 
 def display(message):
     if isinstance(message, bytes):
         int_message = int.from_bytes(message, sys.byteorder)
     else:
         int_message = message
-    return f'{int_message:#0{int_message.bit_length() // 4}x}'
+    return f'{int_message:#0x}'
 
-
-def set_mask(number_of_zeroes, block_size=BLOCK_SIZE):
-    num_blocks = max(ceil(number_of_zeroes / (block_size / 8)), 1)
-    mask = (2 ** (num_blocks * block_size)) - 1
-    zero_mask = ((2 ** (number_of_zeroes * 8)) - 1) 
-    zero_mask = zero_mask << (block_size - zero_mask.bit_length())
-    
-
-    print(f'Mask: {mask:#x}\nZero Mask: {zero_mask:#x}')
-    print(f'Bit lengths:', end='\n\t')
-    print(f'Mask: {mask.bit_length()}', f'Zero Mask: {zero_mask.bit_length()}', f'Block size: {block_size}', f'Num zeroes: {number_of_zeroes}', f'Num blocks: {num_blocks}\n', sep="\n\t")
-
-    return mask ^ zero_mask
-
-
-def mask(message, number_of_zeroes):
-    if isinstance(message, bytes):
-        message = int.from_bytes(message, sys.byteorder)
-    return message & set_mask(number_of_zeroes, message.bit_length()) #if number_of_zeros else iv
-
-
-def separate(message: int, block_size=BLOCK_SIZE):
-    '''
-        Separate the message into block_size chunks consisting of the IV first,
-        followed by the message in hexadecimal
-    '''
-
-    num_characters = block_size // 4
-    str_message = display(message)[2:]
-    extra_zeroes = (num_characters - (len(str_message) % num_characters)) % num_characters
-    str_message = str_message.zfill(extra_zeroes + len(str_message))
-    num_elements = ceil(len(str_message) / num_characters)
-    elements = [str_message[start * num_characters:(start + 1) * num_characters] for start in range(num_elements)]
-    return elements if len(elements) > 1 else ['0' * num_characters, *elements]
-    
 
 def get_args():
     parser = ArgumentParser()
