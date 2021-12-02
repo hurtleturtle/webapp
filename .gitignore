@@ -18,3 +18,5 @@ launch
 docker
 Dockerfile
 validate.sh
+
+launch.json
