@@ -8,7 +8,6 @@ from pandas import DataFrame
 from bs4 import BeautifulSoup
 from lipsum import generate_paragraphs
 import os
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
 bp = Blueprint('misc', __name__, url_prefix='/testing', template_folder='templates/misc')
@@ -129,9 +128,16 @@ def compress():
 
 @bp.route('/padding-oracle', methods=['GET', 'POST'])
 def oracle():
+    page_title = 'Padding Oracle Attack'
     groups = {
+        'examples': {
+            'group_title': 'Encrypted Text',
+            1: gen_form_item('example1', label='Example 1', label_class='do-not-wrap', field_type='text', value='<p>0xba185629dec5816200bd7f35c532c9ec</p>'),
+            2: gen_form_item('example2', label='Example 2', label_class='do-not-wrap',field_type='text', value=''),
+            3: gen_form_item('example3', label='Example 3', label_class='do-not-wrap',field_type='text', value='')
+        },
         'attack': {
-            'group_title': 'Paddig Oracle Attack',
+            'group_title': 'Padding Oracle Attack',
             'attack_text': gen_form_item('attack', placeholder='Input padding oracle initialisation vector and ciphertext', field_type='textarea')
         },
         'submit': {
@@ -144,9 +150,9 @@ def oracle():
         db = get_db()
         result = ''
        
-        return render_template('misc/query.html', form_groups=groups, result=result)
+        return render_template('misc/query.html', form_groups=groups, result=result, title=page_title)
 
-    return render_template('misc/query.html', form_groups=groups)
+    return render_template('misc/query.html', form_groups=groups, title=page_title)
 
 class QueryResult(DataFrame):
     def __bool__(self):
