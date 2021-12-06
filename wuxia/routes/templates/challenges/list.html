@@ -2,28 +2,8 @@
 {% block title %}Challenges{% endblock %}
 {% block content %}
 <div class="challenge-welcome">
-    <h2>BT Distributed Web Application</h2>
-    <p>This web application is built using the following elements:</p>
-    <ol>
-        <li>Nginx proxy
-            <ul>
-                <li>Version 1.18.0</li>
-                <li>Running on Ubuntu Server 20.04.2 LTS</li>
-            </ul>
-        </li>
-        <li>Web app
-            <ul>
-                <li>A Python web application built with Python 3.8.10/Flask 2.0.1</li>
-                <li>Running on Ubuntu Server 20.04.2 LTS</li>
-            </ul>
-        </li>
-        <li>Database
-            <ul>
-                <li>MySQL 8.0.25</li>
-                <li>Running on Ubuntu Server 20.04.2 LTS</li>
-            </ul>
-        </li>
-    </ol>
+    <h2>Challenges</h2>
+    <p>Select a challlenge below and crush it!</p>
 </div>
 <div class="challenges-container">
     {% for challenge in challenges %}
