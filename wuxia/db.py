@@ -47,7 +47,7 @@ class Database:
         self.execute(query, params)
         tables = self.cursor.fetchall()
 
-        if len(tables) != 7:
+        if len(tables) != 9:
             with current_app.open_resource('schema.sql') as f:
                 self.executescript(f.read().decode('utf8'))
 
@@ -362,6 +362,17 @@ def init_db():
         db.executescript(f.read().decode('utf8'))
 
     click.echo('Initialised the database.')
+
+
+@click.command('update-db')
+@with_appcontext
+def update_db(sql_script):
+    db = get_db()
+
+    with open(sql_script) as f:
+        db.executescript(f.read().decode('utf8'))
+
+    click.echo(f'Updated the DB with script: {sql_script}')
 
 
 def init_app(app):
