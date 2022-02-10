@@ -128,7 +128,7 @@ def request_challenge_permission(uid):
 def clear_session(uid):
     db = get_db()
 
-def get_current_user_id(default_uid=1):
+def get_current_user_id(default_uid=-1):
     try:
         user = g.user['id']
     except RuntimeError:

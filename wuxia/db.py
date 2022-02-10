@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from shutil import rmtree
 from getpass import getpass
 from werkzeug.security import check_password_hash, generate_password_hash
+from wuxia.routes.users import get_current_user_id
 
 
 class Database:
@@ -74,7 +75,12 @@ class Database:
             query += 'username = %s'
             params = (name,)
         else:
-            return params
+            current_user_id = get_current_user_id()
+            if current_user_id > 0:
+                query += 'id = %s'
+                params = (current_user_id,)
+            else:
+                return params
 
         self.execute(query, params)
         return self.cursor.fetchone()
