@@ -79,6 +79,8 @@ CREATE TABLE challenge_answers (
 
 CREATE TABLE classes (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    class_name TEXT NOT NULL,
+    class_type TEXT NOT NULL DEFAULT "No Gi",
     weekday TEXT NOT NULL,
     time TIME NOT NULL,
     coach_id INTEGER NOT NULL,
