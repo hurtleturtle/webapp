@@ -21,3 +21,9 @@ def check_in_to_class():
     flash('Checked in!')
 
     return render_template('checkin.html')
+
+
+@bp.route('/add-class', methods=['GET', 'POST'])
+@admin_required
+def add_class():
+    return render_template('add_class.html')
