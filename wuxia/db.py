@@ -37,8 +37,11 @@ class Database:
         return connection
 
     def executescript(self, script):
-        for result in self.execute(script, multi=True):
-            print(result)
+        results = self.execute(script, multi=True)
+        
+        if results:
+            for result in results:
+                print(result)
         self.commit()
 
     def check_schema(self):
@@ -292,6 +295,10 @@ class Database:
         self.execute(query, params)
         self.commit()
 
+    def add_class(self, day, time, coach_id, class_type='No Gi'):
+        if class_type not in ['Gi', 'No Gi']:
+            return False
+
 
 def order_query(params, order, descending):
     if order:
@@ -370,16 +377,18 @@ def init_db():
 
 
 @click.command('update-db')
+@click.argument('filename')
 @with_appcontext
-def update_db(sql_script):
+def update_db(filename):
     db = get_db()
 
-    with open(sql_script) as f:
-        db.executescript(f.read().decode('utf8'))
+    with open(filename) as f:
+        db.executescript(f.read())
 
-    click.echo(f'Updated the DB with script: {sql_script}')
+    click.echo(f'Updated the DB with script: {filename}')
 
 
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db)
+    app.cli.add_command(update_db)

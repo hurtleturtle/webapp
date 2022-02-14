@@ -1,25 +1,21 @@
-ALTER TABLE challenge_files RENAME TO challenge_files_old;
+DROP TABLE attendance;
+DROP TABLE classes;
 
-CREATE TABLE challenge_files (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	challenge_id INTEGER NOT NULL,
-	user_id INTEGER DEFAULT 0,
-	type TEXT NOT NULL,
-	file_name TEXT NOT NULL,
-	FOREIGN KEY (challenge_id) REFERENCES users (id)
+CREATE TABLE classes (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    class_name TEXT NOT NULL,
+    class_type TEXT NOT NULL DEFAULT "No Gi",
+    weekday TEXT NOT NULL,
+    time TIME NOT NULL,
+    coach_id INTEGER NOT NULL,
+    FOREIGN KEY (coach_id) REFERENCES users (id)
 );
 
-INSERT INTO challenge_files SELECT * FROM challenge_files_old;
-
-ALTER TABLE challenges ADD COLUMN verifier_filename TEXT NOT NULL;
-ALTER TABLE users ADD COLUMN submission_approved BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE users ADD COLUMN submission_approval_requested BOOLEAN NOT NULL DEFAULT false;
-
-CREATE TABLE challenge_answers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    challenge_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    attempt INTEGER NOT NULL DEFAULT 1,
-    pass BOOLEAN NOT NULL DEFAULT false,
-    evaluation_result TEXT
+CREATE TABLE attendance (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    member_id INTEGER NOT NULL,
+    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    class_id INTEGER NOT NULL,
+    FOREIGN KEY (member_id) REFERENCES users (id),
+    FOREIGN KEY (class_id) REFERENCES classes (id)
 );
