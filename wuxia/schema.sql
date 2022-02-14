@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS challenges;
 DROP TABLE IF EXISTS challenge_descriptions;
 DROP TABLE IF EXISTS challenge_files;
 DROP TABLE IF EXISTS challenge_answers;
+DROP TABLE IF EXISTS classes;
+DROP TABLE IF EXISTS attendance;
 SET FOREIGN_KEY_CHECKS=1;
 
 CREATE TABLE users (
@@ -80,9 +82,10 @@ CREATE TABLE challenge_answers (
 CREATE TABLE classes (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     class_name TEXT NOT NULL,
-    class_type TEXT NOT NULL DEFAULT "No Gi",
+    class_type TEXT NOT NULL,
     weekday TEXT NOT NULL,
     time TIME NOT NULL,
+    duration TIME NOT NULL DEFAULT "1:00:00",
     coach_id INTEGER NOT NULL,
     FOREIGN KEY (coach_id) REFERENCES users (id)
 );
