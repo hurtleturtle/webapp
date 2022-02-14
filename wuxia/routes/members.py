@@ -4,7 +4,7 @@ from wuxia.forms import gen_form_item
 from wuxia.db import get_db
 
 
-bp = Blueprint('members', __name__, url_prefix='/members', template_folder='routes/members')
+bp = Blueprint('members', __name__, url_prefix='/members', template_folder='templates/members')
 
 
 @bp.route('/check-in', methods=['GET'])
