@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, render_template_string, flash, current_app
 from wuxia.routes.auth import admin_required, write_admin_required, test_access_required
 from wuxia.forms import gen_form_item
-from wuxia.db import get_db
+from wuxia.db import get_db, QueryResult
 from urllib.parse import unquote_plus
 from mysql.connector import Error as SQLError
 from pandas import DataFrame
@@ -153,10 +153,6 @@ def oracle():
         return render_template('misc/query.html', form_groups=groups, result=result, title=page_title)
 
     return render_template('misc/query.html', form_groups=groups, title=page_title)
-
-class QueryResult(DataFrame):
-    def __bool__(self):
-        return self.empty
 
 
 class PaddingOracleAttack:

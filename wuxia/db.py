@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from shutil import rmtree
 from getpass import getpass
 from werkzeug.security import check_password_hash, generate_password_hash
+from pandas import DataFrame
 
 
 class Database:
@@ -298,6 +299,18 @@ class Database:
     def add_class(self, day, time, coach_id, class_type='No Gi'):
         if class_type not in ['Gi', 'No Gi']:
             return False
+
+    def get_attendance(self, from_date, to_date):
+        query = 'SELECT date, classes.class_name, classes.class_type, users.username FROM attendance '
+        query += 'INNER JOIN classes ON attendance.class_id=classes.id INNER JOIN users ON attendance.member_id=users.id WHERE date >= %s AND date <= %s'
+        params = (from_date, to_date)
+        self.execute(query, params)
+        return self.cursor.fetchall()
+
+
+class QueryResult(DataFrame):
+    def __bool__(self):
+        return self.empty
 
 
 def order_query(params, order, descending):
