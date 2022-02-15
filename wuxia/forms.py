@@ -43,5 +43,5 @@ def gen_options(options, values=[]):
                 'value': opt,
                 'text': opt
             }
-    print(option_dict)
+
     return option_dict
