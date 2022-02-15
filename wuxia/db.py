@@ -296,9 +296,23 @@ class Database:
         self.execute(query, params)
         self.commit()
 
-    def add_class(self, day, time, coach_id, class_type='No Gi'):
+    def add_class(self, class_name, weekday, time, duration, coach_id, class_type='No Gi'):
         if class_type not in ['Gi', 'No Gi']:
+            flash('Invalid class type. Class type must be either Gi or No Gi')
             return False
+
+        query = 'INSERT INTO classes (class_name, class_type, weekday, time, duration, coach_id) '
+        query += 'VALUES (%s, %s, %s, %s, %s, %s)'
+        params = (class_name, class_type, weekday, time, duration, coach_id)
+        self.execute(query, params)
+        self.commit()
+        return True
+
+    def check_in(self, class_id, user_id):
+        query = 'INSERT INTO attendance (member_id, class_id) VALUES (%s, %s);'
+        params = (user_id, class_id)
+        self.execute(query, params)
+        self.commit()
 
     def get_attendance(self, from_date, to_date):
         query = 'SELECT date, classes.class_name, classes.class_type, users.username FROM attendance '
