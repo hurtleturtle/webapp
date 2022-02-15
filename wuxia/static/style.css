@@ -213,6 +213,7 @@ form {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+  flex: 1 0;
 }
 .form-item input, .form-item a, .form-item textarea, .form-item div, .form-item label {
     font-family: sans-serif;
@@ -243,7 +244,7 @@ form {
 }
 .form-item label {
   padding: 0.5em;
-  flex: 0 1;
+  /*flex: 0 1;*/
 }
 .form-item select {
   flex: 1 1 auto;
