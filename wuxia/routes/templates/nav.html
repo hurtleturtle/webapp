@@ -33,6 +33,13 @@
       </div>
     </div>
     {% endif %}
+    <div class="dropdown">
+      <span>BJJ</span>
+      <div class="dropdown-content">
+        <a href="{{ url_for('members.check_in_to_class') }}">Check In</a>
+        <a href="{{ url_for('members.reports') }}">Reports</a>
+      </div>
+    </div>
   </div>
   <div class="auth">
     {% if g.user and g.user['admin'] in g.admin_levels %}
