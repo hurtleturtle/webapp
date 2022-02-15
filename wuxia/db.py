@@ -9,6 +9,8 @@ from shutil import rmtree
 from getpass import getpass
 from werkzeug.security import check_password_hash, generate_password_hash
 from pandas import DataFrame
+from datetime import time, timedelta, datetime
+from time import localtime, strftime
 
 
 class Database:
@@ -307,6 +309,27 @@ class Database:
         self.execute(query, params)
         self.commit()
         return True
+
+    def get_classes(self, weekday=None, class_time=None):
+        query = 'SELECT date_format(time, "%T") "Class Time", class_name "Class Name" FROM classes WHERE weekday = %s AND time >= %s'
+        params = []
+        today = datetime.today()
+
+        if weekday:
+            params.append(weekday)
+        else:
+            params.append(today.strftime('%A'))
+
+        if class_time:
+            full_date_and_time = datetime.combine(today.date(), time.fromisoformat(class_time))
+        else:
+            full_date_and_time = today
+
+        possible_previous_class_time = full_date_and_time - timedelta(hours=1)
+        params.append(possible_previous_class_time.time().strftime('%X'))
+
+        self.execute(query, params)
+        return self.cursor.fetchall()
 
     def check_in(self, class_id, user_id):
         query = 'INSERT INTO attendance (member_id, class_id) VALUES (%s, %s);'
