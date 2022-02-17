@@ -311,7 +311,9 @@ class Database:
         return True
 
     def get_classes(self, weekday=None, class_time=None):
-        query = 'SELECT date_format(time, "%T") "Class Time", class_name "Class Name" FROM classes WHERE weekday = %s AND time >= %s'
+        query = 'SELECT id, DATE_FORMAT(time, "%H:%i") class_time, class_name, duration, '
+        query += 'DATE_FORMAT(ADDTIME(time, duration), "%H:%i") end_time'
+        query += ' FROM classes WHERE weekday = %s AND time >= %s'
         params = []
         today = datetime.today()
 
@@ -321,15 +323,17 @@ class Database:
             params.append(today.strftime('%A'))
 
         if class_time:
-            full_date_and_time = datetime.combine(today.date(), time.fromisoformat(class_time))
+            show_classes_from_time = class_time
         else:
-            full_date_and_time = today
+            show_classes_from_time = '00:00:00'
 
-        possible_previous_class_time = full_date_and_time - timedelta(hours=1)
-        params.append(possible_previous_class_time.time().strftime('%X'))
+        possible_previous_class_time = time.fromisoformat(show_classes_from_time)
+        params.append(possible_previous_class_time.isoformat())
 
         self.execute(query, params)
-        return self.cursor.fetchall()
+        todays_classes = self.cursor.fetchall()
+        return todays_classes
+
 
     def check_in(self, class_id, user_id):
         query = 'INSERT INTO attendance (member_id, class_id) VALUES (%s, %s);'
@@ -337,10 +341,20 @@ class Database:
         self.execute(query, params)
         self.commit()
 
-    def get_attendance(self, from_date, to_date):
-        query = 'SELECT date, classes.class_name, classes.class_type, users.username FROM attendance '
-        query += 'INNER JOIN classes ON attendance.class_id=classes.id INNER JOIN users ON attendance.member_id=users.id WHERE date >= %s AND date <= %s'
-        params = (from_date, to_date)
+    def get_attendance(self, from_date, to_date, user_id=None, class_id=None):
+        query = 'SELECT date, class_id, classes.class_name, classes.class_type, users.username FROM attendance '
+        query += 'INNER JOIN classes ON attendance.class_id=classes.id INNER JOIN users ON attendance.member_id=users.id'
+        query += ' WHERE date >= %s AND date <= %s'
+        params = [from_date, to_date]
+
+        if user_id:
+            query += ' AND member_id = %s'
+            params.append(user_id)
+        if class_id:
+            query += ' AND class_id = %s'
+            params.append(class_id)
+
+        print(query, params)
         self.execute(query, params)
         return self.cursor.fetchall()
 
