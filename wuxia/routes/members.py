@@ -3,6 +3,7 @@ from pandas import options
 from wuxia.routes.auth import admin_required, login_required
 from wuxia.forms import gen_form_item, gen_options
 from wuxia.db import get_db, QueryResult
+from datetime import datetime, time
 
 
 bp = Blueprint('members', __name__, url_prefix='/members', template_folder='templates/members')
@@ -13,13 +14,31 @@ bp = Blueprint('members', __name__, url_prefix='/members', template_folder='temp
 def check_in_to_class():
     db = get_db()
     current_user = db.get_user()
-    class_id = 1
-    # TODO: Fetch available classes
-    # TODO: Check in to class/offer options
+    today = datetime.today()
+    today_start = datetime.combine(today.date(), time.fromisoformat('00:00:00')).isoformat()
+    today_end = datetime.combine(today.date(), time.fromisoformat('23:59:59')).isoformat()
+    current_user_attendance = QueryResult(db.get_attendance(from_date=today_start, to_date=today_end,
+                                          user_id=current_user['id']))
 
-    flash('Checked in!')
+    try:
+        request_class_id = int(request.args.get('class_id'))
+    except:
+        request_class_id = request.args.get('class_id')
+    classes = db.get_classes()
+    df_classes = QueryResult(classes).set_index('id')
 
-    return render_template('checkin.html')
+    if request_class_id == 'all':
+        for class_id in df_classes.index:
+            if class_id not in current_user_attendance['class_id']:
+                db.check_in(class_id, current_user['id'])
+                flash(f'Checked in to class {df_classes.loc[class_id]["class_name"]}')
+    elif request_class_id and request_class_id not in current_user_attendance['class_id']:
+        db.check_in(request_class_id, current_user['id'])
+        flash(f'Checked in to class {df_classes.loc[request_class_id]["class_name"]}')
+        print(df_classes)
+    
+
+    return render_template('checkin.html', classes=classes)
 
 
 @bp.route('/add-class', methods=['GET', 'POST'])
