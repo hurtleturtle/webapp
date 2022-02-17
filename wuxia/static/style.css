@@ -280,7 +280,7 @@ div.results table {
   color: #59028a;
 }
 
-/* Style for challenges */
+/* Style for challenges and BJJ classes*/
 div.challenges-container {
   display: block;
   overflow-y: auto;
@@ -291,7 +291,14 @@ div.challenges-container {
   border-radius: 0.1em;
   box-shadow: 0.1em 0.1em 0.25em 0.25em #59028a;
 }
-.challenge-welcome {
+div.bjj-classes-container {
+  display: block;
+  overflow-y: auto;
+  margin: 4rem 10% 1rem 10%;
+  padding: 1rem 1rem;
+  background-color: #ecd9f7;
+}
+.challenge-welcome, .bjj-classes {
     display: block;
     margin: 4rem 10% 0rem 10%;
     padding: 1rem 1rem;
@@ -300,11 +307,11 @@ div.challenges-container {
     border-radius: 0.1em;
     box-shadow: 0.1em 0.1em 0.25em 0.25em #59028a;
 }
-.challenge-welcome > h2 {
+.challenge-welcome > h2, .bjj-classes > h2 {
     color: #59028a;
     text-align: center;
 }
-.challenge {
+.challenge, .bjj-class {
     display: block;
     text-decoration: none;
     color: black;
@@ -314,7 +321,7 @@ div.challenges-container {
     border-radius: 0.5rem;
     background-color: #40aaf9;
 }
-.challenge:hover {
+.challenge:hover, .bjj-class:hover {
     background-color: #e305d6;
     color: white;
 }
