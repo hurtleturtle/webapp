@@ -321,6 +321,17 @@ div.bjj-classes-container {
     border-radius: 0.5rem;
     background-color: #40aaf9;
 }
+.bjj-class.checked-in {
+  display: block;
+  text-decoration: none;
+  color: black;
+  text-align: center;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 0.5rem;
+  background-color: grey;
+  pointer-events: none;
+}
 .challenge:hover, .bjj-class:hover {
     background-color: #e305d6;
     color: white;

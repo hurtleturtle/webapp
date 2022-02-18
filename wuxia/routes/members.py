@@ -24,21 +24,32 @@ def check_in_to_class():
         request_class_id = int(request.args.get('class_id'))
     except:
         request_class_id = request.args.get('class_id')
-    classes = db.get_classes()
-    df_classes = QueryResult(classes).set_index('id')
+    classes = db.get_classes(weekday='Wednesday')
+    
+    if not classes:
+        return render_template('checkin.html')
+
+    df_classes = check_attendance(QueryResult(classes).set_index('id'), current_user_attendance)
+    print(df_classes)
 
     if request_class_id == 'all':
         for class_id in df_classes.index:
-            if class_id not in current_user_attendance['class_id']:
+            if not df_classes.loc[class_id, 'attendance']:
                 db.check_in(class_id, current_user['id'])
-                flash(f'Checked in to class {df_classes.loc[class_id]["class_name"]}')
-    elif request_class_id and request_class_id not in current_user_attendance['class_id']:
+                df_classes.loc[class_id, 'attendance'] = True
+    elif request_class_id and not df_classes.loc[request_class_id, 'attendance']:
         db.check_in(request_class_id, current_user['id'])
-        flash(f'Checked in to class {df_classes.loc[request_class_id]["class_name"]}')
-        print(df_classes)
+        df_classes.loc[request_class_id, 'attendance'] = True
     
+    return render_template('checkin.html', classes=df_classes.reset_index().to_dict('records'))
 
-    return render_template('checkin.html', classes=classes)
+
+def check_attendance(classes: QueryResult, user_attendance: QueryResult) -> QueryResult:
+    if user_attendance:
+        classes['attendance'] = classes.index.to_series().apply(lambda x: x in user_attendance['class_id'].values)
+    else:
+        classes['attendance'] = False
+    return classes
 
 
 @bp.route('/add-class', methods=['GET', 'POST'])

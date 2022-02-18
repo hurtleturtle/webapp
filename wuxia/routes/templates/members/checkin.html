@@ -12,8 +12,9 @@
         </a>
         <hr />
         {% for bjj_class in classes %}
-        <a class="bjj-class" href="{{ url_for('members.check_in_to_class', class_id=bjj_class.id) }}">
-            <h2>{{ bjj_class.class_name }}</h2>
+        <a class="bjj-class {% if bjj_class.attendance %}checked-in{% endif %}" 
+        href="{{ url_for('members.check_in_to_class', class_id=bjj_class.id) }}">
+            <h2>{{ bjj_class.class_name }} {% if bjj_class.attendance %}(Checked In){% endif %}</h2>
             <p>{{ bjj_class.class_time }} - {{ bjj_class.end_time }}</p>
         </a>
         {% endfor %}
