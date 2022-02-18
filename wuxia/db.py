@@ -53,9 +53,9 @@ class Database:
         self.execute(query, params)
         tables = self.cursor.fetchall()
 
-        if len(tables) != 9:
-            with current_app.open_resource('schema.sql') as f:
-                self.executescript(f.read().decode('utf8'))
+        # if len(tables) != 9:
+        #     with current_app.open_resource('schema.sql') as f:
+        #         self.executescript(f.read().decode('utf8'))
 
     def make_admin(self, uid, admin_level=0):
         levels = {0: 'no', 1: 'read', 2: 'read-write'}
@@ -312,7 +312,7 @@ class Database:
 
     def get_classes(self, weekday=None, class_time=None):
         query = 'SELECT id, DATE_FORMAT(time, "%H:%i") class_time, class_name, duration, '
-        query += 'DATE_FORMAT(ADDTIME(time, duration), "%H:%i") end_time'
+        query += 'DATE_FORMAT(ADDTIME(time, duration), "%H:%i") end_time, weekday'
         query += ' FROM classes WHERE weekday = %s AND time >= %s'
         params = []
         today = datetime.today()
@@ -335,20 +335,20 @@ class Database:
         return todays_classes
 
 
-    def check_in(self, class_id, user_id):
-        query = 'INSERT INTO attendance (member_id, class_id) VALUES (%s, %s);'
-        params = (user_id, class_id)
+    def check_in(self, class_id, user_id, class_date, class_time):
+        query = 'INSERT INTO attendance (user_id, class_id, class_date, class_time) VALUES (%s, %s, %s, %s);'
+        params = (user_id, class_id, class_date, class_time)
         self.execute(query, params)
         self.commit()
 
     def get_attendance(self, from_date, to_date, user_id=None, class_id=None):
-        query = 'SELECT date, class_id, classes.class_name, classes.class_type, users.username FROM attendance '
-        query += 'INNER JOIN classes ON attendance.class_id=classes.id INNER JOIN users ON attendance.member_id=users.id'
+        query = 'SELECT date, class_id, classes.class_name, class_date, class_time, classes.class_type, users.username FROM attendance '
+        query += 'INNER JOIN classes ON attendance.class_id=classes.id INNER JOIN users ON attendance.user_id=users.id'
         query += ' WHERE date >= %s AND date <= %s'
         params = [from_date, to_date]
 
         if user_id:
-            query += ' AND member_id = %s'
+            query += ' AND user_id = %s'
             params.append(user_id)
         if class_id:
             query += ' AND class_id = %s'
