@@ -361,7 +361,7 @@ class Database:
 
 class QueryResult(DataFrame):
     def __bool__(self):
-        return self.empty
+        return not self.empty
 
 
 def order_query(params, order, descending):
