@@ -86,6 +86,8 @@ def validate_check_in(df_classes: QueryResult, class_id: int):
 @bp.route('/add-class', methods=['GET', 'POST'])
 @admin_required
 def add_class():
+    db = get_db()
+    coaches = QueryResult(db.get_coaches())
     groups = {
         'class': {
             'group_title': 'Add Class',
@@ -94,8 +96,7 @@ def add_class():
                                         options=gen_options(('No Gi', 'Gi')), value='No Gi',
                                         selected_option='No Gi'),
             'class_coach': gen_form_item('class_coach', label='Coach', field_type='select',
-                                         options=gen_options(('Kevin Webb', 'Thomas Grandjean'), values=(3, 2)),
-                                         selected_option=3),
+                                         options=gen_options(coaches['username'].to_list(), values=coaches['id'].to_list())),
             'class_day': gen_form_item('class_day', label='Day', field_type='select',
                                        options=gen_options(('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
                                                             'Saturday', 'Sunday'))),
@@ -108,7 +109,6 @@ def add_class():
     }
 
     if request.method == 'POST':
-        db = get_db()
         form = request.form
         class_name = form.get('class_name')
         class_type = form.get('class_type')

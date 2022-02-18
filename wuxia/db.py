@@ -298,6 +298,11 @@ class Database:
         self.execute(query, params)
         self.commit()
 
+    def get_coaches(self):
+        query = 'SELECT id, username FROM users WHERE is_coach=true'
+        self.execute(query)
+        return self.cursor.fetchall()
+
     def add_class(self, class_name, weekday, time, duration, coach_id, class_type='No Gi'):
         if class_type not in ['Gi', 'No Gi']:
             flash('Invalid class type. Class type must be either Gi or No Gi')

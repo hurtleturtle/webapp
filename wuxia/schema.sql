@@ -19,7 +19,8 @@ CREATE TABLE users (
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_access TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     submission_approval_requested BOOLEAN NOT NULL DEFAULT false,
-    submission_approved BOOLEAN NOT NULL DEFAULT false
+    submission_approved BOOLEAN NOT NULL DEFAULT false,
+    is_coach BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE stories (
