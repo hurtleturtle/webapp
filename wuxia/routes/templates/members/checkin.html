@@ -6,7 +6,8 @@
       <h2>Classes</h2>
       <p>Check in for one or all of the classes below</p>
       <div class="bjj-classes-container">
-        <a class="bjj-class" href="{{ url_for('members.check_in_to_class', class_id='all') }}">
+        <a class="bjj-class {% if all_classes_attended %}checked-in{% endif %}" 
+         href="{{ url_for('members.check_in_to_class', class_id='all') }}">
           <h2>All Classes</h2>
           <p>Check in to all classes listed below</p>
         </a>
@@ -20,7 +21,7 @@
         {% endfor %}
       </div>
   {% else %}
-      <h2>No Classes Available</h2>
+      <h2>No classes available today</h2>
   {% endif %}
   </div>
 {% endblock %}
