@@ -24,7 +24,7 @@ def check_in_to_class():
         request_class_id = int(request.args.get('class_id'))
     except:
         request_class_id = request.args.get('class_id')
-    classes = db.get_classes(weekday='Wednesday')
+    classes = db.get_classes()
     
     if not classes:
         return render_template('checkin.html')
@@ -34,14 +34,25 @@ def check_in_to_class():
 
     if request_class_id == 'all':
         for class_id in df_classes.index:
-            if not df_classes.loc[class_id, 'attendance']:
-                db.check_in(class_id, current_user['id'])
+            check_in_valid, error_message = validate_check_in(df_classes, class_id)
+            if check_in_valid:
+                db.check_in(class_id, current_user['id'], today.date().isoformat(), df_classes.loc[class_id, 'class_time'])
                 df_classes.loc[class_id, 'attendance'] = True
-    elif request_class_id and not df_classes.loc[request_class_id, 'attendance']:
-        db.check_in(request_class_id, current_user['id'])
-        df_classes.loc[request_class_id, 'attendance'] = True
+            else:
+                flash(error_message)
+    elif request_class_id:
+        check_in_valid, error_message = validate_check_in(df_classes, request_class_id)
+        if check_in_valid:
+            db.check_in(request_class_id, current_user['id'], today.date().isoformat(), df_classes.loc[request_class_id, 'class_time'])
+            df_classes.loc[request_class_id, 'attendance'] = True
+        else:
+            flash(error_message)
+
+    flag_all_classes_attended = all(df_classes['attendance'])
+    # TODO: add class_date to attendance table
     
-    return render_template('checkin.html', classes=df_classes.reset_index().to_dict('records'))
+    return render_template('checkin.html', classes=df_classes.reset_index().to_dict('records'), 
+                           all_classes_attended=flag_all_classes_attended)
 
 
 def check_attendance(classes: QueryResult, user_attendance: QueryResult) -> QueryResult:
@@ -52,6 +63,26 @@ def check_attendance(classes: QueryResult, user_attendance: QueryResult) -> Quer
     return classes
 
 
+def validate_check_in(df_classes: QueryResult, class_id: int):
+    check_in_is_valid = True
+    message = ''
+    today = datetime.today()
+
+    try:
+        class_name = df_classes.loc[class_id, "class_name"]
+        if df_classes.loc[class_id, 'attendance']:
+            check_in_is_valid = False
+            message = f'You have already checked in to {class_name}'
+        
+        if today.strftime('%A') != df_classes.loc[class_id, 'weekday']:
+            check_in_is_valid = False
+            message = f'{class_name} is not on today, so you cannot check in yet.'
+    except KeyError:
+        check_in_is_valid = False
+
+    return check_in_is_valid, message
+
+
 @bp.route('/add-class', methods=['GET', 'POST'])
 @admin_required
 def add_class():
@@ -60,10 +91,11 @@ def add_class():
             'group_title': 'Add Class',
             'class_name': gen_form_item('class_name', label='Class Name'),
             'class_type': gen_form_item('class_type', label='Class Type', field_type='select',
-                                        options=gen_options(('Gi', 'No Gi')), value='No Gi',
+                                        options=gen_options(('No Gi', 'Gi')), value='No Gi',
                                         selected_option='No Gi'),
             'class_coach': gen_form_item('class_coach', label='Coach', field_type='select',
-                                         options=gen_options(('Kevin Webb', 'Thomas Grandjean'), values=(2, 3))),
+                                         options=gen_options(('Kevin Webb', 'Thomas Grandjean'), values=(3, 2)),
+                                         selected_option=3),
             'class_day': gen_form_item('class_day', label='Day', field_type='select',
                                        options=gen_options(('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
                                                             'Saturday', 'Sunday'))),
