@@ -123,23 +123,3 @@ def add_class():
 
 
     return render_template('add_class.html', form_groups=groups)
-
-
-@bp.route('/reports', methods=['GET', 'POST'])
-@admin_required
-def reports():
-    groups = {
-        'report': {
-            'group_title': 'Generate Report'
-        },
-        'submit': {
-            'btn-submit': gen_form_item('btn-submit', item_type='submit', value='Submit')
-        }
-    }
-
-    if request.method == 'POST':
-        db = get_db()
-        result = QueryResult(db.get_attendance('2022-02-14', '2022-02-20')).to_html(index=False)
-        return render_template('report.html', form_groups=groups, result=result)
-            
-    return render_template('report.html', form_groups=groups)

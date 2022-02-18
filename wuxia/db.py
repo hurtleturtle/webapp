@@ -347,7 +347,8 @@ class Database:
         self.commit()
 
     def get_attendance(self, from_date, to_date, user_id=None, class_id=None):
-        query = 'SELECT date, class_id, classes.class_name, class_date, class_time, classes.class_type, users.username FROM attendance '
+        query = 'SELECT date, class_id, classes.class_name, class_date, DATE_FORMAT(class_time, "%H:%i") class_time, '
+        query += 'classes.class_type, users.username FROM attendance '
         query += 'INNER JOIN classes ON attendance.class_id=classes.id INNER JOIN users ON attendance.user_id=users.id'
         query += ' WHERE date >= %s AND date <= %s'
         params = [from_date, to_date]
@@ -367,6 +368,10 @@ class Database:
 class QueryResult(DataFrame):
     def __bool__(self):
         return not self.empty
+
+
+def get_end_of_day(day: datetime) -> datetime:
+    return day.replace(hour=0, minute=0, second=0) + timedelta(days=1)
 
 
 def order_query(params, order, descending):
