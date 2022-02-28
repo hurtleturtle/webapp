@@ -9,6 +9,7 @@
     <tr class="user-header">
       <th>Username</th>
       <th>Admin Status</th>
+      <th>Coach</th>
       <th>Access Approved</th>
       <th>Last Accessed</th>
       {% if g.user.admin == 'read-write' %}
@@ -19,6 +20,7 @@
       <tr class="user">
         <td>{{ user.username }}</td>
         <td>{{ user.admin }}</td>
+        <td>{{ user.is_coach }}</td>
         <td>{{ user.access_approved }}</td>
         <td>{{ user.last_access }}</td>
         {% if g.user.admin == 'read-write' %}

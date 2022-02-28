@@ -29,6 +29,7 @@ def edit(uid):
         username = escape(request.form['username'])
         admin = request.form['admin']
         access = escape(request.form['access'])
+        is_coach = request.form['is_coach']
         username_new = (username != user['username'])
         username_exists = db.get_user(name=username) is not None
 
@@ -39,6 +40,8 @@ def edit(uid):
                 db.update_user(uid, 'username', username)
         if admin in admin_levels:
             db.update_user(uid, 'admin', admin)
+        if is_coach is not None:
+            db.update_user(uid, 'is_coach', is_coach)
         else:
             error = error + '\n' if error else ''
             error += f'{admin}\nAdmin Status must be one of:'
@@ -156,7 +159,10 @@ def generate_form_groups(user):
                                    options=gen_options(g.privilege_levels,
                                                        g.privilege_levels),
                                    value=user['admin'],
-                                   selected_option=user['admin'])
+                                   selected_option=user['admin']),
+            'coach': gen_form_item('is_coach', label='Coach', field_type='select',
+                                   options=gen_options(['No', 'Yes'], [0, 1]),
+                                   selected_option=user['is_coach'])
         },
         'change_pass': {
             'button': gen_form_item('change_pass', field_type='link',
