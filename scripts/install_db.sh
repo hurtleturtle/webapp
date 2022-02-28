@@ -10,4 +10,4 @@ sed -E 's/<password>/'$PASSWORD'/' init_template.sql > init.sql
 echo 'Initialising database...'
 mysql < init.sql
 
-echo 'Done.'
+echo 'Finished setting up database.'
