@@ -115,7 +115,7 @@ def get_attendance(start_date, end_date):
     results = QueryResult(db.get_attendance(start_date, end_date))
     
     if results:
-        results.sort_values(by='date', inplace=True)
+        results.sort_values(by=['class_name', 'date'], inplace=True)
     else:
         flash('No classes were attended in that date range')
     
