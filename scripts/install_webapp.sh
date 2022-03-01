@@ -22,7 +22,7 @@ ln -s $LOG_FOLDER $INSTANCE_HOME/logs
 echo 'Configuring logging...'
 LOG_FILE="$LOG_FOLDER/webapp.log"
 cp run.sh run.sh.old
-sed -E 's/<log_file>/'"$LOG_FILE" run.sh.old > run.sh
+sed -E 's/<log_file>/'"$LOG_FILE/" run.sh.old > run.sh
 echo "The application will log to $LOG_FILE"
 
 echo 'Creating config...'
