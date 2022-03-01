@@ -339,6 +339,13 @@ class Database:
         todays_classes = self.cursor.fetchall()
         return todays_classes
 
+    def get_all_classes(self):
+        query = 'SELECT id, DATE_FORMAT(time, "%H:%i") class_time, class_name, duration, '
+        query += 'DATE_FORMAT(ADDTIME(time, duration), "%H:%i") end_time, weekday'
+        query += ' FROM classes'
+        self.execute(query)
+        return self.cursor.fetchall()
+
 
     def check_in(self, class_id, user_id, class_date, class_time):
         query = 'INSERT INTO attendance (user_id, class_id, class_date, class_time) VALUES (%s, %s, %s, %s);'
