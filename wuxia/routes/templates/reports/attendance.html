@@ -5,9 +5,17 @@
 {% endblock %}
 
 {% block content %}
+  {% if form_groups %}
+    {% include "form.html" %}
+  {% endif %}
   {% if result %}
   <div class="results">
       <h2>Results</h2>
+      {% if start_date == end_date %}
+        <p>Attendance at classes on {{ start_date }}. </p>
+      {% else %}
+        <p>Attendance at classes between {{ start_date }} and {{ end_date }}. </p>
+      {% endif %}
       {% if result.sequence -%}
           {%- for line in result.data -%}
               <p>{{ line | safe }}</p>
