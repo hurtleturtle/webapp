@@ -5,7 +5,10 @@ import shlex
 import pandas as pd
 from getpass import getpass
 from wuxia.routes.story import Story
-from wuxia.db import Database
+from wuxia.db import Database, QueryResult
+from datetime import datetime, timedelta
+from numpy.random import randint
+import calendar
 
 
 def get_args():
@@ -26,6 +29,7 @@ def get_args():
     parser.add_argument('-e', '--execute-script', help='Execute SQL script')
     parser.add_argument('-x', '--experiment', action='store_true')
     parser.add_argument('-q', '--query', help='Execute custom query')
+    parser.add_argument('--add-attendances', default=10, type=int, help='Add random attendances')
     parser.add_argument('--commit', action='store_true', help='Commit query changes to database')
     parser.add_argument('--db-user', default='webapp', help='Database user')
     parser.add_argument('--db-pass', help='Password to login to database')
@@ -105,6 +109,30 @@ if __name__ == '__main__':
         
     if args.experiment:
         db.add_challenge('A new challenge', 'A very short test challenge', 'Nah\nbro', None,  None, None)
+
+    if args.add_attendances:
+        classes = QueryResult(db.get_all_classes())
+        users = QueryResult(db.get_users(('id',)))
+        query = 'INSERT INTO attendance (user_id, class_id, class_date, class_time, date) VALUES (%s, %s, %s, %s, %s);'
+        print(classes)
+        for idx in range(args.add_attendances):
+            user_id = users.sample().to_dict('records')[0]['id']
+            _class = classes.sample().to_dict('records')[0]
+            attendance_date = datetime(year=randint(2021, 2023), month=randint(1, 13), day=randint(1, 29),
+                                       hour=randint(0, 24), minute=randint(0, 60), second=randint(0, 60))
+            weekday = _class['weekday']
+            
+            if attendance_date.strftime('%A') != weekday:
+                attendance_date = attendance_date + timedelta(days=(list(calendar.day_name).index(weekday) -
+                                                              attendance_date.weekday()))
+            if attendance_date > datetime.today():
+                attendance_date = attendance_date - timedelta(days=365)
+            
+            params = (user_id, _class['id'], attendance_date.date(), _class['class_time'], attendance_date)
+            db.execute(query, params)
+            db.commit()
+            _class['user'] = user_id
+            print(_class)
 
     if args.reset_password:
         if user:
