@@ -44,7 +44,11 @@
     <div class="dropdown">
       <span>Reports</span>
       <div class="dropdown-content">
-        <a href="{{ url_for('reports.attendance_custom') }}">Attendance</a>
+        <a href="{{ url_for('reports.attendance_today') }}">Attendance - Today</a>
+        <a href="{{ url_for('reports.attendance_yesterday') }}">Attendance - Yesterday</a>
+        <a href="{{ url_for('reports.attendance_last_week') }}">Attendance - Last Week</a>
+        <a href="{{ url_for('reports.attendance_last_month') }}">Attendance - Last Month</a>
+        <a href="{{ url_for('reports.attendance_custom') }}">Attendance - Custom</a>
       </div>
     </div>
     {% endif %}

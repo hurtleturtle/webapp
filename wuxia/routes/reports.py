@@ -1,6 +1,6 @@
 from re import template
 from tracemalloc import start
-from flask import Blueprint, request, render_template, flash
+from flask import Blueprint, redirect, request, render_template, flash, url_for
 from pandas import options
 from wuxia.routes.auth import admin_required, login_required
 from wuxia.forms import gen_form_item, gen_options
@@ -36,6 +36,58 @@ def attendance_custom():
                                    end_date=end_date)
             
     return render_template('attendance.html', form_groups=groups)
+
+
+@bp.route('/attendance/today')
+@admin_required
+def attendance_today():
+    today = datetime.today().date().isoformat()
+    results = get_attendance(today, today)
+    if results:
+            return render_template('attendance.html', result=results.to_html(index=False), start_date=today,
+                                   end_date=today)
+    else:
+        return redirect(url_for('reports.attendance_custom'))
+
+
+@bp.route('/attendance/yesterday')
+@admin_required
+def attendance_yesterday():
+    yesterday = (datetime.today().date() - timedelta(days=1)).isoformat()
+    results = get_attendance(yesterday, yesterday)
+    if results:
+            return render_template('attendance.html', result=results.to_html(index=False), start_date=yesterday,
+                                   end_date=yesterday)
+    else:
+        return redirect(url_for('reports.attendance_custom'))
+
+
+@bp.route('/attendance/last-week')
+@admin_required
+def attendance_last_week():
+    today = datetime.today().date()
+    last_sunday = today - timedelta(days=today.weekday()+1)
+    last_monday = last_sunday - timedelta(days=7)
+    results = get_attendance(last_monday, last_sunday)
+    if results:
+            return render_template('attendance.html', result=results.to_html(index=False), start_date=last_monday,
+                                   end_date=last_sunday)
+    else:
+        return redirect(url_for('reports.attendance_custom'))
+
+
+@bp.route('/attendance/last-month')
+@admin_required
+def attendance_last_month():
+    today = datetime.today().date()
+    first_of_month = datetime(today.year, today.month - 1, 1)
+    last_of_month = datetime(today.year, today.month, day=1) - timedelta(days=1)
+    results = get_attendance(first_of_month, last_of_month)
+    if results:
+            return render_template('attendance.html', result=results.to_html(index=False), start_date=first_of_month,
+                                   end_date=last_of_month)
+    else:
+        return redirect(url_for('reports.attendance_custom'))
 
 
 def get_attendance(start_date, end_date):
