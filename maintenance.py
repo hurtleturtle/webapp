@@ -114,7 +114,8 @@ if __name__ == '__main__':
         classes = QueryResult(db.get_all_classes())
         users = QueryResult(db.get_users(('id',)))
         query = 'INSERT INTO attendance (user_id, class_id, class_date, class_time, date) VALUES (%s, %s, %s, %s, %s);'
-        print(classes)
+        results = QueryResult()
+        
         for idx in range(args.add_attendances):
             user_id = users.sample().to_dict('records')[0]['id']
             _class = classes.sample().to_dict('records')[0]
@@ -132,7 +133,10 @@ if __name__ == '__main__':
             db.execute(query, params)
             db.commit()
             _class['user'] = user_id
-            print(_class)
+            _class['attended'] = attendance_date.isoformat()
+            results = pd.concat([results, QueryResult(_class, index=[0])], ignore_index=True)
+        
+        print(results)
 
     if args.reset_password:
         if user:

@@ -81,7 +81,7 @@ def attendance_last_week():
 def attendance_last_month():
     today = datetime.today().date()
     first_of_month = datetime(today.year, today.month - 1, 1)
-    last_of_month = datetime(today.year, today.month, day=1) - timedelta(days=1)
+    last_of_month = datetime(today.year, today.month, day=1, hour=23, minute=59, second=59) - timedelta(days=1)
     results = get_attendance(first_of_month, last_of_month)
     if results:
             return render_template('attendance.html', result=results.to_html(index=False), start_date=first_of_month,
