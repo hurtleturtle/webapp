@@ -11,6 +11,22 @@ from datetime import datetime, timedelta
 bp = Blueprint('reports', __name__, url_prefix='/reports', template_folder='templates/reports')
 
 
+@bp.route('/attendance/headcount')
+@admin_required
+def headcount():
+    today = datetime.today().date()
+    class_date = today.strftime('%A, %d %b %Y')
+    results = get_attendance(today.isoformat(), today.isoformat())
+    summary = results[['class_name', 'username']].groupby('class_name').count().reset_index()\
+                                                 .rename(columns={
+                                                            'class_name': 'Class',
+                                                            'username': 'Attendees'
+                                                         })\
+                                                 .to_html(index=False)
+    print(summary)
+    return render_template('headcount.html', result=summary, class_date=class_date)
+
+
 @bp.route('/attendance/custom', methods=['GET', 'POST'])
 @admin_required
 def attendance_custom():
