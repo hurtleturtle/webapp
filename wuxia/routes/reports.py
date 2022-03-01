@@ -15,8 +15,9 @@ bp = Blueprint('reports', __name__, url_prefix='/reports', template_folder='temp
 def attendance():
     db = get_db()
     today = datetime.today()
-    results = QueryResult(db.get_attendance('2022-02-01', get_end_of_day(today))).sort_values(by='date')
-    print(results)
+    results = QueryResult(db.get_attendance('2022-02-01', get_end_of_day(today)))
+    if results:
+        results.sort_values(by='date', inplace=True)
 
     groups = {
         'report': {
@@ -26,10 +27,5 @@ def attendance():
             'btn-submit': gen_form_item('btn-submit', item_type='submit', value='Submit')
         }
     }
-
-    if request.method == 'POST':
-        db = get_db()
-        result = QueryResult(db.get_attendance('2022-02-14', '2022-02-20')).to_html(index=False)
-        return render_template('report.html', form_groups=groups, result=result)
             
     return render_template('attendance.html', result=results.to_html(index=False))
